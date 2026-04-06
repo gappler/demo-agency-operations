@@ -270,8 +270,8 @@ Current health scores (as of March 2026):
 
 ## Data Files
 
-Detailed supporting data is maintained in the `data/` directory:
+Detailed supporting data is maintained in the `data/` directory (at project root):
 
-- `data/client_sow_terms.md` — SOW terms, deliverables, and monthly hour allocations per client
-- `data/client_performance_history.md` — 6 months of historical performance metrics (Oct 2025–Mar 2026)
-- `data/client_health_framework.md` — Health scoring methodology and thresholds
+- `../data/client_sow_terms.md` — SOW terms, deliverables, and monthly hour allocations per client
+- `../data/client_performance_history.md` — 6 months of historical performance metrics (Oct 2025–Mar 2026)
+- `../data/client_health_framework.md` — Health scoring methodology and thresholds

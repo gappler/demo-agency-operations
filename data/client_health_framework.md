@@ -3,7 +3,7 @@ title: Client Health Scoring Framework
 version: 1.0
 created: 2026-04-06
 updated: 2026-04-06
-parent: brand_definition.md
+parent: brand/brand_definition.md
 ---
 
 # Client Health Scoring Framework

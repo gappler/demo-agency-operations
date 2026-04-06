@@ -4,7 +4,7 @@ version: 1.0
 created: 2026-04-06
 updated: 2026-04-06
 period: October 2025 – March 2026
-parent: brand_definition.md
+parent: brand/brand_definition.md
 ---
 
 # Client Performance History
