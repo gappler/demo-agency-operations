@@ -363,7 +363,7 @@ body {
     <span class="header-brand">Sidebar Creative</span>
     <span class="header-title">Project Timeline Dashboard</span>
   </div>
-  <span class="header-date">April 7, 2026</span>
+  <span class="header-date" id="headerDate"></span>
 </div>
 
 <!-- Stats Row -->
@@ -371,9 +371,9 @@ body {
 
 <!-- Filter Bar -->
 <div class="filter-bar">
-  <button class="filter-btn active" data-filter="all">All (12)</button>
-  <button class="filter-btn" data-filter="retainer">Retainers (8)</button>
-  <button class="filter-btn" data-filter="project">Projects (4)</button>
+  <button class="filter-btn active" data-filter="all" id="filterAll">All</button>
+  <button class="filter-btn" data-filter="retainer" id="filterRetainer">Retainers</button>
+  <button class="filter-btn" data-filter="project" id="filterProject">Projects</button>
 </div>
 
 <!-- Gantt -->
@@ -588,12 +588,6 @@ function healthLabel(h, type) {
 }
 function scoreColor(v) { return v >= 75 ? '#28a745' : v >= 50 ? '#e6a817' : '#dc3545'; }
 
-/* Position helpers: fraction of year (0–1) for a date */
-function yearFrac(d) {
-  const jan1 = new Date(YEAR, 0, 1);
-  const dec31 = new Date(YEAR, 11, 31);
-  return Math.max(0, Math.min(1, (d - jan1) / (dec31 - jan1)));
-}
 
 /* ════════════════════════════════════════════════════════
    STATS
@@ -617,8 +611,8 @@ function renderStats() {
   const html = `
     <div class="stat-card">
       <div class="stat-label">Active Engagements</div>
-      <div class="stat-value">12</div>
-      <div class="stat-sub">8 retainers &middot; 4 projects</div>
+      <div class="stat-value">${ALL.length}</div>
+      <div class="stat-sub">${RETAINERS.length} retainers &middot; ${PROJECTS.length} projects</div>
     </div>
     <div class="stat-card">
       <div class="stat-label">At Risk</div>
@@ -723,10 +717,16 @@ function renderGantt(filter) {
   container.querySelectorAll('.gantt-row').forEach(row => {
     row.addEventListener('click', () => {
       const id = row.dataset.id;
-      selectedId = id === selectedId ? null : id;
-      renderGantt(currentFilter);
-      if (selectedId) renderDetail(ALL.find(x => x.id === selectedId));
-      else closeDetail();
+      const prevSelected = container.querySelector('.gantt-row.selected');
+      if (prevSelected) prevSelected.classList.remove('selected');
+      if (id === selectedId) {
+        selectedId = null;
+        closeDetail();
+      } else {
+        selectedId = id;
+        row.classList.add('selected');
+        renderDetail(ALL.find(x => x.id === selectedId));
+      }
     });
     // Tooltip
     row.addEventListener('mouseenter', (ev) => showTooltip(ev, ALL.find(x => x.id === row.dataset.id)));
@@ -857,8 +857,10 @@ function showTooltip(ev, e) {
   moveTooltip(ev);
 }
 function moveTooltip(ev) {
-  tooltipEl.style.left = (ev.clientX + 14) + 'px';
-  tooltipEl.style.top = (ev.clientY + 14) + 'px';
+  const x = Math.min(ev.clientX + 14, window.innerWidth - tooltipEl.offsetWidth - 10);
+  const y = Math.min(ev.clientY + 14, window.innerHeight - tooltipEl.offsetHeight - 10);
+  tooltipEl.style.left = x + 'px';
+  tooltipEl.style.top = y + 'px';
 }
 function hideTooltip() { tooltipEl.style.display = 'none'; }
 
@@ -985,15 +987,30 @@ document.querySelectorAll('.filter-btn').forEach(btn => {
    INIT + RESIZE
    ════════════════════════════════════════════════════════ */
 function init() {
+  // Render header date from TODAY constant
+  const headerDate = document.getElementById('headerDate');
+  if (headerDate) {
+    headerDate.textContent = TODAY.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+  }
+
+  // Update filter button labels with dynamic counts
+  document.getElementById('filterAll').textContent = `All (${ALL.length})`;
+  document.getElementById('filterRetainer').textContent = `Retainers (${RETAINERS.length})`;
+  document.getElementById('filterProject').textContent = `Projects (${PROJECTS.length})`;
+
   renderStats();
   renderGantt(currentFilter);
 }
 
+let resizeTimer;
 window.addEventListener('resize', () => {
-  renderGantt(currentFilter);
+  clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(() => renderGantt(currentFilter), 150);
 });
 
-init();
+window.addEventListener('DOMContentLoaded', () => {
+  requestAnimationFrame(init);
+});
 </script>
 </body>
 </html>
