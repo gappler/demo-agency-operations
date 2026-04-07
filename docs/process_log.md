@@ -12,7 +12,7 @@ updated: 2026-04-07
 ## 2026-04-07 — Project Timeline Dashboard (Tool 1)
 
 **Prompt:**
-Create `tools/project_timeline.html` — a single self-contained HTML file with all CSS and JS inlined. Interactive Gantt-style project timeline dashboard for Sidebar Creative agency. Includes branded header, summary stats, filter bar, Gantt timeline with bars/milestones/today line, and expandable detail panel with budget, health scores, milestones, team, and risk notes.
+Build a project timeline dashboard for Sidebar Creative. Read the brand definition and client portfolio data. Show all active projects on an interactive Gantt-style timeline with start dates, deadlines, current progress, and RAG status. Include the 8 retainer clients and the project-based engagements. Output as an interactive HTML file.
 
 **What was built:**
 - `tools/project_timeline.html` — Complete single-file interactive dashboard with:
