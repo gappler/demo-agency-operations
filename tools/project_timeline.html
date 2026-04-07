@@ -1,0 +1,999 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Project Timeline Dashboard — Sidebar Creative</title>
+<style>
+/* ── Reset & Base ─────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 14px; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: #f5f5f5;
+  color: #222;
+  min-width: 1200px;
+}
+
+/* ── Header ───────────────────────────────────────────── */
+.header {
+  background: #1a1a1a;
+  color: #fff;
+  padding: 14px 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.header-left { display: flex; align-items: baseline; gap: 18px; }
+.header-brand { font-size: 1.25rem; font-weight: 700; letter-spacing: .02em; }
+.header-title { font-size: .95rem; font-weight: 400; color: #aaa; }
+.header-date { font-size: .85rem; color: #777; }
+
+/* ── Stats Row ────────────────────────────────────────── */
+.stats-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  padding: 18px 28px;
+}
+.stat-card {
+  background: #fff;
+  border-radius: 6px;
+  padding: 16px 20px;
+  box-shadow: 0 1px 3px rgba(0,0,0,.08);
+}
+.stat-label { font-size: .75rem; text-transform: uppercase; letter-spacing: .06em; color: #777; margin-bottom: 4px; }
+.stat-value { font-size: 1.6rem; font-weight: 700; }
+.stat-sub { font-size: .78rem; color: #888; margin-top: 2px; }
+.stat-value.red { color: #dc3545; }
+.stat-value.green { color: #28a745; }
+
+/* ── Filter Bar ───────────────────────────────────────── */
+.filter-bar {
+  padding: 0 28px 14px;
+  display: flex;
+  gap: 8px;
+}
+.filter-btn {
+  border: 1px solid #ccc;
+  background: #fff;
+  padding: 6px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: .85rem;
+  font-family: inherit;
+  transition: background .15s, border-color .15s;
+}
+.filter-btn:hover { background: #eee; }
+.filter-btn.active { background: #1a1a1a; color: #fff; border-color: #1a1a1a; }
+
+/* ── Gantt Container ──────────────────────────────────── */
+.gantt-container {
+  padding: 0 28px 20px;
+}
+.gantt-section-title {
+  font-size: .85rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: #555;
+  margin: 18px 0 8px;
+}
+.gantt-table {
+  background: #fff;
+  border-radius: 6px;
+  box-shadow: 0 1px 3px rgba(0,0,0,.08);
+  overflow: hidden;
+}
+.gantt-header, .gantt-row {
+  display: grid;
+  grid-template-columns: 220px repeat(12, 1fr);
+  min-height: 36px;
+  align-items: center;
+}
+.gantt-header {
+  background: #fafafa;
+  border-bottom: 1px solid #e5e5e5;
+  font-size: .72rem;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  color: #888;
+  font-weight: 600;
+  position: sticky;
+  top: 0;
+  z-index: 2;
+}
+.gantt-header-label { padding: 8px 12px; }
+.gantt-header-month { text-align: center; padding: 8px 0; border-left: 1px solid #eee; }
+.gantt-row {
+  border-bottom: 1px solid #f0f0f0;
+  cursor: pointer;
+  transition: background .1s;
+}
+.gantt-row:last-child { border-bottom: none; }
+.gantt-row:hover { background: #f9f9f9; }
+.gantt-row.selected { background: #eef4ff; }
+
+/* Left label cell */
+.gantt-label {
+  padding: 8px 12px;
+  font-size: .82rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.rag-dot {
+  width: 9px; height: 9px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.rag-green  { background: #28a745; }
+.rag-yellow { background: #e6a817; }
+.rag-red    { background: #dc3545; }
+.rag-blue   { background: #3a8fd4; }
+
+/* Timeline cells */
+.gantt-cell {
+  position: relative;
+  height: 36px;
+  border-left: 1px solid #f0f0f0;
+}
+
+/* Today line */
+.today-line {
+  position: absolute;
+  top: 0; bottom: 0;
+  width: 2px;
+  background: #dc3545;
+  z-index: 3;
+  pointer-events: none;
+}
+
+/* Bar */
+.gantt-bar {
+  position: absolute;
+  top: 8px;
+  height: 20px;
+  border-radius: 3px;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+}
+.gantt-bar-fill {
+  height: 100%;
+  border-radius: 3px;
+  opacity: .55;
+}
+.bar-green  { background: #d4edda; }
+.bar-green .gantt-bar-fill { background: #28a745; }
+.bar-yellow { background: #fff3cd; }
+.bar-yellow .gantt-bar-fill { background: #e6a817; }
+.bar-red    { background: #f8d7da; }
+.bar-red .gantt-bar-fill { background: #dc3545; }
+.bar-blue   { background: #d6e9f8; }
+.bar-blue .gantt-bar-fill { background: #3a8fd4; }
+
+/* Milestone diamond */
+.milestone-marker {
+  position: absolute;
+  width: 10px; height: 10px;
+  background: #555;
+  transform: rotate(45deg);
+  top: 13px;
+  z-index: 4;
+  pointer-events: none;
+}
+.milestone-marker.done { background: #28a745; }
+.milestone-marker.in-progress { background: #e6a817; }
+.milestone-marker.upcoming { background: #999; }
+
+/* Renewal marker */
+.renewal-marker {
+  position: absolute;
+  top: 6px;
+  width: 16px; height: 16px;
+  background: #7b2d8e;
+  color: #fff;
+  font-size: .6rem;
+  font-weight: 700;
+  border-radius: 3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 4;
+  pointer-events: none;
+}
+
+/* Overflow arrows */
+.overflow-arrow {
+  position: absolute;
+  top: 9px;
+  font-size: .7rem;
+  color: #888;
+  z-index: 5;
+  pointer-events: none;
+}
+.overflow-arrow.left { left: 2px; }
+.overflow-arrow.right { right: 2px; }
+
+/* ── Tooltip ──────────────────────────────────────────── */
+.tooltip {
+  position: fixed;
+  background: #1a1a1a;
+  color: #fff;
+  padding: 10px 14px;
+  border-radius: 5px;
+  font-size: .78rem;
+  line-height: 1.5;
+  max-width: 300px;
+  z-index: 100;
+  pointer-events: none;
+  display: none;
+  box-shadow: 0 4px 12px rgba(0,0,0,.25);
+}
+
+/* ── Detail Panel ─────────────────────────────────────── */
+.detail-panel {
+  display: none;
+  margin: 0 28px 24px;
+  background: #fff;
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(0,0,0,.1);
+  overflow: hidden;
+}
+.detail-panel.open { display: block; }
+.detail-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 20px;
+  border-bottom: 1px solid #e5e5e5;
+}
+.detail-header-left { display: flex; align-items: center; gap: 10px; }
+.detail-header h2 { font-size: 1.05rem; font-weight: 700; }
+.health-badge {
+  padding: 2px 10px;
+  border-radius: 10px;
+  font-size: .72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+.badge-green  { background: #d4edda; color: #155724; }
+.badge-yellow { background: #fff3cd; color: #856404; }
+.badge-red    { background: #f8d7da; color: #721c24; }
+.badge-blue   { background: #d6e9f8; color: #1a4971; }
+.detail-close {
+  background: none; border: none; font-size: 1.3rem; cursor: pointer; color: #888; padding: 4px 8px;
+  font-family: inherit;
+}
+.detail-close:hover { color: #333; }
+.detail-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+}
+.detail-section {
+  padding: 16px 20px;
+  border-bottom: 1px solid #f0f0f0;
+  border-right: 1px solid #f0f0f0;
+}
+.detail-section:nth-child(even) { border-right: none; }
+.detail-section.full-width {
+  grid-column: 1 / -1;
+  border-right: none;
+}
+.detail-section h3 {
+  font-size: .75rem;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: #888;
+  margin-bottom: 10px;
+}
+.detail-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: .82rem;
+  padding: 3px 0;
+}
+.detail-row .label { color: #666; }
+.detail-row .value { font-weight: 600; }
+.util-bar {
+  height: 6px;
+  background: #eee;
+  border-radius: 3px;
+  margin-top: 6px;
+  overflow: hidden;
+}
+.util-bar-fill {
+  height: 100%;
+  border-radius: 3px;
+}
+.score-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: .82rem;
+  padding: 3px 0;
+}
+.score-label { width: 100px; color: #666; }
+.score-value { font-weight: 700; width: 32px; text-align: right; }
+.score-bar-track { flex: 1; height: 6px; background: #eee; border-radius: 3px; overflow: hidden; }
+.score-bar-fill { height: 100%; border-radius: 3px; }
+.milestone-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: .82rem;
+  padding: 3px 0;
+}
+.milestone-icon { font-size: .9rem; width: 16px; text-align: center; }
+.milestone-date { color: #888; margin-left: auto; white-space: nowrap; }
+.team-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.team-pill {
+  background: #f0f0f0;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: .78rem;
+}
+.risk-note {
+  padding: 8px 12px;
+  border-left: 3px solid;
+  margin-bottom: 6px;
+  font-size: .82rem;
+  border-radius: 0 4px 4px 0;
+}
+.risk-note.red { border-color: #dc3545; background: #f8d7da; }
+.risk-note.yellow { border-color: #e6a817; background: #fff3cd; }
+.risk-note.none { color: #888; font-style: italic; }
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<div class="header">
+  <div class="header-left">
+    <span class="header-brand">Sidebar Creative</span>
+    <span class="header-title">Project Timeline Dashboard</span>
+  </div>
+  <span class="header-date">April 7, 2026</span>
+</div>
+
+<!-- Stats Row -->
+<div class="stats-row" id="statsRow"></div>
+
+<!-- Filter Bar -->
+<div class="filter-bar">
+  <button class="filter-btn active" data-filter="all">All (12)</button>
+  <button class="filter-btn" data-filter="retainer">Retainers (8)</button>
+  <button class="filter-btn" data-filter="project">Projects (4)</button>
+</div>
+
+<!-- Gantt -->
+<div class="gantt-container" id="ganttContainer"></div>
+
+<!-- Detail Panel -->
+<div class="detail-panel" id="detailPanel"></div>
+
+<!-- Tooltip -->
+<div class="tooltip" id="tooltip"></div>
+
+<script>
+/* ════════════════════════════════════════════════════════
+   DATA
+   ════════════════════════════════════════════════════════ */
+const TODAY = new Date(2026, 3, 7); // Apr 7 2026
+const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const YEAR = 2026;
+
+const RETAINERS = [
+  {
+    id: 'r1', name: 'Evergreen Outdoor Co.', type: 'retainer',
+    retainer: 45000, sowStart: '2024-03-01', sowEnd: '2027-02-28',
+    health: 'green', allocHrs: 257, actualHrs: 248, util: 96, rate: 181,
+    scores: { perf: 92, profit: 85, rel: 95, overall: 91 },
+    team: [{ n: 'Sophie Morales', r: 'AM' }, { n: 'Nico Strand', r: 'Design Lead' }, { n: 'Owen Marsh', r: 'Dev Lead' }, { n: 'Celeste Durand', r: 'Strategy' }],
+    milestones: [
+      { label: 'Q2 QBR', date: '2026-06-30', status: 'upcoming' },
+      { label: 'Holiday Campaign Planning', date: '2026-09-01', status: 'upcoming' },
+      { label: 'SOW Renewal', date: '2027-02-28', status: 'upcoming' }
+    ],
+    renewal: '2027-02', risks: []
+  },
+  {
+    id: 'r2', name: 'Brightwash Home', type: 'retainer',
+    retainer: 38000, sowStart: '2024-06-01', sowEnd: '2027-05-31',
+    health: 'green', allocHrs: 224, actualHrs: 240, util: 107, rate: 158,
+    scores: { perf: 80, profit: 68, rel: 88, overall: 78 },
+    team: [{ n: 'Tomás Reyes', r: 'AM' }, { n: 'Yuki Tanaka', r: 'Design' }, { n: 'Diana Kovač', r: 'Dev' }, { n: 'Andre Kim', r: 'Strategy' }],
+    milestones: [
+      { label: 'Subscription Model Optimization', date: '2026-05-15', status: 'upcoming' },
+      { label: 'Q3 QBR', date: '2026-09-30', status: 'upcoming' },
+      { label: 'SOW Renewal', date: '2027-05-31', status: 'upcoming' }
+    ],
+    renewal: '2027-05', risks: ['Margin-thin due to untracked small changes — scope creep risk']
+  },
+  {
+    id: 'r3', name: 'Vello Cycling', type: 'retainer',
+    retainer: 32000, sowStart: '2025-01-01', sowEnd: '2026-06-30',
+    health: 'red', allocHrs: 183, actualHrs: 210, util: 115, rate: 152,
+    scores: { perf: 45, profit: 52, rel: 35, overall: 44 },
+    team: [{ n: 'Sophie Morales', r: 'AM' }, { n: 'Bea Cortez', r: 'Design' }, { n: 'Leo Farias', r: 'Dev' }, { n: 'Celeste Durand', r: 'Strategy' }],
+    milestones: [
+      { label: 'Recovery Plan Checkpoint', date: '2026-04-15', status: 'in-progress' },
+      { label: 'Renewal Decision', date: '2026-06-30', status: 'upcoming' }
+    ],
+    renewal: '2026-06', risks: [
+      'New VP Marketing has different expectations — relationship strained',
+      'Client requested competitive pitches from two agencies (Feb 2026)',
+      'Two major deliverables missed deadlines in Jan–Feb 2026',
+      'Operating month-to-month — 30-day termination notice'
+    ]
+  },
+  {
+    id: 'r4', name: 'Petal & Thorn', type: 'retainer',
+    retainer: 28000, sowStart: '2024-09-01', sowEnd: '2027-08-31',
+    health: 'green', allocHrs: 170, actualHrs: 162, util: 95, rate: 173,
+    scores: { perf: 85, profit: 90, rel: 82, overall: 86 },
+    team: [{ n: 'Alina Park', r: 'AM' }, { n: 'Finn Gallagher', r: 'Design' }, { n: 'Hana Yoshida', r: 'Dev' }, { n: 'Tessa Moreno', r: 'Strategy' }],
+    milestones: [
+      { label: "Mother's Day Campaign", date: '2026-04-20', status: 'in-progress' },
+      { label: 'Summer Collection Launch', date: '2026-06-15', status: 'upcoming' },
+      { label: 'Holiday Campaign Prep', date: '2026-09-15', status: 'upcoming' },
+      { label: 'SOW Renewal', date: '2027-08-31', status: 'upcoming' }
+    ],
+    renewal: '2027-08', risks: []
+  },
+  {
+    id: 'r5', name: 'Kova Skincare', type: 'retainer',
+    retainer: 25000, sowStart: '2024-11-01', sowEnd: '2026-10-31',
+    health: 'yellow', allocHrs: 147, actualHrs: 155, util: 105, rate: 161,
+    scores: { perf: 55, profit: 70, rel: 72, overall: 64 },
+    team: [{ n: 'Tomás Reyes', r: 'AM' }, { n: 'Jordan Tate', r: 'Design' }, { n: 'Nadia Volkov', r: 'Dev' }, { n: 'Andre Kim', r: 'Strategy' }],
+    milestones: [
+      { label: 'Conversion Metrics Review', date: '2026-04-30', status: 'upcoming' },
+      { label: 'Quarterly Review — Possible Downsize', date: '2026-07-01', status: 'upcoming' },
+      { label: 'SOW Auto-Renewal', date: '2026-10-31', status: 'upcoming' }
+    ],
+    renewal: '2026-10', risks: [
+      'Web redesign (Feb 2026) has not improved conversion metrics',
+      'Client questioning ROI — possible retainer downsize from $25K to $18K at Jul 2026 review'
+    ]
+  },
+  {
+    id: 'r6', name: 'Drift Coffee Roasters', type: 'retainer',
+    retainer: 22000, sowStart: '2024-04-01', sowEnd: '2027-03-31',
+    health: 'green', allocHrs: 138, actualHrs: 132, util: 96, rate: 167,
+    scores: { perf: 78, profit: 88, rel: 85, overall: 83 },
+    team: [{ n: 'Priya Nair', r: 'PM' }, { n: 'Luna Esperanza', r: 'Design' }, { n: 'Ravi Subramanian', r: 'Dev' }, { n: 'Rowan Griffiths', r: 'Content' }],
+    milestones: [
+      { label: 'Annual Brand Refresh', date: '2026-03-31', status: 'done' },
+      { label: 'Subscription UX Optimization', date: '2026-06-30', status: 'upcoming' },
+      { label: 'SOW Renewal', date: '2027-03-31', status: 'upcoming' }
+    ],
+    renewal: '2027-03', risks: []
+  },
+  {
+    id: 'r7', name: 'Summit Pet Supply', type: 'retainer',
+    retainer: 18000, sowStart: '2025-08-01', sowEnd: '2026-07-31',
+    health: 'green', allocHrs: 113, actualHrs: 108, util: 96, rate: 167,
+    scores: { perf: 82, profit: 80, rel: 90, overall: 84 },
+    team: [{ n: 'James Whitfield', r: 'PM' }, { n: 'Zara Osei', r: 'Design' }, { n: 'Marcus Webb', r: 'Dev' }, { n: 'Jia Liang', r: 'Content' }],
+    milestones: [
+      { label: 'Scope Expansion Discussion', date: '2026-06-15', status: 'upcoming' },
+      { label: 'SOW Renewal / Upgrade', date: '2026-07-31', status: 'upcoming' }
+    ],
+    renewal: '2026-07', risks: ['Client has asked about expanding scope twice — may outgrow $18K retainer']
+  },
+  {
+    id: 'r8', name: 'Moonridge Spirits', type: 'retainer',
+    retainer: 12000, sowStart: '2025-12-01', sowEnd: '2026-11-30',
+    health: 'yellow', allocHrs: 77, actualHrs: 88, util: 114, rate: 136,
+    scores: { perf: 65, profit: 48, rel: 70, overall: 60 },
+    team: [{ n: 'Alina Park', r: 'AM' }, { n: 'Milo Varga', r: 'Design' }, { n: 'Elodie Blanc', r: 'Dev' }, { n: 'Elliot Saunders', r: 'Content' }],
+    milestones: [
+      { label: 'Brand Identity Phase Complete', date: '2026-03-31', status: 'done' },
+      { label: 'Website Launch', date: '2026-06-15', status: 'upcoming' },
+      { label: 'SOW Review', date: '2026-11-30', status: 'upcoming' }
+    ],
+    renewal: '2026-11', risks: [
+      'Averaging 88 hrs/month vs. 77 hrs allocated — likely unprofitable',
+      'Founding team indecisive — revision cycles 2x normal',
+      'Revision limits (3 rounds) frequently exceeded'
+    ]
+  }
+];
+
+const PROJECTS = [
+  {
+    id: 'p1', name: 'River District Rebrand', client: 'River District BID', type: 'project',
+    desc: 'Brand identity + guidelines', budget: 85000, burned: 62000, burnPct: 73,
+    startMonth: 0, endMonth: 3, // Jan–Apr
+    health: 'green', // on-track
+    team: [{ n: 'Nico Strand', r: 'Art Director' }, { n: 'Luna Esperanza', r: 'Brand Design' }, { n: 'Lena Voss', r: 'Strategy Lead' }],
+    milestones: [
+      { label: 'Discovery Complete', date: '2026-01-31', status: 'done' },
+      { label: 'Concepts Presented', date: '2026-02-28', status: 'done' },
+      { label: 'Refinement & Testing', date: '2026-03-31', status: 'done' },
+      { label: 'Guidelines Delivered', date: '2026-04-30', status: 'in-progress' }
+    ],
+    risks: []
+  },
+  {
+    id: 'p2', name: 'Cascade Athletic Website', client: 'Cascade Athletic Wear', type: 'project',
+    desc: 'Shopify Plus build', budget: 120000, burned: 48000, burnPct: 40,
+    startMonth: 1, endMonth: 5, // Feb–Jun
+    health: 'green',
+    team: [{ n: 'Owen Marsh', r: 'Dev Lead' }, { n: 'Diana Kovač', r: 'Senior Dev' }, { n: 'Kai Bergström', r: 'UX Design' }, { n: 'Yuki Tanaka', r: 'Visual Design' }],
+    milestones: [
+      { label: 'UX/Design Phase', date: '2026-02-28', status: 'done' },
+      { label: 'Dev Sprint 1', date: '2026-03-31', status: 'done' },
+      { label: 'Dev Sprint 2', date: '2026-05-15', status: 'upcoming' },
+      { label: 'QA & Launch', date: '2026-06-30', status: 'upcoming' }
+    ],
+    risks: []
+  },
+  {
+    id: 'p3', name: 'Fieldwork Provisions Launch', client: 'Fieldwork Provisions', type: 'project',
+    desc: 'Brand + web + launch campaign', budget: 95000, burned: 18000, burnPct: 19,
+    startMonth: 2, endMonth: 6, // Mar–Jul
+    health: 'blue', // early-stage
+    team: [{ n: 'Bea Cortez', r: 'Design' }, { n: 'Leo Farias', r: 'Dev' }, { n: 'Celeste Durand', r: 'Strategy' }, { n: 'Rowan Griffiths', r: 'Content' }],
+    milestones: [
+      { label: 'Brand Strategy & Identity', date: '2026-04-15', status: 'in-progress' },
+      { label: 'Web Design', date: '2026-05-15', status: 'upcoming' },
+      { label: 'Web Development', date: '2026-06-30', status: 'upcoming' },
+      { label: 'Launch Campaign', date: '2026-07-31', status: 'upcoming' }
+    ],
+    risks: []
+  },
+  {
+    id: 'p4', name: 'NW Natural Rebrand', client: 'NW Natural Foods Co-op', type: 'project',
+    desc: 'Visual identity refresh', budget: 55000, burned: 41000, burnPct: 75,
+    startMonth: 1, endMonth: 3, // Feb–Apr
+    health: 'yellow', // over-scope
+    team: [{ n: 'Nico Strand', r: 'Art Director' }, { n: 'Finn Gallagher', r: 'Design' }, { n: 'Tessa Moreno', r: 'Strategy' }],
+    milestones: [
+      { label: 'Concept Exploration', date: '2026-02-28', status: 'done' },
+      { label: 'Refinement', date: '2026-03-31', status: 'done' },
+      { label: 'Final Delivery', date: '2026-04-30', status: 'in-progress' }
+    ],
+    risks: ['75% budget burned with final delivery still in progress — over scope']
+  }
+];
+
+const ALL = [...RETAINERS, ...PROJECTS];
+
+/* ════════════════════════════════════════════════════════
+   HELPERS
+   ════════════════════════════════════════════════════════ */
+function fmt$(n) { return '$' + n.toLocaleString(); }
+function parseDate(s) { const p = s.split('-'); return new Date(+p[0], +p[1]-1, +p[2]); }
+function fmtDate(s) {
+  const d = parseDate(s);
+  return MONTHS[d.getMonth()] + ' ' + d.getDate() + ', ' + d.getFullYear();
+}
+function healthLabel(h, type) {
+  if (type === 'retainer') {
+    return { green: 'On Track', yellow: 'At Risk', red: 'Churn Risk' }[h] || h;
+  }
+  return { green: 'On Track', yellow: 'Over Scope', blue: 'Early Stage' }[h] || h;
+}
+function scoreColor(v) { return v >= 75 ? '#28a745' : v >= 50 ? '#e6a817' : '#dc3545'; }
+
+/* Position helpers: fraction of year (0–1) for a date */
+function yearFrac(d) {
+  const jan1 = new Date(YEAR, 0, 1);
+  const dec31 = new Date(YEAR, 11, 31);
+  return Math.max(0, Math.min(1, (d - jan1) / (dec31 - jan1)));
+}
+
+/* ════════════════════════════════════════════════════════
+   STATS
+   ════════════════════════════════════════════════════════ */
+function renderStats() {
+  const atRisk = ALL.filter(e => e.health === 'red' || e.health === 'yellow').length;
+  const onTrack = ALL.filter(e => e.health === 'green' || e.health === 'blue').length;
+
+  // Next upcoming milestone
+  let nearest = null;
+  ALL.forEach(e => {
+    e.milestones.forEach(m => {
+      if (m.status !== 'upcoming') return;
+      const md = parseDate(m.date);
+      if (md > TODAY && (!nearest || md < nearest.date)) {
+        nearest = { date: md, label: m.label, client: e.name, dateStr: m.date };
+      }
+    });
+  });
+
+  const html = `
+    <div class="stat-card">
+      <div class="stat-label">Active Engagements</div>
+      <div class="stat-value">12</div>
+      <div class="stat-sub">8 retainers &middot; 4 projects</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">At Risk</div>
+      <div class="stat-value red">${atRisk}</div>
+      <div class="stat-sub">Red + Yellow + Over-scope</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">On Track</div>
+      <div class="stat-value green">${onTrack}</div>
+      <div class="stat-sub">Green + Early-stage</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Next Deadline</div>
+      <div class="stat-value" style="font-size:1rem;font-weight:600">${nearest ? nearest.label : '—'}</div>
+      <div class="stat-sub">${nearest ? nearest.client + ' &middot; ' + fmtDate(nearest.dateStr) : ''}</div>
+    </div>
+  `;
+  document.getElementById('statsRow').innerHTML = html;
+}
+
+/* ════════════════════════════════════════════════════════
+   GANTT
+   ════════════════════════════════════════════════════════ */
+let selectedId = null;
+
+function monthHeader() {
+  return '<div class="gantt-header"><div class="gantt-header-label">Client</div>' +
+    MONTHS.map(m => `<div class="gantt-header-month">${m}</div>`).join('') + '</div>';
+}
+
+function renderBar(e) {
+  // Determine bar start/end in month indices (0–11) within 2026
+  let startMo, endMo, progressPct;
+  if (e.type === 'retainer') {
+    const ss = parseDate(e.sowStart);
+    const se = parseDate(e.sowEnd);
+    startMo = ss.getFullYear() < YEAR ? 0 : ss.getMonth();
+    endMo = se.getFullYear() > YEAR ? 11 : se.getMonth();
+    progressPct = Math.min(100, Math.round(e.actualHrs / e.allocHrs * 100));
+  } else {
+    startMo = e.startMonth;
+    endMo = e.endMonth;
+    progressPct = e.burnPct;
+  }
+
+  // Clamp to 0–11
+  const clampStart = Math.max(0, startMo);
+  const clampEnd = Math.min(11, endMo);
+
+  // Calculate bar position within the month cells
+  // Each month cell is one grid column; bar spans from startMo to endMo (inclusive)
+  // We use CSS to position the bar across the cells via a wrapper
+  const barClass = `bar-${e.health}`;
+  const showLeftArrow = e.type === 'retainer' && parseDate(e.sowStart).getFullYear() < YEAR;
+  const showRightArrow = e.type === 'retainer' && parseDate(e.sowEnd).getFullYear() > YEAR;
+
+  return { clampStart, clampEnd, progressPct, barClass, showLeftArrow, showRightArrow };
+}
+
+function buildRow(e) {
+  const bar = renderBar(e);
+  const ragClass = `rag-${e.health}`;
+  const sel = selectedId === e.id ? ' selected' : '';
+
+  let cells = `<div class="gantt-label"><span class="rag-dot ${ragClass}"></span>${e.name}</div>`;
+
+  for (let m = 0; m < 12; m++) {
+    cells += `<div class="gantt-cell" data-month="${m}"></div>`;
+  }
+
+  return `<div class="gantt-row${sel}" data-id="${e.id}">${cells}</div>`;
+}
+
+function renderGantt(filter) {
+  const container = document.getElementById('ganttContainer');
+  let html = '';
+
+  if (filter === 'all' || filter === 'retainer') {
+    html += '<div class="gantt-section-title">Retainer Clients</div>';
+    html += '<div class="gantt-table" id="retainerTable">' + monthHeader();
+    RETAINERS.forEach(r => { html += buildRow(r); });
+    html += '</div>';
+  }
+
+  if (filter === 'all' || filter === 'project') {
+    html += '<div class="gantt-section-title">Project Engagements</div>';
+    html += '<div class="gantt-table" id="projectTable">' + monthHeader();
+    PROJECTS.forEach(p => { html += buildRow(p); });
+    html += '</div>';
+  }
+
+  container.innerHTML = html;
+
+  // Now overlay bars, milestones, today line, etc.
+  ALL.forEach(e => {
+    if (filter === 'retainer' && e.type !== 'retainer') return;
+    if (filter === 'project' && e.type !== 'project') return;
+    overlayBar(e);
+  });
+
+  // Attach row click events
+  container.querySelectorAll('.gantt-row').forEach(row => {
+    row.addEventListener('click', () => {
+      const id = row.dataset.id;
+      selectedId = id === selectedId ? null : id;
+      renderGantt(currentFilter);
+      if (selectedId) renderDetail(ALL.find(x => x.id === selectedId));
+      else closeDetail();
+    });
+    // Tooltip
+    row.addEventListener('mouseenter', (ev) => showTooltip(ev, ALL.find(x => x.id === row.dataset.id)));
+    row.addEventListener('mousemove', moveTooltip);
+    row.addEventListener('mouseleave', hideTooltip);
+  });
+}
+
+function overlayBar(e) {
+  const row = document.querySelector(`.gantt-row[data-id="${e.id}"]`);
+  if (!row) return;
+  const cells = row.querySelectorAll('.gantt-cell');
+
+  const bar = renderBar(e);
+
+  // Get pixel positions from cells
+  const startCell = cells[bar.clampStart];
+  const endCell = cells[bar.clampEnd];
+  if (!startCell || !endCell) return;
+
+  const rowRect = row.getBoundingClientRect();
+  const startRect = startCell.getBoundingClientRect();
+  const endRect = endCell.getBoundingClientRect();
+
+  const barLeft = startRect.left - rowRect.left;
+  const barWidth = endRect.right - startRect.left;
+
+  // Create bar element
+  const barEl = document.createElement('div');
+  barEl.className = `gantt-bar ${bar.barClass}`;
+  barEl.style.left = barLeft + 'px';
+  barEl.style.width = barWidth + 'px';
+
+  const fillEl = document.createElement('div');
+  fillEl.className = 'gantt-bar-fill';
+  fillEl.style.width = bar.progressPct + '%';
+  barEl.appendChild(fillEl);
+  row.style.position = 'relative';
+  row.appendChild(barEl);
+
+  // Overflow arrows
+  if (bar.showLeftArrow) {
+    const a = document.createElement('span');
+    a.className = 'overflow-arrow left';
+    a.textContent = '◀';
+    a.style.left = (barLeft + 3) + 'px';
+    a.style.top = '10px';
+    row.appendChild(a);
+  }
+  if (bar.showRightArrow) {
+    const a = document.createElement('span');
+    a.className = 'overflow-arrow right';
+    a.textContent = '▶';
+    a.style.left = (barLeft + barWidth - 14) + 'px';
+    a.style.top = '10px';
+    row.appendChild(a);
+  }
+
+  // Milestones
+  e.milestones.forEach(m => {
+    const md = parseDate(m.date);
+    if (md.getFullYear() !== YEAR) return;
+    const mMonth = md.getMonth();
+    const mDay = md.getDate();
+    const daysInMonth = new Date(YEAR, mMonth + 1, 0).getDate();
+    const cell = cells[mMonth];
+    if (!cell) return;
+    const cellRect = cell.getBoundingClientRect();
+    const xOff = (cellRect.left - rowRect.left) + (mDay / daysInMonth) * cellRect.width - 5;
+
+    const diamond = document.createElement('div');
+    diamond.className = `milestone-marker ${m.status}`;
+    diamond.style.left = xOff + 'px';
+    row.appendChild(diamond);
+  });
+
+  // Renewal marker (retainers only)
+  if (e.type === 'retainer' && e.renewal) {
+    const [ry, rm] = e.renewal.split('-').map(Number);
+    if (ry === YEAR) {
+      const cell = cells[rm - 1];
+      if (cell) {
+        const cellRect = cell.getBoundingClientRect();
+        const xOff = (cellRect.left - rowRect.left) + cellRect.width * 0.8 - 8;
+        const marker = document.createElement('div');
+        marker.className = 'renewal-marker';
+        marker.textContent = 'R';
+        marker.style.left = xOff + 'px';
+        row.appendChild(marker);
+      }
+    }
+  }
+
+  // Today line
+  const todayMonth = TODAY.getMonth();
+  const todayDay = TODAY.getDate();
+  const todayCell = cells[todayMonth];
+  if (todayCell) {
+    const cellRect = todayCell.getBoundingClientRect();
+    const daysInMonth = new Date(YEAR, todayMonth + 1, 0).getDate();
+    const xOff = (cellRect.left - rowRect.left) + (todayDay / daysInMonth) * cellRect.width;
+    const line = document.createElement('div');
+    line.className = 'today-line';
+    line.style.left = xOff + 'px';
+    row.appendChild(line);
+  }
+}
+
+/* ════════════════════════════════════════════════════════
+   TOOLTIP
+   ════════════════════════════════════════════════════════ */
+const tooltipEl = document.getElementById('tooltip');
+function showTooltip(ev, e) {
+  if (!e) return;
+  let html = `<strong>${e.name}</strong><br>`;
+  html += `Status: ${healthLabel(e.health, e.type)}<br>`;
+  if (e.type === 'retainer') {
+    html += `Retainer: ${fmt$(e.retainer)}/mo<br>`;
+    html += `Hours: ${e.actualHrs}/${e.allocHrs} (${e.util}%)<br>`;
+    html += `Rate: ${fmt$(e.rate)}/hr<br>`;
+    html += `Overall Score: ${e.scores.overall}`;
+  } else {
+    html += `Budget: ${fmt$(e.budget)}<br>`;
+    html += `Burned: ${fmt$(e.burned)} (${e.burnPct}%)`;
+  }
+  tooltipEl.innerHTML = html;
+  tooltipEl.style.display = 'block';
+  moveTooltip(ev);
+}
+function moveTooltip(ev) {
+  tooltipEl.style.left = (ev.clientX + 14) + 'px';
+  tooltipEl.style.top = (ev.clientY + 14) + 'px';
+}
+function hideTooltip() { tooltipEl.style.display = 'none'; }
+
+/* ════════════════════════════════════════════════════════
+   DETAIL PANEL
+   ════════════════════════════════════════════════════════ */
+function renderDetail(e) {
+  const panel = document.getElementById('detailPanel');
+  const badgeClass = `badge-${e.health}`;
+  const label = healthLabel(e.health, e.type);
+
+  let budgetHtml, scoresHtml;
+
+  if (e.type === 'retainer') {
+    const utilColor = e.util <= 100 ? '#28a745' : e.util <= 110 ? '#e6a817' : '#dc3545';
+    budgetHtml = `
+      <div class="detail-row"><span class="label">Monthly Retainer</span><span class="value">${fmt$(e.retainer)}</span></div>
+      <div class="detail-row"><span class="label">Allocated Hours</span><span class="value">${e.allocHrs}</span></div>
+      <div class="detail-row"><span class="label">Actual Hours</span><span class="value">${e.actualHrs}</span></div>
+      <div class="detail-row"><span class="label">Utilization</span><span class="value" style="color:${utilColor}">${e.util}%</span></div>
+      <div class="detail-row"><span class="label">Effective Rate</span><span class="value">${fmt$(e.rate)}/hr</span></div>
+      <div class="util-bar"><div class="util-bar-fill" style="width:${Math.min(e.util, 130)}%;background:${utilColor}"></div></div>
+    `;
+    scoresHtml = ['perf','profit','rel','overall'].map(k => {
+      const v = e.scores[k];
+      const lbl = { perf: 'Performance', profit: 'Profitability', rel: 'Relationship', overall: 'Overall' }[k];
+      return `<div class="score-row">
+        <span class="score-label">${lbl}</span>
+        <span class="score-value" style="color:${scoreColor(v)}">${v}</span>
+        <div class="score-bar-track"><div class="score-bar-fill" style="width:${v}%;background:${scoreColor(v)}"></div></div>
+      </div>`;
+    }).join('');
+  } else {
+    const remaining = e.budget - e.burned;
+    const startLabel = MONTHS[e.startMonth] + ' 2026';
+    const endLabel = MONTHS[e.endMonth] + ' 2026';
+    budgetHtml = `
+      <div class="detail-row"><span class="label">Total Budget</span><span class="value">${fmt$(e.budget)}</span></div>
+      <div class="detail-row"><span class="label">Burned</span><span class="value">${fmt$(e.burned)} (${e.burnPct}%)</span></div>
+      <div class="detail-row"><span class="label">Remaining</span><span class="value">${fmt$(remaining)}</span></div>
+      <div class="detail-row"><span class="label">Timeline</span><span class="value">${startLabel} – ${endLabel}</span></div>
+      <div class="util-bar"><div class="util-bar-fill" style="width:${e.burnPct}%;background:${e.burnPct > 80 ? '#dc3545' : e.burnPct > 60 ? '#e6a817' : '#28a745'}"></div></div>
+    `;
+    scoresHtml = '<div style="color:#888;font-size:.82rem;font-style:italic">Project engagement — health scores apply to retainer clients</div>';
+  }
+
+  const msIcons = { done: '✓', 'in-progress': '●', upcoming: '○' };
+  const msColors = { done: '#28a745', 'in-progress': '#e6a817', upcoming: '#888' };
+  const milestonesHtml = e.milestones.map(m =>
+    `<div class="milestone-item">
+      <span class="milestone-icon" style="color:${msColors[m.status]}">${msIcons[m.status]}</span>
+      <span>${m.label}</span>
+      <span class="milestone-date">${fmtDate(m.date)}</span>
+    </div>`
+  ).join('');
+
+  const teamHtml = e.team.map(t => `<span class="team-pill">${t.n} &middot; ${t.r}</span>`).join('');
+
+  let risksHtml;
+  if (e.risks.length === 0) {
+    risksHtml = '<div class="risk-note none">No active risk notes</div>';
+  } else {
+    const riskColor = e.health === 'red' ? 'red' : 'yellow';
+    risksHtml = e.risks.map(r => `<div class="risk-note ${riskColor}">${r}</div>`).join('');
+  }
+
+  panel.innerHTML = `
+    <div class="detail-header">
+      <div class="detail-header-left">
+        <h2>${e.name}</h2>
+        <span class="health-badge ${badgeClass}">${label}</span>
+      </div>
+      <button class="detail-close" onclick="closeDetail()">&times;</button>
+    </div>
+    <div class="detail-grid">
+      <div class="detail-section">
+        <h3>Budget</h3>
+        ${budgetHtml}
+      </div>
+      <div class="detail-section">
+        <h3>Health Scores</h3>
+        ${scoresHtml}
+      </div>
+      <div class="detail-section">
+        <h3>Milestones</h3>
+        ${milestonesHtml}
+      </div>
+      <div class="detail-section">
+        <h3>Team</h3>
+        <div class="team-pills">${teamHtml}</div>
+      </div>
+      <div class="detail-section full-width">
+        <h3>Risk Notes</h3>
+        ${risksHtml}
+      </div>
+    </div>
+  `;
+  panel.classList.add('open');
+}
+
+function closeDetail() {
+  selectedId = null;
+  document.getElementById('detailPanel').classList.remove('open');
+  document.querySelectorAll('.gantt-row.selected').forEach(r => r.classList.remove('selected'));
+}
+
+/* ════════════════════════════════════════════════════════
+   FILTER
+   ════════════════════════════════════════════════════════ */
+let currentFilter = 'all';
+
+document.querySelectorAll('.filter-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentFilter = btn.dataset.filter;
+    selectedId = null;
+    closeDetail();
+    renderGantt(currentFilter);
+  });
+});
+
+/* ════════════════════════════════════════════════════════
+   INIT + RESIZE
+   ════════════════════════════════════════════════════════ */
+function init() {
+  renderStats();
+  renderGantt(currentFilter);
+}
+
+window.addEventListener('resize', () => {
+  renderGantt(currentFilter);
+});
+
+init();
+</script>
+</body>
+</html>

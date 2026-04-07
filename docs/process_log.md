@@ -1,11 +1,47 @@
 ---
 title: Process Log
-version: 1.0
+version: 1.1
 created: 2026-04-06
-updated: 2026-04-06
+updated: 2026-04-07
 ---
 
 # Process Log
+
+---
+
+## 2026-04-07 — Project Timeline Dashboard (Tool 1)
+
+**Prompt:**
+Create `tools/project_timeline.html` — a single self-contained HTML file with all CSS and JS inlined. Interactive Gantt-style project timeline dashboard for Sidebar Creative agency. Includes branded header, summary stats, filter bar, Gantt timeline with bars/milestones/today line, and expandable detail panel with budget, health scores, milestones, team, and risk notes.
+
+**What was built:**
+- `tools/project_timeline.html` — Complete single-file interactive dashboard with:
+  - Dark branded header with agency name, page title, and current date (April 7, 2026)
+  - 4 summary stat cards (active engagements, at-risk count, on-track count, next deadline)
+  - Filter bar toggling between All (12), Retainers (8), Projects (4)
+  - Gantt timeline with two sections (Retainer Clients, Project Engagements)
+  - Horizontal bars colored by health status with progress fill
+  - Diamond milestone markers, purple renewal markers, red "Today" line
+  - Overflow arrows for bars extending beyond the visible year
+  - Hover tooltips with key stats
+  - Click-to-open detail panel with budget, health scores, milestones, team pills, and risk notes
+  - All 8 retainer clients and 4 project engagements with complete data
+
+**Key decisions:**
+- Single HTML file with all CSS in `<style>` and all JS in `<script>` — zero external dependencies
+- CSS Grid for Gantt layout (220px label column + 12 month columns)
+- Bars and markers are overlaid on rows after render using absolute positioning relative to cell bounding rects
+- Re-renders on window resize to keep bar positions accurate
+- Health color mapping: retainers use green/yellow/red; projects use green/yellow/blue (early-stage)
+- Utilization bar color-codes: green <=100%, yellow <=110%, red >110%
+- Score color thresholds: >=75 green, >=50 yellow, <50 red
+- At-risk count includes both red and yellow health statuses
+- On-track count includes both green and blue (early-stage) statuses
+
+**Files created or modified:**
+- `tools/project_timeline.html` (created)
+- `docs/process_log.md` (modified)
+- `tutorials/01_project_timeline.md` (created)
 
 ---
 
