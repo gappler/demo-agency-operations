@@ -133,6 +133,34 @@ body {
   width: 48px; padding: 4px; text-align: center; font-size: 13px; font-weight: 700;
   font-family: inherit; border: 2px solid #007bff; border-radius: 4px; outline: none; background: #fff;
 }
+
+/* Overload Warning */
+.overload-warning {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #fff;
+  border: 2px solid #dc3545;
+  border-radius: 6px;
+  padding: 10px 14px;
+  box-shadow: 0 4px 12px rgba(0,0,0,.15);
+  z-index: 10;
+  white-space: nowrap;
+  font-size: 12px;
+  min-width: 240px;
+}
+.overload-warning .warn-text { color: #dc3545; font-weight: 600; margin-bottom: 6px; }
+.overload-warning .warn-suggest { color: #28a745; font-size: 11px; margin-bottom: 8px; }
+.overload-warning .warn-buttons { display: flex; gap: 6px; }
+.warn-btn {
+  padding: 4px 12px; border-radius: 4px; border: none; cursor: pointer;
+  font-size: 12px; font-family: inherit;
+}
+.warn-btn.confirm { background: #dc3545; color: #fff; }
+.warn-btn.confirm:hover { background: #c82333; }
+.warn-btn.cancel { background: #eee; color: #555; }
+.warn-btn.cancel:hover { background: #ddd; }
 </style>
 </head>
 <body>
@@ -527,7 +555,17 @@ document.getElementById('matrixTable').addEventListener('click', function(e) {
     const rawInput = parseInt(input.value) || 0;
     const weeklyVal = activePeriod === 'month' ? Math.round(rawInput / WEEK_MONTH_FACTOR) : rawInput;
     const newVal = Math.max(0, weeklyVal);
-    applyEdit(projId, personId, newVal);
+
+    const person = TEAM.find(t => t.id === personId);
+    const oldVal = allocations[projId][personId] || 0;
+    const newTotal = getPersonTotal(personId) - oldVal + newVal;
+    const newUtil = newTotal / person.billableTarget;
+
+    if (newUtil > 1.15 && newVal > oldVal) {
+      showOverloadWarning(cell, projId, personId, person, oldVal, newVal, newUtil);
+    } else {
+      applyEdit(projId, personId, newVal);
+    }
   }
 
   input.addEventListener('keydown', function(e) {
@@ -546,6 +584,66 @@ function applyEdit(projId, personId, newVal) {
   if (newVal > 0) { allocations[projId][personId] = newVal; }
   else { delete allocations[projId][personId]; }
   renderMatrix();
+}
+
+function showOverloadWarning(cell, projId, personId, person, oldVal, newVal, newUtil) {
+  const alternatives = TEAM
+    .filter(t => t.dept === person.dept && t.id !== personId && getUtilization(t.id) < 0.70)
+    .slice(0, 2)
+    .map(t => {
+      const free = Math.round(t.billableTarget - getPersonTotal(t.id));
+      return `${t.name} (${Math.round(getUtilization(t.id) * 100)}%, ${free} hrs free)`;
+    });
+
+  let suggestHtml = '';
+  if (alternatives.length > 0) {
+    suggestHtml = `<div class="warn-suggest">Available: ${alternatives.join(', ')}</div>`;
+  }
+
+  const warning = document.createElement('div');
+  warning.className = 'overload-warning';
+  warning.innerHTML = `
+    <div class="warn-text">${person.name.split(' ')[0]} will be at ${Math.round(newUtil * 100)}% \u2014 confirm?</div>
+    ${suggestHtml}
+    <div class="warn-buttons">
+      <button class="warn-btn confirm">Confirm</button>
+      <button class="warn-btn cancel">Cancel</button>
+    </div>
+  `;
+
+  // Wire up buttons
+  warning.querySelector('.warn-btn.confirm').addEventListener('click', function(e) {
+    e.stopPropagation();
+    applyEdit(projId, personId, newVal);
+  });
+  warning.querySelector('.warn-btn.cancel').addEventListener('click', function(e) {
+    e.stopPropagation();
+    renderMatrix();
+  });
+
+  cell.innerHTML = '';
+  const multiplier = activePeriod === 'month' ? WEEK_MONTH_FACTOR : 1;
+  const display = Math.round(newVal * multiplier);
+  cell.innerHTML = `<div class="hour-val" style="background:#dc354515;border:1px solid #dc354530;color:#dc3545;">${display}</div>`;
+  cell.appendChild(warning);
+
+  // Reposition if overflowing viewport
+  requestAnimationFrame(() => {
+    const rect = warning.getBoundingClientRect();
+    if (rect.bottom > window.innerHeight) {
+      warning.style.top = 'auto';
+      warning.style.bottom = '100%';
+    }
+    if (rect.left < 0) {
+      warning.style.left = '0';
+      warning.style.transform = 'none';
+    }
+    if (rect.right > window.innerWidth) {
+      warning.style.left = 'auto';
+      warning.style.right = '0';
+      warning.style.transform = 'none';
+    }
+  });
 }
 
 // ── Event Wiring ──
