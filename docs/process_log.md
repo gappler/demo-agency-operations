@@ -1,11 +1,45 @@
 ---
 title: Process Log
-version: 1.1
+version: 1.2
 created: 2026-04-06
 updated: 2026-04-07
 ---
 
 # Process Log
+
+---
+
+## 2026-04-07 — Resource Allocator (Tool 2)
+
+**Prompt:**
+Build a resource allocator for Sidebar Creative. Read the team roster and project data. Show each team member's current capacity — hours allocated vs. available — with visual indicators for overloaded (red) and underutilized (green) staff. Let me drag or reassign team members across projects and see capacity update in real time. Output as an interactive HTML file.
+
+**What was built:**
+- `tools/resource_allocator.html` — Interactive resource allocation matrix with:
+  - Projects as rows (8 retainers + 4 project-based engagements), team members as columns
+  - Department filter tabs (All, Design, Development, Strategy, Content, Account/PM)
+  - Week/Month toggle for SOW-level vs. working-unit views
+  - Click-to-edit hour cells with real-time capacity recalculation
+  - Over-allocation warning with confirmation dialog and alternative suggestions
+  - Sticky left column (project info) and footer row (capacity totals)
+  - Color-coded utilization: red (>115%), green (<70%), gray (normal)
+  - 4 summary stat cards: overloaded count, underutilized count, total hours, avg utilization
+  - All 33 billable staff with allocations summing to their known current load
+
+**Key decisions:**
+- Projects-as-rows orientation (mirrors Monday meeting flow: walk through projects, not people)
+- Click-to-edit over drag-and-drop (faster for real allocation work in meetings)
+- Soft over-allocation constraint with confirmation + alternative suggestions
+- Weekly default with monthly toggle (working unit vs. SOW review)
+- Department filter tabs to manage column count
+- Excluded Leadership (4) and Ops/Admin (3) as non-billable staff
+
+**Files created/modified:**
+- `tools/resource_allocator.html` (created)
+- `docs/superpowers/specs/2026-04-07-resource-allocator-design.md` (created)
+- `docs/superpowers/plans/2026-04-07-resource-allocator.md` (created)
+- `tutorials/02_resource_allocator.md` (created)
+- `docs/process_log.md` (modified)
 
 ---
 
