@@ -1,11 +1,39 @@
 ---
 title: Process Log
-version: 1.5
+version: 1.6
 created: 2026-04-06
 updated: 2026-04-07
 ---
 
 # Process Log
+
+---
+
+## 2026-04-07 — Client Health Scorer (Tool 5)
+
+**Prompt:**
+Build a client health scorer tool at `tools/client_health.html` — a single self-contained HTML file with zero dependencies. A ranked list of 8 agency clients scored on health, sorted worst-first. Read-only scorecard with 4 stat cards, score circles, 3 dimension bars per client, and risk/highlights box.
+
+**What was built:**
+- `tools/client_health.html` — Read-only client health scorecard with:
+  - Dark header matching existing tools (Sidebar Creative / Client Health Scorer / date)
+  - 4 stat cards: Portfolio Health (74), Revenue at Risk ($69K/mo in red), Green/Yellow/Red distribution (5/2/1), Avg Effective Rate
+  - 8 client cards sorted worst-first by composite score (44→91)
+  - Each card: 4px left border by status, 48px score circle with tinted background, name/meta/rate line, badge(s), 3 dimension bars in a CSS grid, risk/highlights box
+  - Dimension bar colors driven by that dimension's own score (not composite), enabling green clients with red profitability bars
+  - All stats calculated dynamically from JS data array
+
+**Key decisions:**
+- Dim colors independent of composite: `dimColor(score)` applied per-dimension, not per-client status — matches spec requirement
+- `riskHeader` field per client drives label text ('Risk Factors' vs 'Highlights') so red/yellow and green clients differ correctly
+- Stats derived from data (not hardcoded) so future data updates auto-propagate to stat cards
+- Yellow score in score circle uses `#d49e00` for legibility on white background (not raw `#ffc107`)
+- Matched all visual conventions: dark header, #f5f5f5 bg, white cards, system font, same box-shadow/border-radius as existing tools
+
+**Files created or modified:**
+- `tools/client_health.html` (created)
+- `docs/process_log.md` (updated)
+- `tutorials/05_client_health.md` (created)
 
 ---
 

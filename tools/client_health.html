@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Client Health Scorer — Sidebar Creative</title>
+<style>
+/* Reset & Base */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 14px; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: #f5f5f5;
+  color: #222;
+  min-width: 900px;
+}
+
+/* Header */
+.header {
+  background: #1a1a1a;
+  color: #fff;
+  padding: 14px 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.header-left { display: flex; align-items: baseline; gap: 18px; }
+.header-brand { font-size: 1.25rem; font-weight: 700; letter-spacing: .02em; }
+.header-title { font-size: .95rem; font-weight: 400; color: #aaa; }
+.header-date { font-size: .85rem; color: #777; }
+
+/* Stats Row */
+.stats-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  padding: 18px 28px;
+}
+.stat-card {
+  background: #fff;
+  border-radius: 6px;
+  padding: 16px 20px;
+  box-shadow: 0 1px 3px rgba(0,0,0,.08);
+}
+.stat-label { font-size: .75rem; text-transform: uppercase; letter-spacing: .06em; color: #777; margin-bottom: 4px; }
+.stat-value { font-size: 1.6rem; font-weight: 700; color: #222; }
+.stat-value.red { color: #dc3545; }
+.stat-value.green { color: #28a745; }
+.stat-value.yellow { color: #ffc107; }
+.stat-value.blue { color: #007bff; }
+.stat-sub { font-size: .75rem; color: #999; margin-top: 3px; }
+
+/* Cards Container */
+.cards-container {
+  padding: 0 28px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Client Card */
+.client-card {
+  background: #fff;
+  border-radius: 6px;
+  box-shadow: 0 1px 3px rgba(0,0,0,.08);
+  border-left: 4px solid #ccc;
+  padding: 18px 20px;
+}
+.client-card.red   { border-left-color: #dc3545; }
+.client-card.yellow { border-left-color: #ffc107; }
+.client-card.green  { border-left-color: #28a745; }
+
+/* Card Top Row */
+.card-top {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 14px;
+}
+
+/* Score Circle */
+.score-circle {
+  flex-shrink: 0;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+.score-circle.red    { background: rgba(220,53,69,.15);  color: #dc3545; }
+.score-circle.yellow { background: rgba(255,193,7,.15);  color: #d49e00; }
+.score-circle.green  { background: rgba(40,167,69,.15);  color: #28a745; }
+
+/* Name Block */
+.name-block { flex: 1; min-width: 0; }
+.client-name { font-size: 15px; font-weight: 700; color: #222; }
+.client-meta { font-size: 12px; color: #888; margin-top: 2px; }
+.client-meta span + span::before { content: ' · '; }
+.client-rate-row { font-size: 11px; color: #aaa; margin-top: 2px; }
+
+/* Badges */
+.badges { display: flex; gap: 6px; align-items: center; flex-shrink: 0; flex-wrap: wrap; justify-content: flex-end; }
+.badge {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 3px;
+  white-space: nowrap;
+}
+.badge.red    { background: rgba(220,53,69,.12);  color: #dc3545; }
+.badge.yellow { background: rgba(255,193,7,.12);  color: #c49000; }
+.badge.green  { background: rgba(40,167,69,.12);  color: #28a745; }
+.badge.blue   { background: rgba(0,123,255,.12);  color: #007bff; }
+
+/* Dimension Bars */
+.dimensions {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.dim-block {}
+.dim-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 4px;
+}
+.dim-label { font-size: 11px; color: #888; text-transform: uppercase; letter-spacing: .04em; }
+.dim-score { font-size: 12px; font-weight: 700; }
+.dim-score.red    { color: #dc3545; }
+.dim-score.yellow { color: #d49e00; }
+.dim-score.green  { color: #28a745; }
+.dim-bar-track {
+  height: 6px;
+  background: #eee;
+  border-radius: 3px;
+  overflow: hidden;
+}
+.dim-bar-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width .3s ease;
+}
+.dim-bar-fill.red    { background: #dc3545; }
+.dim-bar-fill.yellow { background: #ffc107; }
+.dim-bar-fill.green  { background: #28a745; }
+
+/* Risk / Highlight Box */
+.risk-box {
+  border-radius: 4px;
+  padding: 10px 14px;
+}
+.risk-box.red    { background: rgba(220,53,69,.08); }
+.risk-box.yellow { background: rgba(255,193,7,.08); }
+.risk-box.green  { background: rgba(40,167,69,.08); }
+.risk-header {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  margin-bottom: 6px;
+}
+.risk-header.red    { color: #dc3545; }
+.risk-header.yellow { color: #c49000; }
+.risk-header.green  { color: #28a745; }
+.risk-list {
+  list-style: none;
+  padding: 0;
+}
+.risk-list li {
+  font-size: 12px;
+  color: #444;
+  padding: 2px 0;
+  padding-left: 14px;
+  position: relative;
+  line-height: 1.45;
+}
+.risk-list li::before {
+  content: '•';
+  position: absolute;
+  left: 0;
+  color: #bbb;
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-left">
+    <span class="header-brand">Sidebar Creative</span>
+    <span class="header-title">Client Health Scorer</span>
+  </div>
+  <span class="header-date" id="header-date"></span>
+</div>
+
+<div class="stats-row">
+  <div class="stat-card">
+    <div class="stat-label">Portfolio Health</div>
+    <div class="stat-value" id="stat-health">—</div>
+    <div class="stat-sub">avg composite score</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">Revenue at Risk</div>
+    <div class="stat-value red" id="stat-risk">—</div>
+    <div class="stat-sub">yellow + red retainers</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">Green / Yellow / Red</div>
+    <div class="stat-value" id="stat-distribution">—</div>
+    <div class="stat-sub">client distribution</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">Avg Effective Rate</div>
+    <div class="stat-value" id="stat-rate">—</div>
+    <div class="stat-sub">across all accounts</div>
+  </div>
+</div>
+
+<div class="cards-container" id="cards-container"></div>
+
+<script>
+// Client data — sorted worst-first by composite score (ascending)
+const clients = [
+  {
+    name: 'Vello Cycling',
+    composite: 44,
+    status: 'red',
+    performance: 45,
+    profitability: 52,
+    relationship: 35,
+    retainer: 32000,
+    director: 'Sophie Morales',
+    effectiveRate: 149,
+    sowUtilization: 117,
+    badges: [
+      { label: 'AT RISK', color: 'red' },
+      { label: 'CHURN RISK', color: 'red' }
+    ],
+    riskHeader: 'Risk Factors',
+    points: [
+      'Client requested competitive agency pitches — 60-day recovery window',
+      'All metrics declining 6 consecutive months (traffic −24%, MQLs −38%)',
+      'Hours 15–23% over SOW due to rework; effective rate $149/hr'
+    ]
+  },
+  {
+    name: 'Moonridge Spirits',
+    composite: 60,
+    status: 'yellow',
+    performance: 65,
+    profitability: 48,
+    relationship: 70,
+    retainer: 12000,
+    director: 'Alina Park',
+    effectiveRate: 136,
+    sowUtilization: 106,
+    badges: [
+      { label: 'WATCH', color: 'yellow' }
+    ],
+    riskHeader: 'Risk Factors',
+    points: [
+      'Brand identity phase month 5 of 3 — revision cycles 2× contracted limit',
+      'Averaging 114% SOW hours; effective rate $136/hr (target $155/hr)',
+      'Needs retainer increase to $15–18K or stricter scope management'
+    ]
+  },
+  {
+    name: 'Kova Skincare',
+    composite: 64,
+    status: 'yellow',
+    performance: 55,
+    profitability: 70,
+    relationship: 72,
+    retainer: 25000,
+    director: 'Tomás Reyes',
+    effectiveRate: 161,
+    sowUtilization: 102,
+    badges: [
+      { label: 'WATCH', color: 'yellow' }
+    ],
+    riskHeader: 'Risk Factors',
+    points: [
+      'Web redesign hasn\'t moved conversion metrics; client questioning ROI',
+      'Performance milestones not met (15% traffic growth, 10% conversion targets)',
+      'Possible retainer downsize from $25K to $18K at July quarterly review'
+    ]
+  },
+  {
+    name: 'Brightwash Home',
+    composite: 78,
+    status: 'green',
+    performance: 80,
+    profitability: 68,
+    relationship: 88,
+    retainer: 38000,
+    director: 'Tomás Reyes',
+    effectiveRate: 158,
+    sowUtilization: 105,
+    badges: [
+      { label: 'HEALTHY', color: 'green' }
+    ],
+    riskHeader: 'Highlights',
+    points: [
+      'Meeting most KPIs; subscription launch was a win; steady metrics',
+      'Profitability weak spot — persistent 5–7% hour overruns from untracked requests',
+      'Strong working relationship; client responsive and collaborative'
+    ]
+  },
+  {
+    name: 'Drift Coffee Roasters',
+    composite: 83,
+    status: 'green',
+    performance: 78,
+    profitability: 88,
+    relationship: 85,
+    retainer: 22000,
+    director: 'Priya Nair',
+    effectiveRate: 169,
+    sowUtilization: 94,
+    badges: [
+      { label: 'HEALTHY', color: 'green' }
+    ],
+    riskHeader: 'Highlights',
+    points: [
+      'Subscription platform performing well; modest consistent growth',
+      'Most efficient account — hours consistently under SOW, effective rate $169/hr',
+      'Long-term, low-drama relationship with mutual trust'
+    ]
+  },
+  {
+    name: 'Summit Pet Supply',
+    composite: 84,
+    status: 'green',
+    performance: 82,
+    profitability: 80,
+    relationship: 90,
+    retainer: 18000,
+    director: 'James Whitfield',
+    effectiveRate: 167,
+    sowUtilization: 96,
+    badges: [
+      { label: 'HEALTHY', color: 'green' },
+      { label: 'EXPANSION OPP', color: 'blue' }
+    ],
+    riskHeader: 'Highlights',
+    points: [
+      'Strongest growth trajectory in portfolio; metrics improving MoM',
+      'Client has asked about scope expansion twice — ready for $25–30K retainer',
+      'Enthusiastic, responsive client; highest relationship score after Evergreen'
+    ]
+  },
+  {
+    name: 'Petal & Thorn',
+    composite: 86,
+    status: 'green',
+    performance: 85,
+    profitability: 90,
+    relationship: 82,
+    retainer: 28000,
+    director: 'Alina Park',
+    effectiveRate: 173,
+    sowUtilization: 93,
+    badges: [
+      { label: 'HEALTHY', color: 'green' }
+    ],
+    riskHeader: 'Highlights',
+    points: [
+      'Valentine\'s 2026 was client\'s best-performing campaign ($148K email revenue)',
+      'Most profitable account — hours consistently under SOW, effective rate $173/hr',
+      'Seasonal surge provision well-managed; client trusts the team'
+    ]
+  },
+  {
+    name: 'Evergreen Outdoor Co.',
+    composite: 91,
+    status: 'green',
+    performance: 92,
+    profitability: 85,
+    relationship: 95,
+    retainer: 45000,
+    director: 'Sophie Morales',
+    effectiveRate: 179,
+    sowUtilization: 98,
+    badges: [
+      { label: 'HEALTHY', color: 'green' },
+      { label: 'EXPANDED ↑', color: 'blue' }
+    ],
+    riskHeader: 'Highlights',
+    points: [
+      'Expanded retainer from $35K to $45K in Jan 2026 after strong holiday campaign',
+      'CMO is an advocate — co-presents with Maya Chen at industry events',
+      'Highest effective rate in portfolio at $179/hr'
+    ]
+  }
+];
+
+function dimColor(score) {
+  if (score >= 80) return 'green';
+  if (score >= 60) return 'yellow';
+  return 'red';
+}
+
+function formatCurrency(n) {
+  if (n >= 1000) return '$' + (n / 1000).toFixed(0) + 'K';
+  return '$' + n;
+}
+
+function renderCards() {
+  const container = document.getElementById('cards-container');
+  container.innerHTML = '';
+
+  clients.forEach(c => {
+    const card = document.createElement('div');
+    card.className = 'client-card ' + c.status;
+
+    const badgesHtml = c.badges.map(b =>
+      `<span class="badge ${b.color}">${b.label}</span>`
+    ).join('');
+
+    const dims = [
+      { label: 'Performance', score: c.performance },
+      { label: 'Profitability', score: c.profitability },
+      { label: 'Relationship', score: c.relationship }
+    ];
+
+    const dimsHtml = dims.map(d => {
+      const col = dimColor(d.score);
+      return `
+        <div class="dim-block">
+          <div class="dim-header">
+            <span class="dim-label">${d.label}</span>
+            <span class="dim-score ${col}">${d.score}</span>
+          </div>
+          <div class="dim-bar-track">
+            <div class="dim-bar-fill ${col}" style="width:${d.score}%"></div>
+          </div>
+        </div>`;
+    }).join('');
+
+    const pointsHtml = c.points.map(p => `<li>${p}</li>`).join('');
+
+    card.innerHTML = `
+      <div class="card-top">
+        <div class="score-circle ${c.status}">${c.composite}</div>
+        <div class="name-block">
+          <div class="client-name">${c.name}</div>
+          <div class="client-meta">
+            <span>${formatCurrency(c.retainer)}/mo</span>
+            <span>${c.director}</span>
+          </div>
+          <div class="client-rate-row">$${c.effectiveRate}/hr effective rate &nbsp;·&nbsp; ${c.sowUtilization}% SOW utilization</div>
+        </div>
+        <div class="badges">${badgesHtml}</div>
+      </div>
+      <div class="dimensions">${dimsHtml}</div>
+      <div class="risk-box ${c.status}">
+        <div class="risk-header ${c.status}">${c.riskHeader}</div>
+        <ul class="risk-list">${pointsHtml}</ul>
+      </div>`;
+
+    container.appendChild(card);
+  });
+}
+
+function updateStats() {
+  // Portfolio health — average composite
+  const avgComposite = Math.round(clients.reduce((s, c) => s + c.composite, 0) / clients.length);
+  document.getElementById('stat-health').textContent = avgComposite;
+
+  // Revenue at risk — yellow + red retainers
+  const atRisk = clients
+    .filter(c => c.status === 'yellow' || c.status === 'red')
+    .reduce((s, c) => s + c.retainer, 0);
+  document.getElementById('stat-risk').textContent = '$' + (atRisk / 1000).toFixed(0) + 'K/mo';
+
+  // Distribution
+  const green  = clients.filter(c => c.status === 'green').length;
+  const yellow = clients.filter(c => c.status === 'yellow').length;
+  const red    = clients.filter(c => c.status === 'red').length;
+  const distEl = document.getElementById('stat-distribution');
+  distEl.innerHTML =
+    `<span style="color:#28a745">${green}</span>` +
+    `<span style="color:#bbb"> / </span>` +
+    `<span style="color:#ffc107">${yellow}</span>` +
+    `<span style="color:#bbb"> / </span>` +
+    `<span style="color:#dc3545">${red}</span>`;
+
+  // Avg effective rate
+  const avgRate = Math.round(clients.reduce((s, c) => s + c.effectiveRate, 0) / clients.length);
+  document.getElementById('stat-rate').textContent = '$' + avgRate + '/hr';
+}
+
+function setDate() {
+  const now = new Date();
+  const opts = { year: 'numeric', month: 'long', day: 'numeric' };
+  document.getElementById('header-date').textContent = now.toLocaleDateString('en-US', opts);
+}
+
+// Init
+setDate();
+renderCards();
+updateStats();
+</script>
+</body>
+</html>
