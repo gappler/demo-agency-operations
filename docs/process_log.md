@@ -1,11 +1,40 @@
 ---
 title: Process Log
-version: 1.4
+version: 1.5
 created: 2026-04-06
 updated: 2026-04-07
 ---
 
 # Process Log
+
+---
+
+## 2026-04-07 — Status Report Generator (Tool 4)
+
+**Prompt:**
+You are implementing a status report generator for a creative agency. Create `tools/status_reports.html` — a single self-contained HTML file. A two-panel report viewer: left panel selects reports, right panel displays them. Include all 8 clients with full data, plus a Monday Leadership Roll-Up.
+
+**What was built:**
+- `tools/status_reports.html` — Interactive status report viewer with:
+  - Two-panel layout: selector panel (300px, sticky) + viewer panel (flex: 1)
+  - Roll-up entry at top of selector with 8 client entries below (health dot, name, retainer, score)
+  - Roll-up view: attention accounts with highlights, on-track table, portfolio summary table
+  - Client view: progress, blockers, next steps, budget health table, key metrics table with MoM change colors
+  - Copy Report button that assembles plain-text report to clipboard
+  - 4 stat cards: Reports Generated (9), Red Accounts, Yellow Accounts, Avg Health Score
+  - All 8 clients: Evergreen, Brightwash, Vello, Petal & Thorn, Kova, Drift Coffee, Summit Pet, Moonridge
+
+**Key decisions:**
+- Matched existing tools' dark header (#1a1a1a), #f5f5f5 background, white card panels, system sans-serif
+- Health dot uses 8px circle with HEALTH_COLORS map; health badge uses semi-transparent background
+- Metric direction ('up'/'down'/'flat') drives change color (green/red/gray) independent of sign
+- Copy function assembles clean plain-text report with section dividers for paste into email/Slack
+- metricsNote (Petal & Thorn) rendered as italic disclaimer above metrics table
+
+**Files created or modified:**
+- `tools/status_reports.html` (created)
+- `docs/process_log.md` (updated)
+- `tutorials/04_status_reports.md` (created)
 
 ---
 

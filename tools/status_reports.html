@@ -1,0 +1,907 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Status Reports — Sidebar Creative</title>
+<style>
+/* Reset & Base */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 14px; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: #f5f5f5;
+  color: #222;
+  min-width: 1100px;
+}
+
+/* Header */
+.header {
+  background: #1a1a1a;
+  color: #fff;
+  padding: 14px 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.header-left { display: flex; align-items: baseline; gap: 18px; }
+.header-brand { font-size: 1.25rem; font-weight: 700; letter-spacing: .02em; }
+.header-title { font-size: .95rem; font-weight: 400; color: #aaa; }
+.header-date { font-size: .85rem; color: #777; }
+
+/* Stats Row */
+.stats-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  padding: 18px 28px;
+}
+.stat-card {
+  background: #fff;
+  border-radius: 6px;
+  padding: 16px 20px;
+  box-shadow: 0 1px 3px rgba(0,0,0,.08);
+}
+.stat-label { font-size: .75rem; text-transform: uppercase; letter-spacing: .06em; color: #777; margin-bottom: 4px; }
+.stat-value { font-size: 1.6rem; font-weight: 700; }
+.stat-value.red { color: #dc3545; }
+.stat-value.green { color: #28a745; }
+.stat-value.yellow { color: #ffc107; }
+.stat-value.blue { color: #007bff; }
+
+/* Two-panel layout */
+.layout {
+  display: flex;
+  gap: 14px;
+  padding: 0 28px 28px;
+}
+
+/* Selector Panel */
+.selector-panel {
+  flex: 0 0 300px;
+  overflow-y: auto;
+  max-height: calc(100vh - 180px);
+  background: #fff;
+  border-radius: 6px;
+  box-shadow: 0 1px 3px rgba(0,0,0,.08);
+}
+
+.rollup-item {
+  background: #1a1a1a;
+  color: #fff;
+  padding: 12px 16px;
+  cursor: pointer;
+  border-left: 3px solid transparent;
+  transition: border-color .15s;
+}
+.rollup-item:hover { background: #2a2a2a; }
+.rollup-item.active { border-left-color: #007bff; }
+.rollup-item .rollup-label { font-weight: 600; font-size: 13px; }
+.rollup-item .rollup-sub { font-size: 11px; color: #999; margin-top: 2px; }
+
+.section-label {
+  text-transform: uppercase;
+  font-size: 11px;
+  letter-spacing: .06em;
+  color: #888;
+  padding: 8px 16px;
+  background: #f5f5f5;
+  border-bottom: 1px solid #eee;
+}
+
+.report-item {
+  padding: 10px 16px;
+  border-bottom: 1px solid #eee;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: background .1s;
+  border-left: 3px solid transparent;
+}
+.report-item:hover { background: #fafafa; }
+.report-item.active {
+  background: #007bff08;
+  border-left-color: #007bff;
+}
+.report-item-left { display: flex; align-items: center; gap: 8px; }
+.report-item-name { font-weight: 500; font-size: 13px; }
+.report-item-retainer { font-size: 11px; color: #888; }
+.report-item-right { text-align: right; }
+.report-item-health { font-size: 12px; font-weight: 600; }
+
+.health-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+  vertical-align: middle;
+  flex-shrink: 0;
+}
+
+/* Viewer Panel */
+.viewer-panel {
+  flex: 1;
+  overflow-y: auto;
+  background: #fff;
+  border-radius: 6px;
+  box-shadow: 0 1px 3px rgba(0,0,0,.08);
+}
+
+.report-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  border-bottom: 1px solid #eee;
+}
+.report-title { font-weight: 700; font-size: 16px; }
+.copy-btn {
+  background: #28a745;
+  color: white;
+  border: none;
+  padding: 6px 14px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 12px;
+}
+.copy-btn:hover { background: #218838; }
+.copy-btn.copied { background: #28a745; }
+
+.report-body { padding: 20px; line-height: 1.6; font-size: 13px; }
+.report-meta { display: flex; gap: 20px; align-items: center; flex-wrap: wrap; margin-bottom: 16px; }
+.report-date { color: #888; font-size: 12px; }
+.report-ad { color: #555; font-size: 12px; }
+
+.report-section { margin-bottom: 20px; }
+.report-section h3 {
+  font-size: 14px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid #eee;
+  margin-bottom: 10px;
+}
+.report-section ul { margin: 0 0 0 20px; color: #444; }
+.report-section li { margin-bottom: 6px; }
+
+.report-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+  margin-top: 8px;
+}
+.report-table th {
+  padding: 6px 10px;
+  text-align: left;
+  background: #f5f5f5;
+  font-size: 11px;
+  border-bottom: 1px solid #ddd;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  color: #555;
+}
+.report-table td { padding: 6px 10px; border-bottom: 1px solid #eee; }
+.report-table tr:last-child td { border-bottom: none; }
+
+.health-badge {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 3px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.attention-client { margin-bottom: 16px; }
+.attention-header { margin-bottom: 6px; display: flex; align-items: center; gap: 8px; }
+
+.metrics-note { font-style: italic; color: #888; font-size: 12px; margin-bottom: 8px; }
+
+.metric-change-up { color: #28a745; }
+.metric-change-down { color: #dc3545; }
+.metric-change-flat { color: #888; }
+
+.empty-state {
+  padding: 60px 20px;
+  text-align: center;
+  color: #999;
+  font-size: 13px;
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-left">
+    <span class="header-brand">Sidebar Creative</span>
+    <span class="header-title">Status Reports</span>
+  </div>
+  <span class="header-date" id="headerDate"></span>
+</div>
+
+<div class="stats-row">
+  <div class="stat-card">
+    <div class="stat-label">Reports Generated</div>
+    <div class="stat-value blue">9</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">Red Accounts</div>
+    <div class="stat-value red" id="statRed">—</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">Yellow Accounts</div>
+    <div class="stat-value yellow" id="statYellow">—</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">Avg Health Score</div>
+    <div class="stat-value" id="statAvgHealth">—</div>
+  </div>
+</div>
+
+<div class="layout">
+  <div class="selector-panel" id="selectorPanel"></div>
+  <div class="viewer-panel" id="viewerPanel"></div>
+</div>
+
+<script>
+const REPORT_DATE = 'Week of March 31 – April 4, 2026';
+const HEALTH_COLORS = { green: '#28a745', yellow: '#ffc107', red: '#dc3545' };
+const STATUS_EMOJI = { green: '🟢', yellow: '🟡', red: '🔴' };
+function formatMoney(n) { return '$' + n.toLocaleString(); }
+let selectedReport = 'rollup';
+
+const CLIENTS = [
+  {
+    id: 'evergreen',
+    name: 'Evergreen Outdoor Co.',
+    health: 91,
+    status: 'green',
+    retainer: 45000,
+    accountDirector: 'Sophie Morales',
+    progress: [
+      'Spring campaign creative delivered (4 hero assets, 12 social variants)',
+      'Shopify Plus checkout optimization A/B test launched',
+      'March email (9 sends) 29.6% open rate, 4.5% click rate, $168K revenue',
+      'Pinterest 1.56M monthly views +9.9% MoM',
+      'Instagram 145,800 followers +3.3% MoM'
+    ],
+    blockers: [
+      'Awaiting client approval on Q2 campaign brief (sent Mar 28)',
+      'Summer collection product photography delayed, vendor ETA Apr 15'
+    ],
+    nextSteps: [
+      'Launch spring paid media ($85K budget)',
+      'Begin summer landing page design',
+      'Prep QBR (Apr 18 with CMO)',
+      'Publish 8 blog posts + 20 social posts'
+    ],
+    budget: {
+      sowHours: 257,
+      actualHours: 252,
+      utilization: 98,
+      monthlyBudget: 45000,
+      actualCost: 44100,
+      budgetStatus: 'On budget'
+    },
+    metrics: [
+      { name: 'Sessions', value: '325,800', change: '+9.1%', direction: 'up' },
+      { name: 'MQLs', value: '2,280', change: '+18.8%', direction: 'up' },
+      { name: 'Email Open Rate', value: '29.6%', change: '+1.5pp', direction: 'up' },
+      { name: 'Email Revenue', value: '$168K', change: '+21.7%', direction: 'up' },
+      { name: 'Instagram Followers', value: '145,800', change: '+3.3%', direction: 'up' },
+      { name: 'Pinterest Views', value: '1.56M', change: '+9.9%', direction: 'up' }
+    ]
+  },
+  {
+    id: 'brightwash',
+    name: 'Brightwash Home',
+    health: 78,
+    status: 'green',
+    retainer: 38000,
+    accountDirector: 'Tomás Reyes',
+    progress: [
+      'Subscription checkout refinements reduced abandonment 8%',
+      'March email (13 sends) 26.0% open, 3.7% click, $74K rev',
+      'Social package 16 posts delivered',
+      'A/B test variant B won +12% add-to-cart',
+      'Traffic up 4.2% to 180,100'
+    ],
+    blockers: [
+      'Untracked scope creep (est 12-16 hrs/mo unbilled)',
+      'Klaviyo sync intermittent delays'
+    ],
+    nextSteps: [
+      'Klaviyo sync fix (Apr 7-11)',
+      'April email calendar (12 sends)',
+      'Competitive analysis refresh',
+      'Scope conversation re untracked requests'
+    ],
+    budget: {
+      sowHours: 224,
+      actualHours: 236,
+      utilization: 105,
+      monthlyBudget: 38000,
+      actualCost: 40120,
+      budgetStatus: 'Over budget'
+    },
+    metrics: [
+      { name: 'Sessions', value: '180,100', change: '+4.2%', direction: 'up' },
+      { name: 'MQLs', value: '1,180', change: '+7.3%', direction: 'up' },
+      { name: 'Email Open Rate', value: '26.0%', change: '+0.6pp', direction: 'up' },
+      { name: 'Email Revenue', value: '$74K', change: '+8.8%', direction: 'up' },
+      { name: 'Instagram Followers', value: '55,100', change: '+2.8%', direction: 'up' },
+      { name: 'Subscriptions', value: '1,680', change: '+6.3%', direction: 'up' }
+    ]
+  },
+  {
+    id: 'vello',
+    name: 'Vello Cycling',
+    health: 44,
+    status: 'red',
+    retainer: 32000,
+    accountDirector: 'Sophie Morales',
+    progress: [
+      'Delivered revised Q1 campaign creative (3rd round)',
+      'March email (6 sends) 16.5% open, 1.6% click',
+      'Website maintenance completed',
+      'Derek Okafor attending all client calls'
+    ],
+    blockers: [
+      'CRITICAL: Client requested competitive agency pitches — 60-day window',
+      'New VP Marketing rejecting creative direction causing rework',
+      'All metrics declining 6 months (traffic -24%, MQLs -38%, email rev -61%)',
+      'Hours 15-19% over SOW, effective rate $152/hr'
+    ],
+    nextSteps: [
+      'Present recovery plan to VP Marketing (Apr 10)',
+      'Prepare competitive differentiation deck',
+      'Propose SOW restructure',
+      'Weekly check-ins (from bi-weekly)'
+    ],
+    budget: {
+      sowHours: 183,
+      actualHours: 215,
+      utilization: 117,
+      monthlyBudget: 32000,
+      actualCost: 37625,
+      budgetStatus: 'Over budget'
+    },
+    metrics: [
+      { name: 'Sessions', value: '108,200', change: '-3.7%', direction: 'down' },
+      { name: 'MQLs', value: '420', change: '-6.7%', direction: 'down' },
+      { name: 'Email Open Rate', value: '16.5%', change: '-0.7pp', direction: 'down' },
+      { name: 'Email Revenue', value: '$15K', change: '-16.7%', direction: 'down' },
+      { name: 'Instagram Followers', value: '60,200', change: '-1.0%', direction: 'down' },
+      { name: 'Cost per Lead', value: '$52.00', change: '+7.9%', direction: 'down' }
+    ]
+  },
+  {
+    id: 'petal',
+    name: 'Petal & Thorn',
+    health: 86,
+    status: 'green',
+    retainer: 28000,
+    accountDirector: 'Alina Park',
+    progress: [
+      'Post-Valentine\'s wind-down complete ($148K email rev — client\'s best ever)',
+      'Transitioned to base SOW hours (238→170)',
+      'March email (6 sends) 27.0% open',
+      'Seasonal landing pages archived, spring staged',
+      'Instagram 50,800 +2.4%'
+    ],
+    blockers: [
+      'No active blockers this week'
+    ],
+    nextSteps: [
+      'Mother\'s Day campaign planning (late April launch)',
+      'Email sequence build-out (12 sends May)',
+      'Spring photography shoot (Apr 14-16)',
+      'Seasonal calendar review (Apr 11)'
+    ],
+    budget: {
+      sowHours: 170,
+      actualHours: 158,
+      utilization: 93,
+      monthlyBudget: 28000,
+      actualCost: 26070,
+      budgetStatus: 'Under budget'
+    },
+    metrics: [
+      { name: 'Sessions', value: '95,600', change: '-44.5%', direction: 'down' },
+      { name: 'MQLs', value: '560', change: '-56.3%', direction: 'down' },
+      { name: 'Email Revenue', value: '$45K', change: '-69.6%', direction: 'down' },
+      { name: 'Instagram Followers', value: '50,800', change: '+2.4%', direction: 'up' },
+      { name: 'Pinterest Views', value: '680K', change: '-39.3%', direction: 'down' },
+      { name: 'TikTok Followers', value: '33,600', change: '+2.4%', direction: 'up' }
+    ],
+    metricsNote: 'March decline is expected seasonal normalization after Valentine\'s Day peak in February.'
+  },
+  {
+    id: 'kova',
+    name: 'Kova Skincare',
+    health: 64,
+    status: 'yellow',
+    retainer: 25000,
+    accountDirector: 'Tomás Reyes',
+    progress: [
+      'Web redesign UX improving — bounce rate 45.8% (-0.4pp), pages/session 3.1',
+      'March email (9 sends) 21.0% open, 2.5% click, $30K rev',
+      'CRO roadmap delivered (6 experiments Q2)',
+      'Social content 12 posts delivered'
+    ],
+    blockers: [
+      'Conversion/lead gen flat despite redesign — 15% traffic and 10% conversion targets not met',
+      'Client questioning ROI — possible downsize $25K→$18K at July review',
+      'Paid acquisition costs rising ($28.80 CPL)'
+    ],
+    nextSteps: [
+      'Launch CRO experiment Apr 8',
+      'Prepare mid-quarter ROI analysis (Apr 15)',
+      'Klaviyo abandoned cart optimization',
+      'Develop "quick wins" plan for July review'
+    ],
+    budget: {
+      sowHours: 147,
+      actualHours: 150,
+      utilization: 102,
+      monthlyBudget: 25000,
+      actualCost: 25500,
+      budgetStatus: 'On budget'
+    },
+    metrics: [
+      { name: 'Sessions', value: '101,800', change: '+1.6%', direction: 'flat' },
+      { name: 'MQLs', value: '570', change: '+1.8%', direction: 'flat' },
+      { name: 'Conversion Rate', value: '13.0%', change: '+0.5pp', direction: 'flat' },
+      { name: 'Email Revenue', value: '$30K', change: '+3.4%', direction: 'up' },
+      { name: 'Instagram Followers', value: '76,200', change: '+1.1%', direction: 'flat' },
+      { name: 'Cost per Lead', value: '$28.80', change: '-2.7%', direction: 'up' }
+    ]
+  },
+  {
+    id: 'drift',
+    name: 'Drift Coffee Roasters',
+    health: 83,
+    status: 'green',
+    retainer: 22000,
+    accountDirector: 'Priya Nair',
+    progress: [
+      '290 subscription signups +8.2% MoM',
+      'March email (5 sends) 29.5% open, 4.4% click, $21.2K rev',
+      'Brand refresh kickoff — mood boards approved',
+      'Google Reviews 4.8★ (1,470, +45 March)',
+      'Traffic up 3.6% to 74,200'
+    ],
+    blockers: [
+      'No active blockers this week'
+    ],
+    nextSteps: [
+      'Brand refresh concepts round 1 (Apr 14)',
+      'Spring subscription promo',
+      '3 blog posts + 10 social posts',
+      'Shopify page speed sprint'
+    ],
+    budget: {
+      sowHours: 138,
+      actualHours: 130,
+      utilization: 94,
+      monthlyBudget: 22000,
+      actualCost: 20800,
+      budgetStatus: 'Under budget'
+    },
+    metrics: [
+      { name: 'Sessions', value: '74,200', change: '+3.6%', direction: 'up' },
+      { name: 'Subscriptions', value: '290', change: '+8.2%', direction: 'up' },
+      { name: 'MQLs', value: '430', change: '+6.2%', direction: 'up' },
+      { name: 'Email Revenue', value: '$21.2K', change: '+14.0%', direction: 'up' },
+      { name: 'Instagram Followers', value: '36,800', change: '+2.5%', direction: 'up' },
+      { name: 'Google Reviews', value: '4.8★ (1,470)', change: '+45 new', direction: 'up' }
+    ]
+  },
+  {
+    id: 'summit',
+    name: 'Summit Pet Supply',
+    health: 84,
+    status: 'green',
+    retainer: 18000,
+    accountDirector: 'James Whitfield',
+    progress: [
+      'Traffic grew 8.7% to 72,600 (strongest month)',
+      'MQLs up 11.4% to 440, conversion 17.0%',
+      'March email (5 sends) 28.8% open, $22.6K rev +17.7%',
+      'Instagram surpassed 30K (+10.1%), TikTok 20,400 (+14.6%)',
+      'Product recommendation engine launched'
+    ],
+    blockers: [
+      'Client asked about expanding scope twice — $18K retainer may be limiting growth'
+    ],
+    nextSteps: [
+      'Scope expansion proposal ($25-30K with paid media)',
+      'Spring pet essentials campaign',
+      'Loyalty program feature build',
+      '4 blog + 8 social posts'
+    ],
+    budget: {
+      sowHours: 113,
+      actualHours: 108,
+      utilization: 96,
+      monthlyBudget: 18000,
+      actualCost: 17280,
+      budgetStatus: 'On budget'
+    },
+    metrics: [
+      { name: 'Sessions', value: '72,600', change: '+8.7%', direction: 'up' },
+      { name: 'MQLs', value: '440', change: '+11.4%', direction: 'up' },
+      { name: 'Conversion Rate', value: '17.0%', change: '+1.1pp', direction: 'up' },
+      { name: 'Email Revenue', value: '$22.6K', change: '+17.7%', direction: 'up' },
+      { name: 'Instagram Followers', value: '30,600', change: '+10.1%', direction: 'up' },
+      { name: 'TikTok Followers', value: '20,400', change: '+14.6%', direction: 'up' }
+    ]
+  },
+  {
+    id: 'moonridge',
+    name: 'Moonridge Spirits',
+    health: 60,
+    status: 'yellow',
+    retainer: 12000,
+    accountDirector: 'Alina Park',
+    progress: [
+      'Brand identity in 5th revision round (contracted for 3)',
+      'Website traffic 10,200 +21.4% ahead of full launch',
+      'Instagram 6,800 followers, 5.0% engagement',
+      'March tasting pop-up 145 attendees, 420 new email subs'
+    ],
+    blockers: [
+      'Brand identity month 5 of 3 — founding team indecisiveness (avg 5 rounds vs 3 contracted)',
+      'Account averaging 114% SOW hours',
+      'Effective rate $136/hr vs $155/hr target — likely unprofitable 2 of 4 months'
+    ],
+    nextSteps: [
+      'Firm brand sign-off deadline (propose Apr 18)',
+      'Full website launch plan (late April)',
+      'Scope transition plan to ongoing retainer',
+      'April tasting room event'
+    ],
+    budget: {
+      sowHours: 77,
+      actualHours: 82,
+      utilization: 106,
+      monthlyBudget: 12000,
+      actualCost: 12710,
+      budgetStatus: 'Over budget'
+    },
+    metrics: [
+      { name: 'Sessions', value: '10,200', change: '+21.4%', direction: 'up' },
+      { name: 'MQLs', value: '105', change: '+19.3%', direction: 'up' },
+      { name: 'Email Subscribers', value: '4,600', change: '+21.1%', direction: 'up' },
+      { name: 'Instagram Followers', value: '6,800', change: '+17.2%', direction: 'up' },
+      { name: 'Event Attendees', value: '145', change: '+31.8%', direction: 'up' },
+      { name: 'Email Revenue', value: '$6.5K', change: '+12.1%', direction: 'up' }
+    ]
+  }
+];
+
+const ROLLUP = {
+  title: 'Monday Leadership Roll-Up',
+  date: REPORT_DATE,
+  preparedFor: 'Maya Chen, Raj Patel, Lena Voss, Derek Okafor',
+  attentionClients: [
+    { id: 'vello', name: 'Vello Cycling', health: 44, status: 'red',
+      highlights: ['CHURN RISK: Client requested competitive agency pitches — 60-day window', 'All metrics declining 6 months (traffic -24%, MQLs -38%, email revenue -61%)', 'New VP Marketing rejecting creative, driving rework — hours 17% over SOW', 'Recovery plan: Derek on all calls, restructured SOW proposal Apr 10'] },
+    { id: 'kova', name: 'Kova Skincare', health: 64, status: 'yellow',
+      highlights: ['ROI CONCERN: Web redesign not moving conversion metrics — client questioning value', 'Performance milestones not met (15% traffic growth, 10% conversion targets)', 'Possible retainer downsize $25K→$18K at July review', 'Action: CRO experiment Apr 8, ROI analysis for client Apr 15'] },
+    { id: 'moonridge', name: 'Moonridge Spirits', health: 60, status: 'yellow',
+      highlights: ['MARGIN PRESSURE: Brand identity month 5 of 3 — revision cycles 2x contracted', 'Averaging 114% SOW hours, effective rate $136/hr (target $155/hr)', 'Likely unprofitable 2 of 4 operating months', 'Action: Firm brand sign-off deadline Apr 18, scope transition plan needed'] }
+  ],
+  onTrackClients: [
+    { name: 'Evergreen Outdoor Co.', health: 91, retainer: 45000, note: 'Expanded retainer performing well; spring campaign launching, QBR Apr 18' },
+    { name: 'Petal & Thorn', health: 86, retainer: 28000, note: 'Strong Valentine\'s results ($148K email rev); transitioning to Mother\'s Day' },
+    { name: 'Summit Pet Supply', health: 84, retainer: 18000, note: 'Strongest growth in portfolio; scope expansion proposal in prep ($25-30K)' },
+    { name: 'Drift Coffee Roasters', health: 83, retainer: 22000, note: 'Steady performer; brand refresh underway, subscription signups growing' },
+    { name: 'Brightwash Home', health: 78, retainer: 38000, note: 'Metrics healthy but 5% over SOW hours — scope creep conversation needed' }
+  ],
+  portfolioSummary: { totalRevenue: 220000, avgHealth: 74, blendedUtilization: 103, greenCount: 5, yellowCount: 2, redCount: 1, overSOW: ['Brightwash Home (105%)', 'Vello Cycling (117%)', 'Moonridge Spirits (106%)'] }
+};
+
+// ---- Render Functions ----
+
+function renderSelector() {
+  const panel = document.getElementById('selectorPanel');
+  let html = '';
+
+  // Roll-up entry
+  html += `<div class="rollup-item ${selectedReport === 'rollup' ? 'active' : ''}" onclick="selectReport('rollup')">
+    <div class="rollup-label">📋 Monday Leadership Roll-Up</div>
+    <div class="rollup-sub">${ROLLUP.date}</div>
+  </div>`;
+
+  // Section label
+  html += `<div class="section-label">Client Reports</div>`;
+
+  // Client entries
+  CLIENTS.forEach(client => {
+    const isActive = selectedReport === client.id;
+    const dotColor = HEALTH_COLORS[client.status];
+    html += `<div class="report-item ${isActive ? 'active' : ''}" onclick="selectReport('${client.id}')">
+      <div class="report-item-left">
+        <span class="health-dot" style="background:${dotColor}"></span>
+        <div>
+          <div class="report-item-name">${client.name}</div>
+          <div class="report-item-retainer">${formatMoney(client.retainer)}/mo</div>
+        </div>
+      </div>
+      <div class="report-item-right">
+        <div class="report-item-health" style="color:${dotColor}">${client.health}</div>
+      </div>
+    </div>`;
+  });
+
+  panel.innerHTML = html;
+}
+
+function renderViewer() {
+  if (selectedReport === 'rollup') {
+    renderRollup();
+    return;
+  }
+
+  const client = CLIENTS.find(c => c.id === selectedReport);
+  if (!client) {
+    document.getElementById('viewerPanel').innerHTML = '<div class="empty-state">Select a report from the left panel.</div>';
+    return;
+  }
+
+  const badgeBg = HEALTH_COLORS[client.status];
+  const b = client.budget;
+
+  // Budget row color
+  let budgetColor = '#28a745';
+  if (b.budgetStatus === 'Over budget') budgetColor = '#dc3545';
+  else if (b.budgetStatus === 'Under budget') budgetColor = '#888';
+
+  let html = `
+    <div class="report-header">
+      <div class="report-title">${client.name} — Weekly Status Report</div>
+      <button class="copy-btn" onclick="copyReport('${client.id}')">Copy Report</button>
+    </div>
+    <div class="report-body">
+      <div class="report-meta">
+        <span class="report-date">${REPORT_DATE}</span>
+        <span class="report-ad">Account Director: ${client.accountDirector}</span>
+        <span class="health-badge" style="background:${badgeBg}22; color:${badgeBg}">
+          ${STATUS_EMOJI[client.status]} Health: ${client.health}/100
+        </span>
+      </div>
+
+      <div class="report-section">
+        <h3>Progress This Week</h3>
+        <ul>${client.progress.map(p => `<li>${p}</li>`).join('')}</ul>
+      </div>
+
+      <div class="report-section">
+        <h3>Blockers &amp; Risks</h3>
+        <ul>${client.blockers.map(b => `<li>${b}</li>`).join('')}</ul>
+      </div>
+
+      <div class="report-section">
+        <h3>Next Steps</h3>
+        <ul>${client.nextSteps.map(n => `<li>${n}</li>`).join('')}</ul>
+      </div>
+
+      <div class="report-section">
+        <h3>Budget Health</h3>
+        <table class="report-table">
+          <thead>
+            <tr>
+              <th>SOW Hours</th>
+              <th>Actual Hours</th>
+              <th>Utilization</th>
+              <th>Monthly Budget</th>
+              <th>Actual Cost</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>${b.sowHours}</td>
+              <td>${b.actualHours}</td>
+              <td>${b.utilization}%</td>
+              <td>${formatMoney(b.monthlyBudget)}</td>
+              <td>${formatMoney(b.actualCost)}</td>
+              <td style="color:${budgetColor}; font-weight:600">${b.budgetStatus}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="report-section">
+        <h3>Key Metrics</h3>
+        ${client.metricsNote ? `<div class="metrics-note">${client.metricsNote}</div>` : ''}
+        <table class="report-table">
+          <thead>
+            <tr>
+              <th>Metric</th>
+              <th>Value</th>
+              <th>MoM Change</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${client.metrics.map(m => {
+              let changeClass = 'metric-change-flat';
+              if (m.direction === 'up') changeClass = 'metric-change-up';
+              else if (m.direction === 'down') changeClass = 'metric-change-down';
+              return `<tr>
+                <td>${m.name}</td>
+                <td>${m.value}</td>
+                <td class="${changeClass}">${m.change}</td>
+              </tr>`;
+            }).join('')}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  `;
+
+  document.getElementById('viewerPanel').innerHTML = html;
+}
+
+function renderRollup() {
+  const r = ROLLUP;
+  const ps = r.portfolioSummary;
+
+  let html = `
+    <div class="report-header">
+      <div class="report-title">${r.title}</div>
+      <button class="copy-btn" onclick="copyReport('rollup')">Copy Report</button>
+    </div>
+    <div class="report-body">
+      <div class="report-meta">
+        <span class="report-date">${r.date}</span>
+        <span class="report-ad">Prepared for: ${r.preparedFor}</span>
+      </div>
+
+      <div class="report-section">
+        <h3>Accounts Requiring Attention</h3>
+        ${r.attentionClients.map(ac => {
+          const badgeBg = HEALTH_COLORS[ac.status];
+          return `<div class="attention-client">
+            <div class="attention-header">
+              <span class="health-badge" style="background:${badgeBg}22; color:${badgeBg}">
+                ${STATUS_EMOJI[ac.status]} ${ac.name}
+              </span>
+              <span style="font-size:12px; color:#888">Health: ${ac.health}/100</span>
+            </div>
+            <ul style="margin:0 0 0 20px; color:#444">
+              ${ac.highlights.map(h => `<li style="margin-bottom:4px">${h}</li>`).join('')}
+            </ul>
+          </div>`;
+        }).join('')}
+      </div>
+
+      <div class="report-section">
+        <h3>Accounts On Track</h3>
+        <table class="report-table">
+          <thead>
+            <tr>
+              <th>Client</th>
+              <th>Health</th>
+              <th>Retainer</th>
+              <th>Notes</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${r.onTrackClients.map(oc => {
+              const color = HEALTH_COLORS['green'];
+              return `<tr>
+                <td>${oc.name}</td>
+                <td style="color:${color}; font-weight:600">${oc.health}</td>
+                <td>${formatMoney(oc.retainer)}</td>
+                <td style="color:#555">${oc.note}</td>
+              </tr>`;
+            }).join('')}
+          </tbody>
+        </table>
+      </div>
+
+      <div class="report-section">
+        <h3>Portfolio Summary</h3>
+        <table class="report-table">
+          <thead>
+            <tr><th>Metric</th><th>Value</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Total Monthly Retainer Revenue</td><td style="font-weight:600">${formatMoney(ps.totalRevenue)}</td></tr>
+            <tr><td>Average Account Health Score</td><td style="font-weight:600">${ps.avgHealth}/100</td></tr>
+            <tr><td>Blended SOW Utilization</td><td style="font-weight:600">${ps.blendedUtilization}%</td></tr>
+            <tr><td>Green Accounts</td><td style="color:#28a745; font-weight:600">${ps.greenCount}</td></tr>
+            <tr><td>Yellow Accounts</td><td style="color:#ffc107; font-weight:600">${ps.yellowCount}</td></tr>
+            <tr><td>Red Accounts</td><td style="color:#dc3545; font-weight:600">${ps.redCount}</td></tr>
+            <tr><td>Accounts Over SOW</td><td style="color:#dc3545">${ps.overSOW.join(', ')}</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  `;
+
+  document.getElementById('viewerPanel').innerHTML = html;
+}
+
+function updateStats() {
+  const redCount = CLIENTS.filter(c => c.status === 'red').length;
+  const yellowCount = CLIENTS.filter(c => c.status === 'yellow').length;
+  const avgHealth = Math.round(CLIENTS.reduce((sum, c) => sum + c.health, 0) / CLIENTS.length);
+
+  document.getElementById('statRed').textContent = redCount;
+  document.getElementById('statYellow').textContent = yellowCount;
+  const avgEl = document.getElementById('statAvgHealth');
+  avgEl.textContent = avgHealth;
+  if (avgHealth >= 80) avgEl.classList.add('green');
+  else if (avgHealth >= 60) avgEl.classList.add('yellow');
+  else avgEl.classList.add('red');
+}
+
+function selectReport(id) {
+  selectedReport = id;
+  renderSelector();
+  renderViewer();
+}
+
+function copyReport(id) {
+  let text = '';
+  const date = REPORT_DATE;
+
+  if (id === 'rollup') {
+    const r = ROLLUP;
+    const ps = r.portfolioSummary;
+    text += `${r.title}\n${date}\nPrepared for: ${r.preparedFor}\n\n`;
+    text += `ACCOUNTS REQUIRING ATTENTION\n${'='.repeat(40)}\n\n`;
+    r.attentionClients.forEach(ac => {
+      text += `${STATUS_EMOJI[ac.status]} ${ac.name} (Health: ${ac.health}/100)\n`;
+      ac.highlights.forEach(h => { text += `  • ${h}\n`; });
+      text += '\n';
+    });
+    text += `ACCOUNTS ON TRACK\n${'='.repeat(40)}\n`;
+    r.onTrackClients.forEach(oc => {
+      text += `${STATUS_EMOJI['green']} ${oc.name} (${oc.health}) — ${formatMoney(oc.retainer)} — ${oc.note}\n`;
+    });
+    text += `\nPORTFOLIO SUMMARY\n${'='.repeat(40)}\n`;
+    text += `Total Revenue: ${formatMoney(ps.totalRevenue)}\nAvg Health: ${ps.avgHealth}/100\nUtilization: ${ps.blendedUtilization}%\nGreen: ${ps.greenCount} | Yellow: ${ps.yellowCount} | Red: ${ps.redCount}\nOver SOW: ${ps.overSOW.join(', ')}\n`;
+  } else {
+    const client = CLIENTS.find(c => c.id === id);
+    if (!client) return;
+    const b = client.budget;
+    text += `${client.name} — Weekly Status Report\n${date}\nAccount Director: ${client.accountDirector} | Health: ${client.health}/100\n\n`;
+    text += `PROGRESS THIS WEEK\n${'='.repeat(40)}\n`;
+    client.progress.forEach(p => { text += `• ${p}\n`; });
+    text += `\nBLOCKERS & RISKS\n${'='.repeat(40)}\n`;
+    client.blockers.forEach(bl => { text += `• ${bl}\n`; });
+    text += `\nNEXT STEPS\n${'='.repeat(40)}\n`;
+    client.nextSteps.forEach(n => { text += `• ${n}\n`; });
+    text += `\nBUDGET HEALTH\n${'='.repeat(40)}\n`;
+    text += `SOW: ${b.sowHours}h | Actual: ${b.actualHours}h | Utilization: ${b.utilization}%\nBudget: ${formatMoney(b.monthlyBudget)} | Actual: ${formatMoney(b.actualCost)} | ${b.budgetStatus}\n`;
+    text += `\nKEY METRICS\n${'='.repeat(40)}\n`;
+    if (client.metricsNote) text += `Note: ${client.metricsNote}\n`;
+    client.metrics.forEach(m => { text += `${m.name}: ${m.value} (${m.change})\n`; });
+  }
+
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.querySelector('.copy-btn');
+    if (btn) {
+      btn.textContent = 'Copied!';
+      btn.classList.add('copied');
+      setTimeout(() => {
+        btn.textContent = 'Copy Report';
+        btn.classList.remove('copied');
+      }, 2000);
+    }
+  }).catch(() => {
+    alert('Could not copy to clipboard. Please copy manually.');
+  });
+}
+
+// ---- Init ----
+document.getElementById('headerDate').textContent = REPORT_DATE;
+renderSelector();
+renderViewer();
+updateStats();
+</script>
+</body>
+</html>
