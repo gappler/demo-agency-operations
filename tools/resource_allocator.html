@@ -194,105 +194,126 @@ const PROJECTS = [
 const allocations = {};
 PROJECTS.forEach(p => { allocations[p.id] = {}; });
 
-// Evergreen Outdoor Co.
-allocations['evergreen']['sophie_morales']  = 5;
-allocations['evergreen']['nico_strand']     = 18;
-allocations['evergreen']['owen_marsh']      = 14;
-allocations['evergreen']['celeste_durand']  = 6;
-allocations['evergreen']['rowan_griffiths'] = 9;
-allocations['evergreen']['james_whitfield'] = 3;   // PM support
-allocations['evergreen']['zara_osei']       = 4;   // design support
-allocations['evergreen']['luna_esperanza']  = 4;   // brand design support
+// ── RETAINER CLIENTS ──
+// Allocations sum to each person's currentLoad. Derived from SOW discipline breakdowns
+// scaled to match actual weekly hours.
 
-// Brightwash Home
-allocations['brightwash']['tomas_reyes']   = 4;
-allocations['brightwash']['yuki_tanaka']   = 15;
-allocations['brightwash']['diana_kovac']   = 13;
-allocations['brightwash']['andre_kim']     = 4;
-allocations['brightwash']['jia_liang']     = 8;
-allocations['brightwash']['casey_liu']     = 3;    // coordination
-allocations['brightwash']['jordan_tate']   = 2;    // design support
+// Evergreen Outdoor Co. — $45K/mo
+allocations['evergreen']['nico_strand']      = 23;
+allocations['evergreen']['owen_marsh']       = 20;
+allocations['evergreen']['rowan_griffiths']  = 13;
+allocations['evergreen']['james_whitfield']  = 12;
+allocations['evergreen']['zara_osei']        = 11;
+allocations['evergreen']['sophie_morales']   = 10;
+allocations['evergreen']['celeste_durand']   = 10;
+allocations['evergreen']['luna_esperanza']   = 9;
+allocations['evergreen']['bea_cortez']       = 7;
+allocations['evergreen']['iris_chung']       = 7;
 
-// Vello Cycling
-allocations['vello']['sophie_morales'] = 4;
-allocations['vello']['bea_cortez']     = 14;
-allocations['vello']['leo_farias']     = 10;
-allocations['vello']['celeste_durand'] = 5;
-allocations['vello']['elliot_saunders']= 6;
-allocations['vello']['casey_liu']      = 2;        // coordination
-allocations['vello']['ava_lindstrom']  = 2;        // design support
+// Brightwash Home — $38K/mo
+allocations['brightwash']['yuki_tanaka']     = 22;
+allocations['brightwash']['diana_kovac']     = 22;
+allocations['brightwash']['tomas_reyes']     = 16;
+allocations['brightwash']['andre_kim']       = 15;
+allocations['brightwash']['jia_liang']       = 12;
+allocations['brightwash']['jordan_tate']     = 7;
+allocations['brightwash']['sophie_morales']  = 7;
+allocations['brightwash']['casey_liu']       = 5;
 
-// Petal & Thorn
-allocations['petal']['alina_park']    = 3;
-allocations['petal']['finn_gallagher']= 13;
-allocations['petal']['hana_yoshida']  = 9;
-allocations['petal']['tessa_moreno']  = 3;
-allocations['petal']['jia_liang']     = 7;
-allocations['petal']['ava_lindstrom'] = 4;         // design support
-allocations['petal']['priya_nair']    = 3;         // PM support
+// Vello Cycling — $32K/mo (AT RISK)
+allocations['vello']['bea_cortez']       = 21;
+allocations['vello']['leo_farias']       = 19;
+allocations['vello']['celeste_durand']   = 11;
+allocations['vello']['sophie_morales']   = 10;
+allocations['vello']['elliot_saunders']  = 8;
+allocations['vello']['casey_liu']        = 4;
+allocations['vello']['ava_lindstrom']    = 4;
 
-// Kova Skincare
-allocations['kova']['tomas_reyes']    = 3;
-allocations['kova']['jordan_tate']    = 10;
-allocations['kova']['nadia_volkov']   = 9;
-allocations['kova']['andre_kim']      = 4;
-allocations['kova']['rowan_griffiths']= 4;
-allocations['kova']['priya_nair']     = 3;         // PM support
+// Petal & Thorn — $28K/mo
+allocations['petal']['finn_gallagher']   = 21;
+allocations['petal']['hana_yoshida']     = 18;
+allocations['petal']['alina_park']       = 12;
+allocations['petal']['jia_liang']        = 11;
+allocations['petal']['tessa_moreno']     = 8;
+allocations['petal']['ava_lindstrom']    = 7;
+allocations['petal']['priya_nair']       = 7;
+allocations['petal']['sophie_morales']   = 5;
 
-// Drift Coffee Roasters
-allocations['drift']['priya_nair']        = 2;
-allocations['drift']['luna_esperanza']    = 9;
-allocations['drift']['ravi_subramanian']  = 9;
-allocations['drift']['wes_calloway']      = 2;
-allocations['drift']['rowan_griffiths']   = 6;
-allocations['drift']['casey_liu']         = 2;     // coordination
+// Kova Skincare — $25K/mo
+allocations['kova']['nadia_volkov']      = 20;
+allocations['kova']['jordan_tate']       = 17;
+allocations['kova']['andre_kim']         = 15;
+allocations['kova']['tomas_reyes']       = 12;
+allocations['kova']['rowan_griffiths']   = 7;
+allocations['kova']['priya_nair']        = 7;
+allocations['kova']['sophie_morales']    = 5;
 
-// Summit Pet Supply
-allocations['summit']['james_whitfield']  = 2;
-allocations['summit']['zara_osei']        = 8;
-allocations['summit']['marcus_webb']      = 9;    // 7 primary + 2 dev support
-allocations['summit']['tessa_moreno']     = 2;
-allocations['summit']['jia_liang']        = 5;
-allocations['summit']['casey_liu']        = 2;    // coordination
+// Drift Coffee Roasters — $22K/mo
+allocations['drift']['ravi_subramanian'] = 20;
+allocations['drift']['luna_esperanza']   = 16;
+allocations['drift']['wes_calloway']     = 12;
+allocations['drift']['milo_varga']       = 11;
+allocations['drift']['rowan_griffiths']  = 9;
+allocations['drift']['priya_nair']       = 7;
+allocations['drift']['casey_liu']        = 6;
 
-// Moonridge Spirits
-allocations['moonridge']['alina_park']     = 2;
-allocations['moonridge']['milo_varga']     = 8;   // 6 primary + 2 additional
-allocations['moonridge']['elodie_blanc']   = 6;   // 4 primary + 2 additional
-allocations['moonridge']['elliot_saunders']= 3;
+// Summit Pet Supply — $18K/mo
+allocations['summit']['zara_osei']       = 19;
+allocations['summit']['marcus_webb']     = 19;
+allocations['summit']['james_whitfield'] = 12;
+allocations['summit']['tessa_moreno']    = 8;
+allocations['summit']['jia_liang']       = 8;
+allocations['summit']['casey_liu']       = 6;
 
-// River District Rebrand
-allocations['river_district']['nico_strand']    = 8;
-allocations['river_district']['kai_bergstrom']  = 8;
-allocations['river_district']['luna_esperanza'] = 4;
-allocations['river_district']['owen_marsh']     = 4;
-allocations['river_district']['iris_chung']     = 4;    // motion
-allocations['river_district']['sam_delacroix']  = 4;    // production
+// Moonridge Spirits — $12K/mo
+allocations['moonridge']['milo_varga']       = 17;
+allocations['moonridge']['elodie_blanc']     = 10;
+allocations['moonridge']['alina_park']       = 9;
+allocations['moonridge']['elliot_saunders']  = 6;
+allocations['moonridge']['tomas_reyes']      = 6;
 
-// Cascade Athletic Website
-allocations['cascade']['yuki_tanaka']   = 8;
-allocations['cascade']['bea_cortez']    = 6;
-allocations['cascade']['owen_marsh']    = 12;
-allocations['cascade']['diana_kovac']   = 8;
-allocations['cascade']['iris_chung']    = 4;
-allocations['cascade']['marcus_webb']   = 4;            // dev support
+// ── PROJECT-BASED ENGAGEMENTS ──
 
-// Fieldwork Provisions Launch
-allocations['fieldwork']['sam_delacroix']   = 9;   // 6 primary + 3 additional design
-allocations['fieldwork']['ava_lindstrom']   = 10;
-allocations['fieldwork']['leo_farias']      = 6;
-allocations['fieldwork']['nadia_volkov']    = 4;
-allocations['fieldwork']['elliot_saunders'] = 4;
-allocations['fieldwork']['elodie_blanc']    = 3;   // dev support
+// River District Rebrand — $85K, 73% burned
+allocations['river_district']['kai_bergstrom']   = 18;
+allocations['river_district']['iris_chung']      = 14;
+allocations['river_district']['sam_delacroix']   = 12;
+allocations['river_district']['nico_strand']     = 11;
+allocations['river_district']['luna_esperanza']  = 9;
+allocations['river_district']['owen_marsh']      = 8;
+allocations['river_district']['celeste_durand']  = 7;
 
-// NW Natural Rebrand
-allocations['nw_natural']['nico_strand']       = 10;
-allocations['nw_natural']['finn_gallagher']    = 8;
-allocations['nw_natural']['kai_bergstrom']     = 6;
-allocations['nw_natural']['hana_yoshida']      = 4;
-allocations['nw_natural']['celeste_durand']    = 4;
-allocations['nw_natural']['ravi_subramanian']  = 3;     // dev support
-allocations['nw_natural']['wes_calloway']      = 3;     // analytics
+// Cascade Athletic Website — $120K, 40% burned
+allocations['cascade']['owen_marsh']       = 18;
+allocations['cascade']['diana_kovac']      = 16;
+allocations['cascade']['yuki_tanaka']      = 14;
+allocations['cascade']['bea_cortez']       = 13;
+allocations['cascade']['james_whitfield']  = 12;
+allocations['cascade']['iris_chung']       = 11;
+allocations['cascade']['marcus_webb']      = 11;
+allocations['cascade']['sophie_morales']   = 5;
+
+// Fieldwork Provisions Launch — $95K, 19% burned
+allocations['fieldwork']['sam_delacroix']     = 19;
+allocations['fieldwork']['nadia_volkov']     = 16;
+allocations['fieldwork']['leo_farias']       = 15;
+allocations['fieldwork']['ava_lindstrom']    = 11;
+allocations['fieldwork']['tessa_moreno']     = 10;
+allocations['fieldwork']['elodie_blanc']     = 9;
+allocations['fieldwork']['priya_nair']       = 7;
+allocations['fieldwork']['elliot_saunders']  = 6;
+
+// NW Natural Rebrand — $55K, 75% burned, over scope
+allocations['nw_natural']['kai_bergstrom']     = 17;
+allocations['nw_natural']['wes_calloway']      = 17;
+allocations['nw_natural']['hana_yoshida']      = 15;
+allocations['nw_natural']['nico_strand']       = 14;
+allocations['nw_natural']['finn_gallagher']    = 14;
+allocations['nw_natural']['ravi_subramanian']  = 12;
+allocations['nw_natural']['celeste_durand']    = 10;
+allocations['nw_natural']['jordan_tate']       = 9;
+allocations['nw_natural']['alina_park']        = 9;
+allocations['nw_natural']['rowan_griffiths']   = 7;
 
 // ── UTILITY CONSTANTS & HELPERS ───────────────────────────────────────────────
 const HEALTH_COLORS = { green: '#28a745', yellow: '#ffc107', red: '#dc3545' };
