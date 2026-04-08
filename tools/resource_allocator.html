@@ -667,6 +667,18 @@ document.querySelectorAll('.toggle-btn').forEach(btn => {
   });
 });
 
+// Close warnings on scroll
+document.getElementById('matrixScroll').addEventListener('scroll', function() {
+  if (document.querySelector('.overload-warning')) renderMatrix();
+});
+
+// Debounced resize
+let resizeTimer;
+window.addEventListener('resize', function() {
+  clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(renderMatrix, 200);
+});
+
 renderMatrix();
 </script>
 
