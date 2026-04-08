@@ -127,5 +127,201 @@ body {
   </div>
 </div>
 
+<script>
+// ── TEAM ROSTER (37 billable staff) ─────────────────────────────────────────
+const TEAM = [
+  // Account/PM (billableTarget: 32)
+  { id: 'sophie_morales',   name: 'Sophie Morales',   initials: 'SM', role: 'Account Director',          dept: 'account',     capacity: 40, billableTarget: 32, currentLoad: 42 },
+  { id: 'tomas_reyes',      name: 'Tomás Reyes',       initials: 'TR', role: 'Sr. Account Manager',       dept: 'account',     capacity: 40, billableTarget: 32, currentLoad: 34 },
+  { id: 'alina_park',       name: 'Alina Park',        initials: 'AP', role: 'Account Manager',           dept: 'account',     capacity: 40, billableTarget: 32, currentLoad: 30 },
+  { id: 'james_whitfield',  name: 'James Whitfield',   initials: 'JW', role: 'Sr. Project Manager',       dept: 'account',     capacity: 40, billableTarget: 32, currentLoad: 36 },
+  { id: 'priya_nair',       name: 'Priya Nair',        initials: 'PN', role: 'Project Manager',           dept: 'account',     capacity: 40, billableTarget: 32, currentLoad: 28 },
+  { id: 'casey_liu',        name: 'Casey Liu',         initials: 'CL', role: 'Project Coordinator',       dept: 'account',     capacity: 40, billableTarget: 32, currentLoad: 21 },
+
+  // Design (billableTarget: 34)
+  { id: 'nico_strand',      name: 'Nico Strand',       initials: 'NS', role: 'Sr. Designer / Art Dir.',   dept: 'design',      capacity: 40, billableTarget: 34, currentLoad: 48 },
+  { id: 'yuki_tanaka',      name: 'Yuki Tanaka',       initials: 'YT', role: 'Senior Designer',           dept: 'design',      capacity: 40, billableTarget: 34, currentLoad: 36 },
+  { id: 'bea_cortez',       name: 'Bea Cortez',        initials: 'BC', role: 'Mid Designer',              dept: 'design',      capacity: 40, billableTarget: 34, currentLoad: 41 },
+  { id: 'finn_gallagher',   name: 'Finn Gallagher',    initials: 'FG', role: 'Mid Designer',              dept: 'design',      capacity: 40, billableTarget: 34, currentLoad: 35 },
+  { id: 'ava_lindstrom',    name: 'Ava Lindström',     initials: 'AL', role: 'Mid Designer',              dept: 'design',      capacity: 40, billableTarget: 34, currentLoad: 22 },
+  { id: 'jordan_tate',      name: 'Jordan Tate',       initials: 'JT', role: 'Mid Designer',              dept: 'design',      capacity: 40, billableTarget: 34, currentLoad: 33 },
+  { id: 'zara_osei',        name: 'Zara Osei',         initials: 'ZO', role: 'Junior Designer',           dept: 'design',      capacity: 40, billableTarget: 34, currentLoad: 30 },
+  { id: 'milo_varga',       name: 'Milo Varga',        initials: 'MV', role: 'Junior Designer',           dept: 'design',      capacity: 40, billableTarget: 34, currentLoad: 28 },
+  { id: 'iris_chung',       name: 'Iris Chung',        initials: 'IC', role: 'Motion Designer',           dept: 'design',      capacity: 40, billableTarget: 34, currentLoad: 32 },
+  { id: 'kai_bergstrom',    name: 'Kai Bergström',     initials: 'KB', role: 'UX Designer',               dept: 'design',      capacity: 40, billableTarget: 34, currentLoad: 35 },
+  { id: 'luna_esperanza',   name: 'Luna Esperanza',    initials: 'LE', role: 'Brand Designer',            dept: 'design',      capacity: 40, billableTarget: 34, currentLoad: 34 },
+  { id: 'sam_delacroix',    name: 'Sam Delacroix',     initials: 'SD', role: 'Production Designer',       dept: 'design',      capacity: 40, billableTarget: 34, currentLoad: 31 },
+
+  // Development (billableTarget: 34)
+  { id: 'owen_marsh',       name: 'Owen Marsh',        initials: 'OM', role: 'Lead Developer',            dept: 'development', capacity: 40, billableTarget: 34, currentLoad: 46 },
+  { id: 'diana_kovac',      name: 'Diana Kovač',       initials: 'DK', role: 'Senior Developer',          dept: 'development', capacity: 40, billableTarget: 34, currentLoad: 38 },
+  { id: 'leo_farias',       name: 'Leo Farias',        initials: 'LF', role: 'Mid Developer',             dept: 'development', capacity: 40, billableTarget: 34, currentLoad: 34 },
+  { id: 'nadia_volkov',     name: 'Nadia Volkov',      initials: 'NV', role: 'Mid Developer',             dept: 'development', capacity: 40, billableTarget: 34, currentLoad: 36 },
+  { id: 'ravi_subramanian', name: 'Ravi Subramanian',  initials: 'RS', role: 'Mid Developer',             dept: 'development', capacity: 40, billableTarget: 34, currentLoad: 32 },
+  { id: 'elodie_blanc',     name: 'Elodie Blanc',      initials: 'EB', role: 'Junior Developer',          dept: 'development', capacity: 40, billableTarget: 34, currentLoad: 19 },
+  { id: 'marcus_webb',      name: 'Marcus Webb',       initials: 'MW', role: 'Junior Developer',          dept: 'development', capacity: 40, billableTarget: 34, currentLoad: 30 },
+  { id: 'hana_yoshida',     name: 'Hana Yoshida',      initials: 'HY', role: 'Front-End Developer',       dept: 'development', capacity: 40, billableTarget: 34, currentLoad: 33 },
+
+  // Strategy (billableTarget: 30)
+  { id: 'celeste_durand',   name: 'Celeste Durand',    initials: 'CD', role: 'Senior Strategist',         dept: 'strategy',    capacity: 40, billableTarget: 30, currentLoad: 38 },
+  { id: 'andre_kim',        name: 'Andre Kim',         initials: 'AK', role: 'Strategist',                dept: 'strategy',    capacity: 40, billableTarget: 30, currentLoad: 30 },
+  { id: 'tessa_moreno',     name: 'Tessa Moreno',      initials: 'TM', role: 'Junior Strategist',         dept: 'strategy',    capacity: 40, billableTarget: 30, currentLoad: 26 },
+  { id: 'wes_calloway',     name: 'Wes Calloway',      initials: 'WC', role: 'Data/Analytics Strategist', dept: 'strategy',    capacity: 40, billableTarget: 30, currentLoad: 29 },
+
+  // Content (billableTarget: 34)
+  { id: 'rowan_griffiths',  name: 'Rowan Griffiths',   initials: 'RG', role: 'Sr. Content Creator',       dept: 'content',     capacity: 40, billableTarget: 34, currentLoad: 36 },
+  { id: 'jia_liang',        name: 'Jia Liang',         initials: 'JL', role: 'Content Creator',           dept: 'content',     capacity: 40, billableTarget: 34, currentLoad: 31 },
+  { id: 'elliot_saunders',  name: 'Elliot Saunders',   initials: 'ES', role: 'Content Creator',           dept: 'content',     capacity: 40, billableTarget: 34, currentLoad: 20 },
+];
+
+// ── PROJECTS ─────────────────────────────────────────────────────────────────
+const PROJECTS = [
+  { id: 'evergreen',      name: 'Evergreen Outdoor Co.',      type: 'retainer', value: 45000,  health: 'green'  },
+  { id: 'brightwash',     name: 'Brightwash Home',            type: 'retainer', value: 38000,  health: 'green'  },
+  { id: 'vello',          name: 'Vello Cycling',              type: 'retainer', value: 32000,  health: 'red'    },
+  { id: 'petal',          name: 'Petal & Thorn',              type: 'retainer', value: 28000,  health: 'green'  },
+  { id: 'kova',           name: 'Kova Skincare',              type: 'retainer', value: 25000,  health: 'yellow' },
+  { id: 'drift',          name: 'Drift Coffee Roasters',      type: 'retainer', value: 22000,  health: 'green'  },
+  { id: 'summit',         name: 'Summit Pet Supply',          type: 'retainer', value: 18000,  health: 'green'  },
+  { id: 'moonridge',      name: 'Moonridge Spirits',          type: 'retainer', value: 12000,  health: 'yellow' },
+  { id: 'river_district', name: 'River District Rebrand',     type: 'project',  value: 85000,  health: 'green',  burned: 73, status: 'On track'    },
+  { id: 'cascade',        name: 'Cascade Athletic Website',   type: 'project',  value: 120000, health: 'green',  burned: 40, status: 'On track'    },
+  { id: 'fieldwork',      name: 'Fieldwork Provisions Launch',type: 'project',  value: 95000,  health: 'green',  burned: 19, status: 'Early stage' },
+  { id: 'nw_natural',     name: 'NW Natural Rebrand',         type: 'project',  value: 55000,  health: 'yellow', burned: 75, status: 'Over scope'  },
+];
+
+// ── ALLOCATION MATRIX (weekly hours per person per project) ──────────────────
+const allocations = {};
+PROJECTS.forEach(p => { allocations[p.id] = {}; });
+
+// Evergreen Outdoor Co.
+allocations['evergreen']['sophie_morales']  = 5;
+allocations['evergreen']['nico_strand']     = 18;
+allocations['evergreen']['owen_marsh']      = 14;
+allocations['evergreen']['celeste_durand']  = 6;
+allocations['evergreen']['rowan_griffiths'] = 9;
+allocations['evergreen']['james_whitfield'] = 3;   // PM support
+allocations['evergreen']['zara_osei']       = 4;   // design support
+allocations['evergreen']['luna_esperanza']  = 4;   // brand design support
+
+// Brightwash Home
+allocations['brightwash']['tomas_reyes']   = 4;
+allocations['brightwash']['yuki_tanaka']   = 15;
+allocations['brightwash']['diana_kovac']   = 13;
+allocations['brightwash']['andre_kim']     = 4;
+allocations['brightwash']['jia_liang']     = 8;
+allocations['brightwash']['casey_liu']     = 3;    // coordination
+allocations['brightwash']['jordan_tate']   = 2;    // design support
+
+// Vello Cycling
+allocations['vello']['sophie_morales'] = 4;
+allocations['vello']['bea_cortez']     = 14;
+allocations['vello']['leo_farias']     = 10;
+allocations['vello']['celeste_durand'] = 5;
+allocations['vello']['elliot_saunders']= 6;
+allocations['vello']['casey_liu']      = 2;        // coordination
+allocations['vello']['ava_lindstrom']  = 2;        // design support
+
+// Petal & Thorn
+allocations['petal']['alina_park']    = 3;
+allocations['petal']['finn_gallagher']= 13;
+allocations['petal']['hana_yoshida']  = 9;
+allocations['petal']['tessa_moreno']  = 3;
+allocations['petal']['jia_liang']     = 7;
+allocations['petal']['ava_lindstrom'] = 4;         // design support
+allocations['petal']['priya_nair']    = 3;         // PM support
+
+// Kova Skincare
+allocations['kova']['tomas_reyes']    = 3;
+allocations['kova']['jordan_tate']    = 10;
+allocations['kova']['nadia_volkov']   = 9;
+allocations['kova']['andre_kim']      = 4;
+allocations['kova']['rowan_griffiths']= 4;
+allocations['kova']['priya_nair']     = 3;         // PM support
+
+// Drift Coffee Roasters
+allocations['drift']['priya_nair']        = 2;
+allocations['drift']['luna_esperanza']    = 9;
+allocations['drift']['ravi_subramanian']  = 9;
+allocations['drift']['wes_calloway']      = 2;
+allocations['drift']['rowan_griffiths']   = 6;
+allocations['drift']['casey_liu']         = 2;     // coordination
+
+// Summit Pet Supply
+allocations['summit']['james_whitfield']  = 2;
+allocations['summit']['zara_osei']        = 8;
+allocations['summit']['marcus_webb']      = 9;    // 7 primary + 2 dev support
+allocations['summit']['tessa_moreno']     = 2;
+allocations['summit']['jia_liang']        = 5;
+allocations['summit']['casey_liu']        = 2;    // coordination
+
+// Moonridge Spirits
+allocations['moonridge']['alina_park']     = 2;
+allocations['moonridge']['milo_varga']     = 8;   // 6 primary + 2 additional
+allocations['moonridge']['elodie_blanc']   = 6;   // 4 primary + 2 additional
+allocations['moonridge']['elliot_saunders']= 3;
+
+// River District Rebrand
+allocations['river_district']['nico_strand']    = 8;
+allocations['river_district']['kai_bergstrom']  = 8;
+allocations['river_district']['luna_esperanza'] = 4;
+allocations['river_district']['owen_marsh']     = 4;
+allocations['river_district']['iris_chung']     = 4;    // motion
+allocations['river_district']['sam_delacroix']  = 4;    // production
+
+// Cascade Athletic Website
+allocations['cascade']['yuki_tanaka']   = 8;
+allocations['cascade']['bea_cortez']    = 6;
+allocations['cascade']['owen_marsh']    = 12;
+allocations['cascade']['diana_kovac']   = 8;
+allocations['cascade']['iris_chung']    = 4;
+allocations['cascade']['marcus_webb']   = 4;            // dev support
+
+// Fieldwork Provisions Launch
+allocations['fieldwork']['sam_delacroix']   = 9;   // 6 primary + 3 additional design
+allocations['fieldwork']['ava_lindstrom']   = 10;
+allocations['fieldwork']['leo_farias']      = 6;
+allocations['fieldwork']['nadia_volkov']    = 4;
+allocations['fieldwork']['elliot_saunders'] = 4;
+allocations['fieldwork']['elodie_blanc']    = 3;   // dev support
+
+// NW Natural Rebrand
+allocations['nw_natural']['nico_strand']       = 10;
+allocations['nw_natural']['finn_gallagher']    = 8;
+allocations['nw_natural']['kai_bergstrom']     = 6;
+allocations['nw_natural']['hana_yoshida']      = 4;
+allocations['nw_natural']['celeste_durand']    = 4;
+allocations['nw_natural']['ravi_subramanian']  = 3;     // dev support
+allocations['nw_natural']['wes_calloway']      = 3;     // analytics
+
+// ── UTILITY CONSTANTS & HELPERS ───────────────────────────────────────────────
+const HEALTH_COLORS = { green: '#28a745', yellow: '#ffc107', red: '#dc3545' };
+const HEALTH_LABELS = { green: 'Healthy',  yellow: 'At Risk',  red: 'Critical' };
+const WEEK_MONTH_FACTOR = 4.33;
+
+function getPersonTotal(personId) {
+  let total = 0;
+  for (const projId in allocations) {
+    total += (allocations[projId][personId] || 0);
+  }
+  return total;
+}
+
+function getUtilization(personId) {
+  const person = TEAM.find(t => t.id === personId);
+  return person ? getPersonTotal(personId) / person.billableTarget : 0;
+}
+
+function getStatusColor(util) {
+  if (util > 1.15) return '#dc3545';
+  if (util < 0.70) return '#28a745';
+  return '#555';
+}
+
+function formatMoney(n) {
+  return n >= 1000 ? '$' + Math.round(n / 1000) + 'K' : '$' + n;
+}
+</script>
+
 </body>
 </html>
