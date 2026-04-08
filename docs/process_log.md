@@ -1,11 +1,37 @@
 ---
 title: Process Log
-version: 1.6
+version: 1.7
 created: 2026-04-06
-updated: 2026-04-07
+updated: 2026-04-08
 ---
 
 # Process Log
+
+---
+
+## 2026-04-08 — Guided Tour Page (index.html)
+
+**Prompt:**
+Generate the index.html guided tour page for this project. Showcase all tools in sequence. For each tool show the name, the problem it solves, the prompt that built it, and an embedded preview. Include a narrative intro about building a complete agency operations suite with Claude Code. Commit and push when done.
+
+**What was built:**
+- `index.html` — Guided tour page showcasing all 5 tools with:
+  - Hero section with project stats (5 tools, 40 team members, 8 clients, $69K at risk, $220K retainers)
+  - Sticky navigation bar linking to each tool section
+  - Narrative intro about building an agency operations suite with Claude Code
+  - 5 tool sections, each with: numbered header, problem statement, original prompt (in dark code block), and embedded iframe preview with "Open Full Size" link
+  - Browser-chrome preview frames with red/yellow/green dots
+  - Footer with project summary stats
+
+**Key decisions:**
+- Used the 5 tools that actually exist (not the 7 mentioned in the prompt — 2 were never built)
+- Embedded live iframes rather than screenshots for interactive previews
+- Used lazy loading on iframes to avoid loading all 5 tools at once
+- Prompts shown are the original user prompts, not the subagent dispatch prompts
+
+**Files created/modified:**
+- `index.html` (created)
+- `docs/process_log.md` (modified)
 
 ---
 

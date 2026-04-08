@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sidebar Creative — Agency Operations Suite</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 16px; scroll-behavior: smooth; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: #f5f5f5;
+  color: #222;
+}
+
+/* Header */
+.hero {
+  background: #1a1a1a;
+  color: #fff;
+  padding: 60px 40px;
+  text-align: center;
+}
+.hero-brand { font-size: 0.9rem; text-transform: uppercase; letter-spacing: .12em; color: #777; margin-bottom: 12px; }
+.hero-title { font-size: 2.4rem; font-weight: 700; letter-spacing: -.02em; margin-bottom: 16px; }
+.hero-subtitle { font-size: 1.1rem; color: #aaa; max-width: 680px; margin: 0 auto 28px; line-height: 1.6; }
+.hero-stats { display: flex; justify-content: center; gap: 40px; margin-top: 28px; }
+.hero-stat-value { font-size: 2rem; font-weight: 700; }
+.hero-stat-label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: .06em; color: #777; margin-top: 4px; }
+.hero-stat-value.green { color: #28a745; }
+.hero-stat-value.red { color: #dc3545; }
+.hero-stat-value.blue { color: #007bff; }
+
+/* Nav */
+.tool-nav {
+  background: #fff;
+  border-bottom: 1px solid #e0e0e0;
+  padding: 0 40px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  gap: 0;
+  overflow-x: auto;
+}
+.tool-nav a {
+  padding: 14px 20px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #555;
+  text-decoration: none;
+  border-bottom: 2px solid transparent;
+  white-space: nowrap;
+  transition: color .15s, border-color .15s;
+}
+.tool-nav a:hover { color: #1a1a1a; border-bottom-color: #ccc; }
+
+/* Intro */
+.intro {
+  max-width: 800px;
+  margin: 48px auto;
+  padding: 0 40px;
+  line-height: 1.8;
+  font-size: 0.95rem;
+  color: #444;
+}
+.intro h2 { font-size: 1.5rem; font-weight: 700; color: #1a1a1a; margin-bottom: 16px; }
+.intro p { margin-bottom: 16px; }
+.intro strong { color: #222; }
+
+/* Tool sections */
+.tool-section {
+  max-width: 1200px;
+  margin: 0 auto 60px;
+  padding: 0 40px;
+}
+.tool-header {
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+  margin-bottom: 8px;
+}
+.tool-number {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #fff;
+  background: #1a1a1a;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.tool-name { font-size: 1.4rem; font-weight: 700; color: #1a1a1a; }
+.tool-problem {
+  font-size: 0.95rem;
+  color: #555;
+  margin-bottom: 16px;
+  line-height: 1.6;
+  max-width: 800px;
+}
+.tool-prompt {
+  background: #1a1a1a;
+  color: #ccc;
+  padding: 16px 20px;
+  border-radius: 6px;
+  font-size: 0.82rem;
+  line-height: 1.6;
+  margin-bottom: 16px;
+  position: relative;
+}
+.tool-prompt::before {
+  content: 'PROMPT';
+  position: absolute;
+  top: -10px;
+  left: 16px;
+  background: #1a1a1a;
+  padding: 0 8px;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: .1em;
+  color: #555;
+}
+.tool-prompt em { color: #fff; font-style: normal; }
+.tool-preview {
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  overflow: hidden;
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(0,0,0,.06);
+}
+.tool-preview iframe {
+  width: 100%;
+  height: 600px;
+  border: none;
+  display: block;
+}
+.tool-preview-bar {
+  background: #f5f5f5;
+  border-bottom: 1px solid #e0e0e0;
+  padding: 8px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.tool-preview-dots { display: flex; gap: 6px; }
+.tool-preview-dots span { width: 10px; height: 10px; border-radius: 50%; }
+.dot-red { background: #ff5f57; }
+.dot-yellow { background: #ffbd2e; }
+.dot-green { background: #28c840; }
+.tool-preview-file { font-size: 0.75rem; color: #888; }
+.tool-preview-open {
+  font-size: 0.75rem;
+  color: #007bff;
+  text-decoration: none;
+  font-weight: 600;
+}
+.tool-preview-open:hover { text-decoration: underline; }
+
+/* Divider */
+.divider {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 40px;
+}
+.divider hr {
+  border: none;
+  border-top: 1px solid #e0e0e0;
+  margin-bottom: 48px;
+}
+
+/* Footer */
+.footer {
+  background: #1a1a1a;
+  color: #777;
+  padding: 32px 40px;
+  text-align: center;
+  font-size: 0.8rem;
+  line-height: 1.6;
+}
+.footer strong { color: #aaa; }
+</style>
+</head>
+<body>
+
+<!-- Hero -->
+<div class="hero">
+  <div class="hero-brand">Sidebar Creative</div>
+  <div class="hero-title">Agency Operations Suite</div>
+  <div class="hero-subtitle">A complete suite of operational tools built entirely with Claude Code. Five interactive dashboards that replace fragmented spreadsheets, manual Friday reports, and hallway-conversation resource planning with data-driven, real-time visibility.</div>
+  <div class="hero-stats">
+    <div><div class="hero-stat-value">5</div><div class="hero-stat-label">Tools Built</div></div>
+    <div><div class="hero-stat-value green">40</div><div class="hero-stat-label">Team Members</div></div>
+    <div><div class="hero-stat-value">8</div><div class="hero-stat-label">Retainer Clients</div></div>
+    <div><div class="hero-stat-value red">$69K</div><div class="hero-stat-label">Revenue at Risk</div></div>
+    <div><div class="hero-stat-value blue">$220K</div><div class="hero-stat-label">Monthly Retainers</div></div>
+  </div>
+</div>
+
+<!-- Navigation -->
+<nav class="tool-nav">
+  <a href="#tool-1">1. Timeline</a>
+  <a href="#tool-2">2. Resource Allocator</a>
+  <a href="#tool-3">3. Capacity Planner</a>
+  <a href="#tool-4">4. Status Reports</a>
+  <a href="#tool-5">5. Health Scorer</a>
+</nav>
+
+<!-- Intro -->
+<div class="intro">
+  <h2>Building an Agency Operations Suite with Claude Code</h2>
+  <p><strong>Sidebar Creative</strong> is a 40-person digital agency in Portland doing $6.5M in annual revenue. Like many agencies that have grown fast, their operational infrastructure hasn't kept pace. Scope creep is endemic. Resource loading is invisible. Profitability is a black box until quarter-end. And every Friday afternoon, account directors spend 2-3 hours per client manually assembling performance reports in Google Slides.</p>
+  <p>This project demonstrates how Claude Code can build a complete suite of interconnected operational tools from a single brand definition and data set. Each tool was built in a single conversation using natural language prompts — no frameworks, no dependencies, no build steps. Every tool is a self-contained HTML file that opens in any browser.</p>
+  <p>The five tools work together as a system: the <strong>Timeline Dashboard</strong> shows project status at a glance, the <strong>Resource Allocator</strong> reveals who's overloaded and who has capacity, the <strong>Capacity Planner</strong> forecasts where bottlenecks will form next quarter, the <strong>Status Reports</strong> eliminate the Friday reporting grind, and the <strong>Health Scorer</strong> surfaces which clients need intervention before it's too late.</p>
+</div>
+
+<!-- Tool 1: Project Timeline -->
+<div class="divider"><hr></div>
+<div class="tool-section" id="tool-1">
+  <div class="tool-header">
+    <div class="tool-number">1</div>
+    <div class="tool-name">Project Timeline Dashboard</div>
+  </div>
+  <div class="tool-problem">
+    <strong>Problem it solves:</strong> No single view of all active engagements, their timelines, and health status. Partners relied on asking account directors "how's Project X going?" in hallway conversations.
+  </div>
+  <div class="tool-prompt">
+    Build a project timeline dashboard for Sidebar Creative. Read the brand definition and client portfolio data. Show all active projects on an <em>interactive Gantt-style timeline</em> with start dates, deadlines, current progress, and RAG status. Include the 8 retainer clients and the project-based engagements. Output as an interactive HTML file.
+  </div>
+  <div class="tool-preview">
+    <div class="tool-preview-bar">
+      <div class="tool-preview-dots"><span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span></div>
+      <span class="tool-preview-file">tools/project_timeline.html</span>
+      <a href="tools/project_timeline.html" target="_blank" class="tool-preview-open">Open Full Size &rarr;</a>
+    </div>
+    <iframe src="tools/project_timeline.html" loading="lazy"></iframe>
+  </div>
+</div>
+
+<!-- Tool 2: Resource Allocator -->
+<div class="divider"><hr></div>
+<div class="tool-section" id="tool-2">
+  <div class="tool-header">
+    <div class="tool-number">2</div>
+    <div class="tool-name">Resource Allocator</div>
+  </div>
+  <div class="tool-problem">
+    <strong>Problem it solves:</strong> Resource loading was blind. Some team members were working 50+ hour weeks while others had open capacity. Partners allocated people based on gut feel. Senior staff were on every project because they were the "safe" choice, burning them out while juniors didn't get growth opportunities.
+  </div>
+  <div class="tool-prompt">
+    Build a resource allocator for Sidebar Creative. Read the team roster and project data. Show each team member's current capacity &mdash; <em>hours allocated vs. available</em> &mdash; with visual indicators for overloaded (red) and underutilized (green) staff. Let me <em>drag or reassign team members</em> across projects and see capacity update in real time. Output as an interactive HTML file.
+  </div>
+  <div class="tool-preview">
+    <div class="tool-preview-bar">
+      <div class="tool-preview-dots"><span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span></div>
+      <span class="tool-preview-file">tools/resource_allocator.html</span>
+      <a href="tools/resource_allocator.html" target="_blank" class="tool-preview-open">Open Full Size &rarr;</a>
+    </div>
+    <iframe src="tools/resource_allocator.html" loading="lazy"></iframe>
+  </div>
+</div>
+
+<!-- Tool 3: Capacity Planner -->
+<div class="divider"><hr></div>
+<div class="tool-section" id="tool-3">
+  <div class="tool-header">
+    <div class="tool-number">3</div>
+    <div class="tool-name">Capacity Planner</div>
+  </div>
+  <div class="tool-problem">
+    <strong>Problem it solves:</strong> No way to forecast where bottlenecks would form as projects end and new work comes in. The agency couldn't answer "can we take on a new client next month?" without a week of spreadsheet archaeology.
+  </div>
+  <div class="tool-prompt">
+    Build a capacity planner for Sidebar Creative. Read the team roster, current project allocations, and upcoming project pipeline. <em>Forecast team capacity for the next quarter</em> &mdash; show where bottlenecks will form, which roles need hiring or contracting, and when bench time opens up. Let me <em>add hypothetical new projects</em> and see how they impact capacity. Output as an interactive HTML file.
+  </div>
+  <div class="tool-preview">
+    <div class="tool-preview-bar">
+      <div class="tool-preview-dots"><span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span></div>
+      <span class="tool-preview-file">tools/capacity_planner.html</span>
+      <a href="tools/capacity_planner.html" target="_blank" class="tool-preview-open">Open Full Size &rarr;</a>
+    </div>
+    <iframe src="tools/capacity_planner.html" loading="lazy"></iframe>
+  </div>
+</div>
+
+<!-- Tool 4: Status Reports -->
+<div class="divider"><hr></div>
+<div class="tool-section" id="tool-4">
+  <div class="tool-header">
+    <div class="tool-number">4</div>
+    <div class="tool-name">Status Report Generator</div>
+  </div>
+  <div class="tool-problem">
+    <strong>Problem it solves:</strong> Every Friday afternoon, account directors stopped strategic work to spend 2-3 hours per client manually assembling performance reports in Google Slides &mdash; pulling data from GA, social platforms, email tools, and the CRM. That's 16-24 hours of senior account time per month spent formatting instead of thinking.
+  </div>
+  <div class="tool-prompt">
+    Build an automated status report generator for Sidebar Creative. Read all project data &mdash; timelines, hours burned vs. budgeted, milestones, RAG status. <em>Generate a written weekly status report</em> for each client covering progress, blockers, next steps, and budget health. Also generate an <em>internal roll-up report</em> summarizing all 8 clients for the Monday leadership meeting. Output the reports as markdown files and build an HTML interface to generate and view them.
+  </div>
+  <div class="tool-preview">
+    <div class="tool-preview-bar">
+      <div class="tool-preview-dots"><span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span></div>
+      <span class="tool-preview-file">tools/status_reports.html</span>
+      <a href="tools/status_reports.html" target="_blank" class="tool-preview-open">Open Full Size &rarr;</a>
+    </div>
+    <iframe src="tools/status_reports.html" loading="lazy"></iframe>
+  </div>
+</div>
+
+<!-- Tool 5: Client Health Scorer -->
+<div class="divider"><hr></div>
+<div class="tool-section" id="tool-5">
+  <div class="tool-header">
+    <div class="tool-number">5</div>
+    <div class="tool-name">Client Health Scorer</div>
+  </div>
+  <div class="tool-problem">
+    <strong>Problem it solves:</strong> Profitability was invisible until quarter-end. Two retainer clients were almost certainly unprofitable, but nobody could prove it. Account health was assessed by gut feel, not data. By the time problems surfaced, the client was already shopping for a new agency.
+  </div>
+  <div class="tool-prompt">
+    Build a client health scorer for Sidebar Creative. Read the client performance data and SOW terms. <em>Score each client green, yellow, or red</em> based on the health framework &mdash; performance metrics, profitability, and relationship signals. Show all 8 clients <em>ranked by health</em> with the key risk factors called out. Flag the at-risk client and the one that recently expanded. Output as an interactive HTML file.
+  </div>
+  <div class="tool-preview">
+    <div class="tool-preview-bar">
+      <div class="tool-preview-dots"><span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span></div>
+      <span class="tool-preview-file">tools/client_health.html</span>
+      <a href="tools/client_health.html" target="_blank" class="tool-preview-open">Open Full Size &rarr;</a>
+    </div>
+    <iframe src="tools/client_health.html" loading="lazy"></iframe>
+  </div>
+</div>
+
+<!-- Footer -->
+<div class="footer">
+  <p><strong>Sidebar Creative — Agency Operations Suite</strong></p>
+  <p>Built with Claude Code. Every tool is a single self-contained HTML file with zero external dependencies.</p>
+  <p>5 tools &middot; 5 tutorials &middot; 4 data files &middot; 1 brand definition &middot; 0 frameworks</p>
+</div>
+
+</body>
+</html>
