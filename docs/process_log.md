@@ -1,11 +1,39 @@
 ---
 title: Process Log
-version: 1.2
+version: 1.3
 created: 2026-04-06
 updated: 2026-04-07
 ---
 
 # Process Log
+
+---
+
+## 2026-04-07 — Capacity Planner Scaffold (Tool 3, Tasks 1–2)
+
+**Prompt:**
+You are implementing Tasks 1-2 for the capacity planner: HTML scaffold and data layer. Create `tools/capacity_planner.html` — a single self-contained HTML file with: same visual conventions as resource_allocator.html (dark header, system fonts, status colors); a header with "Sidebar Creative" / "Capacity Planner" / date; 4 stat cards (Bottlenecks, Bench Openings, Hypothetical Projects, Net Capacity Change); a three-panel layout with Capacity Forecast, Projects Driving Demand, and Pipeline Risks panels; and a full data layer with TEAM array, PROJECTS array with timeline fields, allocations object, and all utility/forecast functions.
+
+**What was built:**
+- `tools/capacity_planner.html` — HTML scaffold and data layer including:
+  - Header, 4 stat cards, three-panel flexbox layout (main-content + sidebar)
+  - Full CSS (panels, forecast table, projects table, risk items, toggle switches, hypothetical project form styles)
+  - TEAM array (33 billable staff, copied exactly from resource_allocator.html)
+  - PROJECTS array (12 projects with added endMonth/endsHalf timeline fields)
+  - allocations object (all 12 project allocations, copied exactly)
+  - All utility/forecast functions: getProjectMonthMultiplier, getProjectDeptMonthHours, getDeptMonthDemand, getDeptCapacity, getCapacityColor, getCapacityLabel, formatMoney, getRiskAdjustment, getPersonMonthDemand, getPersonRiskAdjustment, getProjectMonthTotal, getProjectRiskAdjustment, isProjectRiskAffected, getTimelineTag
+  - State variables: hypotheticalProjects, riskToggles, expandedDept
+  - Render stubs for later tasks: renderForecast, renderProjects, renderRisks, updateStats
+
+**Key decisions:**
+- TEAM and allocations copied exactly from resource_allocator.html — no invented data
+- PROJECTS extended with endMonth/endsHalf timeline fields (retainers get null, project-based get specific end months)
+- All CSS self-contained in file, matching visual conventions of resource_allocator.html
+- Render functions left as stubs per task scoping — wired to renderAll() which is called on load
+
+**Files created/modified:**
+- `tools/capacity_planner.html` (created)
+- `docs/process_log.md` (modified)
 
 ---
 
