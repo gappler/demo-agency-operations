@@ -1,11 +1,35 @@
 ---
 title: Process Log
-version: 1.9
+version: 2.0
 created: 2026-04-06
-updated: 2026-04-07
+updated: 2026-04-08
 ---
 
 # Process Log
+
+---
+
+## 2026-04-08 — Project Notes & Skills Inventory
+
+**Prompt:**
+Create docs/project_notes.md and add the skills inventory you just generated. Also append the build methodology pattern as a reusable reference. This file will be an ongoing log of insights and methodology notes for this project.
+
+**What was built:**
+- `docs/project_notes.md` — Ongoing project notes file containing:
+  - Full skills inventory (6 superpowers skills, 6 core tools, agent/MCP usage summary)
+  - Reusable 9-step build methodology pattern extracted from the 7-tool build process
+  - Key principles section (zero dependencies, data consistency, sequential builds, document-as-you-go)
+  - Insights log section for ongoing entries
+
+**Key decisions:**
+- Structured as a living document with YAML metadata header per global preferences
+- Separated skills inventory from methodology so each section is independently referenceable
+- Added an insights log section (newest-first) for future entries
+- Documented skills that were NOT invoked for completeness
+
+**Files created or modified:**
+- `docs/project_notes.md` (created)
+- `docs/process_log.md` (updated — this entry)
 
 ---
 
