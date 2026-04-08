@@ -83,6 +83,56 @@ body {
 .toggle-btn:first-child { border-radius: 4px 0 0 4px; }
 .toggle-btn:last-child { border-radius: 0 4px 4px 0; border-left: 0; }
 .toggle-btn.active { background: #1a1a1a; color: #fff; border-color: #1a1a1a; }
+
+/* Matrix Container */
+.matrix-wrap { padding: 0 28px 28px; }
+.matrix-scroll {
+  overflow: auto;
+  max-height: calc(100vh - 220px);
+  background: #fff;
+  border-radius: 6px;
+  box-shadow: 0 1px 3px rgba(0,0,0,.08);
+}
+.matrix-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.matrix-table th.project-col, .matrix-table td.project-col {
+  position: sticky; left: 0; z-index: 2; min-width: 200px; max-width: 220px; background: inherit;
+}
+.matrix-table thead th.project-col { z-index: 3; }
+.matrix-table tfoot td, .matrix-table tfoot th { position: sticky; bottom: 0; z-index: 2; }
+.matrix-table tfoot th.project-col { z-index: 3; }
+.matrix-table thead th {
+  background: #1a1a1a; color: #fff; padding: 8px 4px; text-align: center;
+  font-weight: 600; font-size: 11px; vertical-align: bottom; min-width: 72px;
+}
+.matrix-table thead th.project-col { text-align: left; padding: 10px 12px; font-size: 12px; background: #1a1a1a; }
+.col-role { font-size: 10px; font-weight: 400; opacity: 0.7; }
+.col-name { font-size: 11px; margin-top: 1px; }
+.col-bar { width: 40px; height: 4px; background: rgba(255,255,255,0.2); border-radius: 2px; margin: 3px auto 0; }
+.col-bar-fill { height: 100%; border-radius: 2px; }
+.col-util { font-size: 9px; margin-top: 1px; }
+.section-row td {
+  background: #f0f0f0; padding: 6px 12px; font-weight: 700; font-size: 11px;
+  text-transform: uppercase; letter-spacing: 1px; color: #555;
+}
+.project-name { font-weight: 600; font-size: 13px; }
+.project-meta { display: flex; align-items: center; gap: 6px; margin-top: 2px; }
+.project-value { font-size: 10px; color: #888; }
+.health-dot { width: 6px; height: 6px; border-radius: 50%; display: inline-block; }
+.health-label { font-size: 10px; }
+.hour-cell { padding: 4px; text-align: center; cursor: pointer; transition: background .1s; position: relative; }
+.hour-cell:hover { background: #f0f0f0; }
+.hour-val { border-radius: 4px; padding: 5px 0; font-weight: 700; font-size: 13px; }
+.hour-empty { background: #f8f8f8; border: 1px solid #eee; border-radius: 4px; padding: 5px 0; color: #ccc; font-size: 13px; }
+.hour-empty:hover { color: #999; }
+.row-total { padding: 4px 8px; text-align: center; font-weight: 600; font-size: 13px; color: #555; min-width: 55px; }
+.matrix-table tfoot td, .matrix-table tfoot th { background: #1a1a1a; color: #fff; padding: 8px 4px; text-align: center; }
+.matrix-table tfoot th { text-align: left; padding: 10px 12px; font-weight: 700; font-size: 12px; }
+.footer-total { font-weight: 700; font-size: 14px; }
+.footer-target { font-size: 10px; opacity: 0.6; }
+.hour-input {
+  width: 48px; padding: 4px; text-align: center; font-size: 13px; font-weight: 700;
+  font-family: inherit; border: 2px solid #007bff; border-radius: 4px; outline: none; background: #fff;
+}
 </style>
 </head>
 <body>
@@ -124,6 +174,16 @@ body {
   <div class="toggle-group">
     <button class="toggle-btn active" data-period="week">Week</button>
     <button class="toggle-btn" data-period="month">Month</button>
+  </div>
+</div>
+
+<div class="matrix-wrap">
+  <div class="matrix-scroll" id="matrixScroll">
+    <table class="matrix-table" id="matrixTable">
+      <thead id="matrixHead"></thead>
+      <tbody id="matrixBody"></tbody>
+      <tfoot id="matrixFoot"></tfoot>
+    </table>
   </div>
 </div>
 
@@ -342,6 +402,174 @@ function getStatusColor(util) {
 function formatMoney(n) {
   return n >= 1000 ? '$' + Math.round(n / 1000) + 'K' : '$' + n;
 }
+
+let activeDept = 'all';
+let activePeriod = 'week';
+
+function renderMatrix() {
+  const multiplier = activePeriod === 'month' ? WEEK_MONTH_FACTOR : 1;
+  const visibleTeam = activeDept === 'all' ? TEAM : TEAM.filter(t => t.dept === activeDept);
+
+  // THEAD
+  let headHtml = '<tr><th class="project-col">Project</th>';
+  visibleTeam.forEach(person => {
+    const util = getUtilization(person.id);
+    const color = getStatusColor(util);
+    const pct = Math.round(util * 100);
+    const barWidth = Math.min(100, pct);
+    headHtml += `<th>
+      <div class="col-role">${person.role}</div>
+      <div class="col-name">${abbreviateName(person.name)}</div>
+      <div class="col-bar"><div class="col-bar-fill" style="width:${barWidth}%;background:${color};"></div></div>
+      <div class="col-util" style="color:${color === '#555' ? 'rgba(255,255,255,0.7)' : color};">${pct}%</div>
+    </th>`;
+  });
+  headHtml += '<th style="min-width:55px;">Total</th></tr>';
+  document.getElementById('matrixHead').innerHTML = headHtml;
+
+  // TBODY
+  let bodyHtml = '';
+  bodyHtml += renderSection('Retainer Clients', PROJECTS.filter(p => p.type === 'retainer'), visibleTeam, multiplier);
+  bodyHtml += renderSection('Project-Based', PROJECTS.filter(p => p.type === 'project'), visibleTeam, multiplier);
+  document.getElementById('matrixBody').innerHTML = bodyHtml;
+
+  // TFOOT
+  let footHtml = '<tr><th class="project-col">TOTAL ALLOCATED</th>';
+  visibleTeam.forEach(person => {
+    const total = Math.round(getPersonTotal(person.id) * multiplier);
+    const target = Math.round(person.billableTarget * multiplier);
+    const util = getUtilization(person.id);
+    const color = getStatusColor(util);
+    const textColor = color === '#555' ? '#fff' : (color === '#28a745' ? '#6fdc6f' : '#ff6b6b');
+    footHtml += `<td><div class="footer-total" style="color:${textColor};">${total}</div><div class="footer-target">/ ${target} target</div></td>`;
+  });
+  const grandTotal = Math.round(visibleTeam.reduce((sum, p) => sum + getPersonTotal(p.id), 0) * multiplier);
+  footHtml += `<td><div class="footer-total">${grandTotal}</div></td></tr>`;
+  document.getElementById('matrixFoot').innerHTML = footHtml;
+
+  updateStats(multiplier);
+}
+
+function renderSection(title, projectList, visibleTeam, multiplier) {
+  let html = `<tr class="section-row"><td colspan="${visibleTeam.length + 2}">${title}</td></tr>`;
+  projectList.forEach(proj => {
+    html += '<tr style="border-bottom:1px solid #eee;">';
+    html += `<td class="project-col" style="padding:8px 12px;background:#fff;">
+      <div class="project-name">${proj.name}</div>
+      <div class="project-meta">
+        <span class="project-value">${proj.type === 'retainer' ? formatMoney(proj.value) + '/mo' : formatMoney(proj.value) + ' budget'}</span>
+        <span class="health-dot" style="background:${HEALTH_COLORS[proj.health]};"></span>
+        <span class="health-label" style="color:${HEALTH_COLORS[proj.health]};">${proj.type === 'retainer' ? HEALTH_LABELS[proj.health] : (proj.burned + '% burned')}</span>
+      </div>
+    </td>`;
+    let rowTotal = 0;
+    visibleTeam.forEach(person => {
+      const raw = allocations[proj.id][person.id] || 0;
+      const display = Math.round(raw * multiplier);
+      rowTotal += raw;
+      const util = getUtilization(person.id);
+      const color = getStatusColor(util);
+      if (raw > 0) {
+        html += `<td class="hour-cell" data-proj="${proj.id}" data-person="${person.id}"><div class="hour-val" style="background:${color}15;border:1px solid ${color}30;color:${color};">${display}</div></td>`;
+      } else {
+        html += `<td class="hour-cell" data-proj="${proj.id}" data-person="${person.id}"><div class="hour-empty">\u2014</div></td>`;
+      }
+    });
+    html += `<td class="row-total">${Math.round(rowTotal * multiplier)}</td></tr>`;
+  });
+  return html;
+}
+
+function abbreviateName(fullName) {
+  const parts = fullName.split(' ');
+  return parts[0] + ' ' + parts[parts.length - 1][0] + '.';
+}
+
+function updateStats(multiplier) {
+  let overloaded = 0, underutilized = 0, totalHrs = 0, utilSum = 0;
+  TEAM.forEach(person => {
+    const util = getUtilization(person.id);
+    if (util > 1.15) overloaded++;
+    if (util < 0.70) underutilized++;
+    totalHrs += getPersonTotal(person.id);
+    utilSum += util;
+  });
+  document.getElementById('statOverloaded').textContent = overloaded;
+  document.getElementById('statUnderutilized').textContent = underutilized;
+  document.getElementById('statTotalHrs').textContent = Math.round(totalHrs * multiplier).toLocaleString();
+  document.getElementById('statAvgUtil').textContent = Math.round(utilSum / TEAM.length * 100) + '%';
+}
+
+// ── Click-to-Edit ──
+document.getElementById('matrixTable').addEventListener('click', function(e) {
+  const cell = e.target.closest('.hour-cell');
+  if (!cell || cell.querySelector('.hour-input')) return;
+
+  const projId = cell.dataset.proj;
+  const personId = cell.dataset.person;
+  const currentVal = allocations[projId][personId] || 0;
+  const multiplier = activePeriod === 'month' ? WEEK_MONTH_FACTOR : 1;
+  const displayVal = Math.round(currentVal * multiplier);
+
+  const input = document.createElement('input');
+  input.type = 'number';
+  input.className = 'hour-input';
+  input.value = displayVal || '';
+  input.min = 0;
+  input.max = 60;
+
+  cell.innerHTML = '';
+  cell.appendChild(input);
+  input.focus();
+  input.select();
+
+  function commitEdit() {
+    const rawInput = parseInt(input.value) || 0;
+    const weeklyVal = activePeriod === 'month' ? Math.round(rawInput / WEEK_MONTH_FACTOR) : rawInput;
+    const newVal = Math.max(0, weeklyVal);
+    applyEdit(projId, personId, newVal);
+  }
+
+  input.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter' || e.key === 'Tab') { e.preventDefault(); commitEdit(); }
+    else if (e.key === 'Escape') { renderMatrix(); }
+  });
+
+  input.addEventListener('blur', function() {
+    setTimeout(() => {
+      if (!cell.querySelector('.overload-warning')) commitEdit();
+    }, 150);
+  });
+});
+
+function applyEdit(projId, personId, newVal) {
+  if (newVal > 0) { allocations[projId][personId] = newVal; }
+  else { delete allocations[projId][personId]; }
+  renderMatrix();
+}
+
+// ── Event Wiring ──
+document.getElementById('headerDate').textContent = new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+
+document.querySelectorAll('.filter-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    activeDept = btn.dataset.dept;
+    renderMatrix();
+  });
+});
+
+document.querySelectorAll('.toggle-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    activePeriod = btn.dataset.period;
+    renderMatrix();
+  });
+});
+
+renderMatrix();
 </script>
 
 </body>
