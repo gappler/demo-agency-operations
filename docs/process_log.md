@@ -1,11 +1,44 @@
 ---
 title: Process Log
-version: 1.7
+version: 1.8
 created: 2026-04-06
-updated: 2026-04-08
+updated: 2026-04-07
 ---
 
 # Process Log
+
+---
+
+## 2026-04-07 — Multi-Client Performance Dashboard (Tool 6)
+
+**Prompt:**
+Build a multi-client performance dashboard at `tools/performance_dashboard.html` — a single self-contained HTML file with zero dependencies. A 2x4 card grid showing all 8 agency clients with SVG sparklines for 6-month trends. Click any card for a full-page detail view with data tables.
+
+**What was built:**
+- `tools/performance_dashboard.html` — Interactive performance dashboard with:
+  - Dark header matching existing tools (Sidebar Creative / Performance Dashboard / date)
+  - 4 stat cards: Total Clients (8), Avg Monthly Sessions, Portfolio MQLs, Avg SOW Utilization
+  - 2x4 overview grid sorted by health score descending (healthiest first)
+  - Each card: 4px left border by health color, client name, retainer, health score + emoji, trend indicator, 2x2 sparkline grid
+  - SVG sparklines (60x20) colored by growth/decline for each client's key metrics
+  - Custom sparkline metrics per client (Drift uses Subscriptions, Summit uses Instagram Followers, Moonridge uses Dec-Mar only data)
+  - Click-to-expand detail view with 5 sections (Traffic, Leads, Social, Email, Hours)
+  - Each detail section: larger sparkline (200x40), full 6-month data table, MoM change column (green/red)
+  - Moonridge pre-contract months (Oct/Nov) shown as dashes in detail tables
+  - Back to Overview navigation
+
+**Key decisions:**
+- Stats computed dynamically from embedded data (avg sessions, sum MQLs, blended utilization)
+- Sparkline color determined by comparing first vs last data point (green = growth, red = decline, gray = flat)
+- Trend thresholds: >15% strong growth, >5% trending up, +/-5% steady, -5% to -15% declining, <-15% sharp decline
+- Moonridge sparklines use only Dec-Mar (4 data points) for metrics that were zero pre-contract
+- MoM change compares Mar (index 5) vs Feb (index 4) with percentage formatting
+- Matched all visual conventions from existing tools: dark header, #f5f5f5 bg, white cards, system font
+
+**Files created or modified:**
+- `tools/performance_dashboard.html` (created)
+- `docs/process_log.md` (updated)
+- `tutorials/06_performance_dashboard.md` (created)
 
 ---
 

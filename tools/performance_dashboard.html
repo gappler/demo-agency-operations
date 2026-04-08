@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Performance Dashboard — Sidebar Creative</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 14px; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: #f5f5f5;
+  color: #222;
+  min-width: 900px;
+}
+
+/* Header */
+.header {
+  background: #1a1a1a;
+  color: #fff;
+  padding: 14px 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.header-left { display: flex; align-items: baseline; gap: 18px; }
+.header-brand { font-size: 1.25rem; font-weight: 700; letter-spacing: .02em; }
+.header-title { font-size: .95rem; font-weight: 400; color: #aaa; }
+.header-date { font-size: .85rem; color: #777; }
+
+/* Stats Row */
+.stats-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  padding: 18px 28px;
+}
+.stat-card {
+  background: #fff;
+  border-radius: 6px;
+  padding: 16px 20px;
+  box-shadow: 0 1px 3px rgba(0,0,0,.08);
+}
+.stat-label { font-size: .75rem; text-transform: uppercase; letter-spacing: .06em; color: #777; margin-bottom: 4px; }
+.stat-value { font-size: 1.6rem; font-weight: 700; color: #222; }
+
+/* Overview Grid */
+.overview-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+  padding: 0 28px 28px;
+}
+.client-card {
+  background: #fff;
+  border-radius: 6px;
+  box-shadow: 0 1px 3px rgba(0,0,0,.08);
+  padding: 16px 20px;
+  cursor: pointer;
+  transition: box-shadow .15s;
+  border-left: 4px solid #ccc;
+}
+.client-card:hover { box-shadow: 0 3px 10px rgba(0,0,0,.14); }
+.client-card.health-green { border-left-color: #28a745; }
+.client-card.health-yellow { border-left-color: #ffc107; }
+.client-card.health-red { border-left-color: #dc3545; }
+
+.card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
+.card-name { font-size: 1rem; font-weight: 700; }
+.card-retainer { font-size: .8rem; color: #777; margin-top: 2px; }
+.card-health { font-size: .85rem; font-weight: 600; text-align: right; }
+.card-health.green { color: #28a745; }
+.card-health.yellow { color: #b8860b; }
+.card-health.red { color: #dc3545; }
+.card-trend { font-size: .78rem; margin-top: 4px; }
+.card-trend.trend-up { color: #28a745; }
+.card-trend.trend-down { color: #dc3545; }
+.card-trend.trend-flat { color: #777; }
+
+.sparkline-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: 10px;
+}
+.spark-cell {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.spark-label { font-size: .7rem; color: #777; min-width: 50px; }
+.spark-value { font-size: .75rem; font-weight: 600; color: #333; margin-left: auto; }
+
+/* Detail View */
+#detail-view { display: none; padding: 0 28px 28px; }
+.back-btn {
+  display: inline-block;
+  margin: 18px 0 12px;
+  padding: 7px 16px;
+  background: #1a1a1a;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: .85rem;
+}
+.back-btn:hover { background: #333; }
+
+.detail-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+.detail-name { font-size: 1.5rem; font-weight: 700; }
+.detail-retainer { font-size: .95rem; color: #777; }
+.detail-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 12px;
+  font-size: .8rem;
+  font-weight: 600;
+  color: #fff;
+}
+.detail-badge.green { background: #28a745; }
+.detail-badge.yellow { background: #ffc107; color: #333; }
+.detail-badge.red { background: #dc3545; }
+
+.detail-section {
+  background: #fff;
+  border-radius: 6px;
+  box-shadow: 0 1px 3px rgba(0,0,0,.08);
+  padding: 20px;
+  margin-bottom: 16px;
+}
+.detail-section h3 { font-size: 1.05rem; margin-bottom: 12px; color: #333; }
+.detail-section .spark-large { margin-bottom: 14px; }
+
+table.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: .82rem;
+}
+table.data-table th {
+  text-align: left;
+  padding: 6px 10px;
+  border-bottom: 2px solid #e0e0e0;
+  font-weight: 600;
+  color: #555;
+  font-size: .75rem;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+}
+table.data-table td {
+  padding: 5px 10px;
+  border-bottom: 1px solid #f0f0f0;
+}
+table.data-table tr:last-child td { border-bottom: none; }
+.mom-pos { color: #28a745; font-weight: 600; }
+.mom-neg { color: #dc3545; font-weight: 600; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-left">
+    <span class="header-brand">Sidebar Creative</span>
+    <span class="header-title">Performance Dashboard</span>
+  </div>
+  <span class="header-date" id="header-date"></span>
+</div>
+
+<div id="overview-view">
+  <div class="stats-row" id="stats-row"></div>
+  <div class="overview-grid" id="overview-grid"></div>
+</div>
+
+<div id="detail-view"></div>
+
+<script>
+const MONTHS = ['Oct 2025', 'Nov 2025', 'Dec 2025', 'Jan 2026', 'Feb 2026', 'Mar 2026'];
+
+const CLIENTS = [
+  {
+    id: 'evergreen',
+    name: 'Evergreen Outdoor Co.',
+    health: 91,
+    healthColor: 'green',
+    retainer: '$45K/mo',
+    manager: 'Sophie Morales',
+    sparkMetrics: ['Sessions', 'MQLs', 'Email Revenue', 'Hours Util %'],
+    traffic: {
+      Sessions: [285400, 342100, 418900, 310200, 298600, 325800],
+      Visitors: [198200, 241600, 302500, 218400, 210100, 228900],
+      'Bounce %': [38.2, 35.8, 33.1, 36.5, 37.0, 35.4],
+      Duration: ['3:12','3:28','3:45','3:18','3:15','3:22'],
+      'Pages/Session': [4.1, 4.5, 4.9, 4.2, 4.1, 4.3]
+    },
+    leads: {
+      MQLs: [1840, 2380, 3120, 2050, 1920, 2280],
+      SQLs: [312, 428, 594, 369, 346, 434],
+      'Conv Rate %': [17.0, 18.0, 19.0, 18.0, 18.0, 19.0],
+      Subscribers: [2450, 3680, 5200, 2890, 2650, 3100],
+      CPL: [18.20, 15.60, 13.40, 16.80, 17.50, 15.20]
+    },
+    social: {
+      Instagram: [124500, 128200, 135600, 138400, 141200, 145800],
+      'Eng Rate %': [3.8, 4.1, 4.5, 4.2, 3.9, 4.0],
+      TikTok: [45200, 52800, 68400, 72100, 74600, 78900],
+      'FB Reach': [180400, 210600, 258200, 225800, 215400, 232600],
+      Pinterest: [1200000, 1450000, 1820000, 1580000, 1420000, 1560000]
+    },
+    email: {
+      'List Size': [82400, 85800, 91000, 93200, 95100, 98400],
+      Sends: [8, 10, 12, 8, 8, 9],
+      'Open Rate %': [28.5, 31.2, 33.8, 27.4, 28.1, 29.6],
+      'Click Rate %': [4.2, 5.1, 5.8, 3.8, 4.0, 4.5],
+      Revenue: [142000, 218000, 385000, 125000, 138000, 168000]
+    },
+    hours: {
+      'SOW Hours': [200, 200, 200, 257, 257, 257],
+      Delivered: [195, 218, 232, 250, 245, 252],
+      'Util %': [98, 109, 116, 97, 95, 98],
+      Budget: [35000, 35000, 35000, 45000, 45000, 45000],
+      'Actual Cost': [34125, 38150, 40600, 43750, 42875, 44100]
+    }
+  },
+  {
+    id: 'brightwash',
+    name: 'Brightwash Home',
+    health: 78,
+    healthColor: 'green',
+    retainer: '$38K/mo',
+    manager: 'Tomás Reyes',
+    sparkMetrics: ['Sessions', 'MQLs', 'Email Revenue', 'Hours Util %'],
+    traffic: {
+      Sessions: [156200, 178500, 192300, 168400, 172800, 180100],
+      Visitors: [112400, 128900, 138200, 121600, 124800, 130200],
+      'Bounce %': [42.1, 40.5, 39.8, 41.2, 40.8, 40.0],
+      Duration: ['2:48','2:55','3:02','2:50','2:52','2:58'],
+      'Pages/Session': [3.4, 3.6, 3.7, 3.5, 3.5, 3.6]
+    },
+    leads: {
+      MQLs: [980, 1220, 1380, 1050, 1100, 1180],
+      SQLs: [142, 183, 214, 158, 165, 183],
+      'Conv Rate %': [14.5, 15.0, 15.5, 15.0, 15.0, 15.5],
+      Subscribers: [1450, 1850, 2100, 1520, 1580, 1680],
+      CPL: [24.80, 22.10, 20.50, 23.40, 22.80, 21.60]
+    },
+    social: {
+      Instagram: [48200, 49800, 51500, 52400, 53600, 55100],
+      'Eng Rate %': [2.8, 3.0, 3.1, 2.9, 2.9, 3.0],
+      Facebook: [32100, 32800, 33400, 33800, 34200, 34800],
+      Pinterest: [680000, 720000, 780000, 710000, 730000, 760000],
+      LinkedIn: [8400, 8650, 8900, 9100, 9300, 9550]
+    },
+    email: {
+      'List Size': [45200, 47100, 49200, 50400, 51800, 53500],
+      Sends: [12, 14, 14, 12, 12, 13],
+      'Open Rate %': [24.8, 26.2, 27.5, 25.0, 25.4, 26.0],
+      'Click Rate %': [3.4, 3.8, 4.1, 3.5, 3.6, 3.7],
+      Revenue: [62000, 78000, 92000, 65000, 68000, 74000]
+    },
+    hours: {
+      'SOW Hours': [224, 224, 224, 224, 224, 224],
+      Delivered: [235, 248, 242, 238, 240, 236],
+      'Util %': [105, 111, 108, 106, 107, 105],
+      Budget: [38000, 38000, 38000, 38000, 38000, 38000],
+      'Actual Cost': [39950, 42160, 41140, 40460, 40800, 40120]
+    }
+  },
+  {
+    id: 'vello',
+    name: 'Vello Cycling',
+    health: 44,
+    healthColor: 'red',
+    retainer: '$32K/mo',
+    manager: 'Sophie Morales',
+    sparkMetrics: ['Sessions', 'MQLs', 'Email Revenue', 'Hours Util %'],
+    traffic: {
+      Sessions: [142800, 138200, 128400, 118600, 112400, 108200],
+      Visitors: [98400, 94800, 87600, 80200, 75800, 72400],
+      'Bounce %': [44.5, 45.2, 46.8, 48.1, 49.5, 50.2],
+      Duration: ['2:35','2:28','2:22','2:15','2:10','2:05'],
+      'Pages/Session': [3.1, 2.9, 2.8, 2.7, 2.6, 2.5]
+    },
+    leads: {
+      MQLs: [680, 620, 540, 480, 450, 420],
+      SQLs: [88, 74, 59, 48, 41, 36],
+      'Conv Rate %': [12.9, 11.9, 10.9, 10.0, 9.1, 8.6],
+      Subscribers: [820, 710, 580, 440, 380, 340],
+      CPL: [32.40, 35.80, 40.20, 44.50, 48.20, 52.00]
+    },
+    social: {
+      Instagram: [62400, 62100, 61500, 61200, 60800, 60200],
+      'Eng Rate %': [2.4, 2.2, 2.0, 1.8, 1.7, 1.6],
+      Strava: [8200, 8150, 8050, 7980, 7900, 7820],
+      'FB Reach': [95400, 88200, 82400, 76800, 72100, 68500],
+      YouTube: [12800, 12650, 12500, 12400, 12300, 12150]
+    },
+    email: {
+      'List Size': [34800, 35200, 35400, 35200, 34800, 34400],
+      Sends: [6, 6, 5, 6, 5, 6],
+      'Open Rate %': [22.4, 21.0, 19.8, 18.5, 17.2, 16.5],
+      'Click Rate %': [2.8, 2.5, 2.2, 2.0, 1.8, 1.6],
+      Revenue: [38000, 32000, 26000, 22000, 18000, 15000]
+    },
+    hours: {
+      'SOW Hours': [183, 183, 183, 183, 183, 183],
+      Delivered: [195, 208, 198, 225, 218, 215],
+      'Util %': [107, 114, 108, 123, 119, 117],
+      Budget: [32000, 32000, 32000, 32000, 32000, 32000],
+      'Actual Cost': [34125, 36400, 34650, 39375, 38150, 37625]
+    }
+  },
+  {
+    id: 'petal',
+    name: 'Petal & Thorn',
+    health: 86,
+    healthColor: 'green',
+    retainer: '$28K/mo',
+    manager: 'Alina Park',
+    sparkMetrics: ['Sessions', 'MQLs', 'Email Revenue', 'Hours Util %'],
+    traffic: {
+      Sessions: [88400, 105200, 148600, 118200, 172400, 95600],
+      Visitors: [62200, 74800, 108400, 84600, 126800, 68200],
+      'Bounce %': [40.5, 38.2, 35.5, 37.0, 33.8, 39.8],
+      Duration: ['2:55','3:10','3:25','3:15','3:35','3:00'],
+      'Pages/Session': [3.8, 4.1, 4.5, 4.2, 4.8, 3.9]
+    },
+    leads: {
+      MQLs: [520, 680, 1020, 740, 1280, 560],
+      SQLs: [88, 122, 194, 133, 256, 95],
+      'Conv Rate %': [16.9, 17.9, 19.0, 18.0, 20.0, 17.0],
+      Subscribers: [780, 1050, 1680, 1120, 2100, 840],
+      CPL: [22.50, 19.80, 16.40, 18.90, 14.20, 21.50]
+    },
+    social: {
+      Instagram: [38400, 40200, 43800, 45200, 49600, 50800],
+      'Eng Rate %': [4.2, 4.5, 5.1, 4.8, 5.5, 4.4],
+      Pinterest: [520000, 640000, 890000, 780000, 1120000, 680000],
+      TikTok: [18200, 20800, 25400, 27200, 32800, 33600],
+      'FB Reach': [65400, 78200, 102600, 88400, 128400, 72800]
+    },
+    email: {
+      'List Size': [28400, 29500, 31200, 32200, 34400, 35100],
+      Sends: [6, 8, 10, 8, 12, 6],
+      'Open Rate %': [26.2, 28.5, 32.0, 29.8, 34.5, 27.0],
+      'Click Rate %': [3.8, 4.4, 5.6, 4.8, 6.2, 3.9],
+      Revenue: [42000, 58000, 105000, 62000, 148000, 45000]
+    },
+    hours: {
+      'SOW Hours': [170, 170, 238, 238, 238, 170],
+      Delivered: [155, 168, 230, 225, 235, 158],
+      'Util %': [91, 99, 97, 95, 99, 93],
+      Budget: [28000, 28000, 39270, 39270, 39270, 28000],
+      'Actual Cost': [25575, 27720, 37950, 37125, 38775, 26070]
+    }
+  },
+  {
+    id: 'kova',
+    name: 'Kova Skincare',
+    health: 64,
+    healthColor: 'yellow',
+    retainer: '$25K/mo',
+    manager: 'Tomás Reyes',
+    sparkMetrics: ['Sessions', 'MQLs', 'Email Revenue', 'Hours Util %'],
+    traffic: {
+      Sessions: [98200, 95600, 102400, 94800, 100200, 101800],
+      Visitors: [72400, 70200, 75800, 69600, 73800, 74600],
+      'Bounce %': [48.5, 49.2, 47.8, 49.5, 46.2, 45.8],
+      Duration: ['2:15','2:10','2:18','2:08','2:22','2:25'],
+      'Pages/Session': [2.8, 2.7, 2.9, 2.7, 3.0, 3.1]
+    },
+    leads: {
+      MQLs: [580, 540, 610, 520, 560, 570],
+      SQLs: [75, 65, 79, 62, 70, 74],
+      'Conv Rate %': [12.9, 12.0, 12.9, 11.9, 12.5, 13.0],
+      Subscribers: [680, 620, 740, 580, 640, 660],
+      CPL: [28.40, 30.50, 27.20, 31.80, 29.60, 28.80]
+    },
+    social: {
+      Instagram: [72800, 73200, 74100, 74600, 75400, 76200],
+      'Eng Rate %': [2.5, 2.4, 2.6, 2.3, 2.4, 2.5],
+      TikTok: [28400, 28800, 29500, 29800, 30400, 31000],
+      YouTube: [5200, 5250, 5350, 5380, 5450, 5520],
+      Pinterest: [380000, 375000, 395000, 370000, 385000, 390000]
+    },
+    email: {
+      'List Size': [38600, 39100, 39800, 40200, 40800, 41400],
+      Sends: [8, 8, 10, 8, 8, 9],
+      'Open Rate %': [20.5, 19.8, 21.2, 19.5, 20.8, 21.0],
+      'Click Rate %': [2.4, 2.2, 2.6, 2.1, 2.5, 2.5],
+      Revenue: [28000, 25000, 32000, 24000, 29000, 30000]
+    },
+    hours: {
+      'SOW Hours': [147, 147, 147, 147, 147, 147],
+      Delivered: [152, 148, 160, 155, 165, 150],
+      'Util %': [103, 101, 109, 105, 112, 102],
+      Budget: [25000, 25000, 25000, 25000, 25000, 25000],
+      'Actual Cost': [25840, 25160, 27200, 26350, 28050, 25500]
+    }
+  },
+  {
+    id: 'drift',
+    name: 'Drift Coffee Roasters',
+    health: 83,
+    healthColor: 'green',
+    retainer: '$22K/mo',
+    manager: 'Priya Nair',
+    sparkMetrics: ['Sessions', 'Subscriptions', 'Email Revenue', 'Hours Util %'],
+    traffic: {
+      Sessions: [68200, 72400, 82600, 70800, 71600, 74200],
+      Visitors: [48400, 51600, 59200, 50200, 50800, 52800],
+      'Bounce %': [42.8, 41.5, 39.8, 42.0, 41.8, 41.0],
+      Duration: ['2:40','2:45','2:55','2:42','2:44','2:48'],
+      'Pages/Session': [3.2, 3.3, 3.5, 3.2, 3.3, 3.4]
+    },
+    leads: {
+      MQLs: [380, 420, 510, 395, 405, 430],
+      SQLs: [61, 71, 92, 67, 69, 77],
+      'Conv Rate %': [16.1, 16.9, 18.0, 17.0, 17.0, 17.9],
+      Subscriptions: [245, 285, 380, 260, 268, 290],
+      CPL: [20.50, 18.80, 15.20, 19.50, 19.00, 17.80]
+    },
+    social: {
+      Instagram: [32400, 33200, 34600, 35200, 35900, 36800],
+      'Eng Rate %': [3.5, 3.6, 3.9, 3.5, 3.6, 3.7],
+      TikTok: [12800, 13500, 14800, 15200, 15800, 16500],
+      'FB Reach': [42600, 44800, 48200, 44400, 45600, 47200],
+      'Google Reviews': ['4.7 (1240)', '4.7 (1285)', '4.7 (1340)', '4.7 (1380)', '4.8 (1425)', '4.8 (1470)']
+    },
+    email: {
+      'List Size': [22400, 22900, 23800, 24200, 24600, 25200],
+      Sends: [4, 5, 6, 4, 4, 5],
+      'Open Rate %': [28.5, 29.2, 31.5, 28.0, 28.8, 29.5],
+      'Click Rate %': [4.2, 4.5, 5.0, 4.0, 4.2, 4.4],
+      Revenue: [18500, 22800, 32400, 17800, 18600, 21200]
+    },
+    hours: {
+      'SOW Hours': [138, 138, 138, 138, 138, 138],
+      Delivered: [130, 135, 140, 128, 132, 130],
+      'Util %': [94, 98, 101, 93, 96, 94],
+      Budget: [22000, 22000, 22000, 22000, 22000, 22000],
+      'Actual Cost': [20800, 21600, 22400, 20480, 21120, 20800]
+    }
+  },
+  {
+    id: 'summit',
+    name: 'Summit Pet Supply',
+    health: 84,
+    healthColor: 'green',
+    retainer: '$18K/mo',
+    manager: 'James Whitfield',
+    sparkMetrics: ['Sessions', 'MQLs', 'Instagram Followers', 'Hours Util %'],
+    traffic: {
+      Sessions: [52400, 58800, 68200, 62400, 66800, 72600],
+      Visitors: [38200, 43200, 50400, 45800, 49200, 53800],
+      'Bounce %': [46.5, 44.8, 42.5, 43.8, 43.0, 41.5],
+      Duration: ['2:20','2:28','2:38','2:32','2:36','2:42'],
+      'Pages/Session': [2.8, 3.0, 3.2, 3.1, 3.2, 3.3]
+    },
+    leads: {
+      MQLs: [280, 340, 420, 360, 395, 440],
+      SQLs: [39, 51, 67, 54, 63, 75],
+      'Conv Rate %': [13.9, 15.0, 16.0, 15.0, 15.9, 17.0],
+      Subscribers: [420, 520, 680, 540, 600, 680],
+      CPL: [26.80, 23.50, 20.20, 22.80, 21.50, 19.80]
+    },
+    social: {
+      Instagram: [18200, 20400, 23600, 25400, 27800, 30600],
+      'Eng Rate %': [3.8, 4.1, 4.4, 4.2, 4.3, 4.5],
+      TikTok: [8400, 10200, 13800, 15600, 17800, 20400],
+      'FB Reach': [28600, 32400, 38200, 36400, 38800, 42200],
+      YouTube: [2800, 3200, 3800, 4100, 4500, 5000]
+    },
+    email: {
+      'List Size': [12400, 13600, 15200, 16400, 17600, 19200],
+      Sends: [4, 5, 6, 4, 5, 5],
+      'Open Rate %': [25.8, 27.2, 29.5, 26.8, 27.5, 28.8],
+      'Click Rate %': [3.5, 3.8, 4.4, 3.6, 3.9, 4.2],
+      Revenue: [14200, 18400, 26800, 15800, 19200, 22600]
+    },
+    hours: {
+      'SOW Hours': [113, 113, 113, 113, 113, 113],
+      Delivered: [105, 110, 115, 108, 112, 108],
+      'Util %': [93, 97, 102, 96, 99, 96],
+      Budget: [18000, 18000, 18000, 18000, 18000, 18000],
+      'Actual Cost': [16800, 17600, 18400, 17280, 17920, 17280]
+    }
+  },
+  {
+    id: 'moonridge',
+    name: 'Moonridge Spirits',
+    health: 60,
+    healthColor: 'yellow',
+    retainer: '$12K/mo',
+    manager: 'Alina Park',
+    sparkMetrics: ['Sessions', 'MQLs', 'Instagram', 'Hours Util %'],
+    preContract: true,
+    traffic: {
+      Sessions: [0, 0, 4200, 6800, 8400, 10200],
+      Visitors: [0, 0, 3100, 5200, 6400, 7800],
+      'Bounce %': [0, 0, 55.2, 52.8, 50.5, 48.2],
+      Duration: ['\u2014','\u2014','1:45','1:52','2:00','2:08'],
+      'Pages/Session': [0, 0, 2.1, 2.3, 2.5, 2.6]
+    },
+    leads: {
+      MQLs: [0, 0, 45, 72, 88, 105],
+      SQLs: [0, 0, 5, 9, 12, 15],
+      'Conv Rate %': [0, 0, 11.1, 12.5, 13.6, 14.3],
+      Subscribers: [120, 180, 210, 280, 340, 420],
+      CPL: [0, 0, 48.00, 42.00, 38.50, 35.00]
+    },
+    social: {
+      Instagram: [2400, 3100, 4200, 5000, 5800, 6800],
+      'Eng Rate %': [5.2, 5.5, 5.8, 5.4, 5.1, 5.0],
+      TikTok: [800, 1200, 1800, 2400, 3000, 3800],
+      'FB Reach': [4200, 5800, 8400, 9200, 10600, 12400],
+      Events: [85, 120, 180, 95, 110, 145]
+    },
+    email: {
+      'List Size': [1200, 1800, 2400, 3100, 3800, 4600],
+      Sends: [2, 2, 3, 3, 3, 4],
+      'Open Rate %': [32.0, 30.5, 29.8, 28.5, 27.2, 26.8],
+      'Click Rate %': [5.5, 5.0, 4.8, 4.5, 4.2, 4.0],
+      Revenue: [2800, 3400, 4200, 5100, 5800, 6500]
+    },
+    hours: {
+      'SOW Hours': [0, 0, 77, 77, 77, 77],
+      Delivered: [0, 0, 92, 88, 95, 82],
+      'Util %': [0, 0, 119, 114, 123, 106],
+      Budget: [0, 0, 12000, 12000, 12000, 12000],
+      'Actual Cost': [0, 0, 14260, 13640, 14725, 12710]
+    }
+  }
+];
+
+// --- Utilities ---
+
+function sparkline(data, width, height, color) {
+  const padding = 2;
+  const w = width - padding * 2;
+  const h = height - padding * 2;
+  const min = Math.min(...data);
+  const max = Math.max(...data);
+  const range = max - min || 1;
+  const points = data.map((v, i) => {
+    const x = padding + (i / (data.length - 1)) * w;
+    const y = padding + h - ((v - min) / range) * h;
+    return `${x.toFixed(1)},${y.toFixed(1)}`;
+  }).join(' ');
+  return `<svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}"><polyline points="${points}" fill="none" stroke="${color}" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+}
+
+function sparkColor(data) {
+  const first = data[0], last = data[data.length - 1];
+  if (first === 0) return '#28a745';
+  const pct = ((last - first) / first) * 100;
+  if (pct > 2) return '#28a745';
+  if (pct < -2) return '#dc3545';
+  return '#555';
+}
+
+function getSparkData(client, metricLabel) {
+  if (metricLabel === 'Sessions') {
+    const d = client.traffic.Sessions;
+    return client.preContract ? d.slice(2) : d;
+  }
+  if (metricLabel === 'MQLs') {
+    const d = client.leads.MQLs;
+    return client.preContract ? d.slice(2) : d;
+  }
+  if (metricLabel === 'Email Revenue') return client.email.Revenue;
+  if (metricLabel === 'Hours Util %') {
+    const d = client.hours['Util %'];
+    return client.preContract ? d.slice(2) : d;
+  }
+  if (metricLabel === 'Subscriptions') return client.leads.Subscriptions;
+  if (metricLabel === 'Instagram Followers' || metricLabel === 'Instagram') return client.social.Instagram;
+  return [0,0,0,0,0,0];
+}
+
+function fmtNum(v) {
+  if (typeof v === 'string') return v;
+  if (v >= 1000000) return (v / 1000000).toFixed(1) + 'M';
+  if (v >= 1000) return (v / 1000).toFixed(v >= 10000 ? 0 : 1) + 'K';
+  return v.toLocaleString();
+}
+
+function fmtDollar(v) {
+  if (v >= 1000000) return '$' + (v / 1000000).toFixed(1) + 'M';
+  if (v >= 1000) return '$' + (v / 1000).toFixed(v >= 10000 ? 0 : 1) + 'K';
+  return '$' + v.toLocaleString();
+}
+
+function healthEmoji(color) {
+  if (color === 'green') return '\u2705';
+  if (color === 'yellow') return '\u26a0\ufe0f';
+  return '\u274c';
+}
+
+function trendText(data) {
+  const first = data[0], last = data[data.length - 1];
+  if (first === 0) return { text: '\u2191 Trending Up', cls: 'trend-up' };
+  const pct = ((last - first) / first) * 100;
+  if (pct > 15) return { text: '\u2191\u2191 Strong Growth', cls: 'trend-up' };
+  if (pct > 5) return { text: '\u2191 Trending Up', cls: 'trend-up' };
+  if (pct >= -5) return { text: '\u2192 Steady', cls: 'trend-flat' };
+  if (pct >= -15) return { text: '\u2193 Declining', cls: 'trend-down' };
+  return { text: '\u2193\u2193 Sharp Decline', cls: 'trend-down' };
+}
+
+function momChange(arr) {
+  const feb = arr[4], mar = arr[5];
+  if (typeof feb === 'string' || typeof mar === 'string') return { text: '\u2014', cls: '' };
+  if (feb === 0) return { text: mar > 0 ? 'New' : '\u2014', cls: mar > 0 ? 'mom-pos' : '' };
+  const pct = ((mar - feb) / Math.abs(feb)) * 100;
+  const sign = pct >= 0 ? '+' : '';
+  return { text: sign + pct.toFixed(1) + '%', cls: pct >= 0 ? 'mom-pos' : 'mom-neg' };
+}
+
+// --- Render ---
+
+function init() {
+  document.getElementById('header-date').textContent = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+
+  // Compute stats
+  const marchSessions = CLIENTS.map(c => c.traffic.Sessions[5]);
+  const avgSessions = Math.round(marchSessions.reduce((a, b) => a + b, 0) / CLIENTS.length);
+
+  const marchMQLs = [2280, 1180, 420, 560, 570, 430, 440, 105];
+  const totalMQLs = marchMQLs.reduce((a, b) => a + b, 0);
+
+  // Blended util: sum of delivered / sum of SOW for March (exclude 0-SOW)
+  let totalDelivered = 0, totalSOW = 0;
+  CLIENTS.forEach(c => {
+    const sow = c.hours['SOW Hours'][5];
+    const del = c.hours.Delivered[5];
+    if (sow > 0) { totalSOW += sow; totalDelivered += del; }
+  });
+  const avgUtil = Math.round((totalDelivered / totalSOW) * 100);
+
+  const statsHTML = [
+    { label: 'Total Clients', value: '8' },
+    { label: 'Avg Monthly Sessions', value: fmtNum(avgSessions) },
+    { label: 'Portfolio MQLs', value: totalMQLs.toLocaleString() },
+    { label: 'Avg SOW Utilization', value: avgUtil + '%' }
+  ].map(s => `<div class="stat-card"><div class="stat-label">${s.label}</div><div class="stat-value">${s.value}</div></div>`).join('');
+  document.getElementById('stats-row').innerHTML = statsHTML;
+
+  // Sort by health descending
+  const sorted = [...CLIENTS].sort((a, b) => b.health - a.health);
+
+  const gridHTML = sorted.map(c => {
+    const primaryData = getSparkData(c, c.sparkMetrics[0]);
+    const trend = trendText(primaryData);
+
+    const sparks = c.sparkMetrics.map(m => {
+      const data = getSparkData(c, m);
+      const color = sparkColor(data);
+      const last = data[data.length - 1];
+      const label = m.replace('Hours Util %', 'Util %').replace('Instagram Followers', 'IG Followers').replace('Email Revenue', 'Email Rev');
+      const val = m.includes('Revenue') || m.includes('Rev') ? fmtDollar(last) : m.includes('Util') ? last + '%' : fmtNum(last);
+      return `<div class="spark-cell"><span class="spark-label">${label}</span>${sparkline(data, 60, 20, color)}<span class="spark-value">${val}</span></div>`;
+    }).join('');
+
+    return `<div class="client-card health-${c.healthColor}" onclick="showDetail('${c.id}')">
+      <div class="card-header">
+        <div><div class="card-name">${c.name}</div><div class="card-retainer">${c.retainer}</div></div>
+        <div><div class="card-health ${c.healthColor}">${c.health} ${healthEmoji(c.healthColor)}</div>
+        <div class="card-trend ${trend.cls}">${trend.text}</div></div>
+      </div>
+      <div class="sparkline-grid">${sparks}</div>
+    </div>`;
+  }).join('');
+
+  document.getElementById('overview-grid').innerHTML = gridHTML;
+}
+
+function showDetail(clientId) {
+  const c = CLIENTS.find(cl => cl.id === clientId);
+  if (!c) return;
+
+  document.getElementById('overview-view').style.display = 'none';
+  const dv = document.getElementById('detail-view');
+  dv.style.display = 'block';
+
+  const primaryData = getSparkData(c, c.sparkMetrics[0]);
+  const trend = trendText(primaryData);
+
+  const sections = [
+    { title: 'Website Traffic', data: c.traffic, primary: 'Sessions' },
+    { title: 'Lead Generation', data: c.leads, primary: 'MQLs' },
+    { title: 'Social Media', data: c.social, primary: 'Instagram' },
+    { title: 'Email Marketing', data: c.email, primary: 'Revenue' },
+    { title: 'Hours & Budget', data: c.hours, primary: 'Delivered' }
+  ];
+
+  const sectionsHTML = sections.map(sec => {
+    const keys = Object.keys(sec.data);
+    const primaryArr = sec.data[sec.primary];
+    let sparkData = primaryArr;
+    if (c.preContract && sec.primary !== 'Instagram' && (sec.title === 'Website Traffic' || sec.title === 'Lead Generation' || sec.title === 'Hours & Budget')) {
+      sparkData = primaryArr.filter((v, i) => typeof v === 'number' ? v > 0 || i >= 2 : i >= 2);
+      if (sparkData.length > 4) sparkData = primaryArr.slice(2);
+    }
+    const numericSparkData = sparkData.filter(v => typeof v === 'number');
+    const sColor = numericSparkData.length > 1 ? sparkColor(numericSparkData) : '#555';
+
+    // Build table
+    let tableHTML = '<table class="data-table"><thead><tr><th>Metric</th>';
+    MONTHS.forEach(m => tableHTML += `<th>${m}</th>`);
+    tableHTML += '<th>MoM</th></tr></thead><tbody>';
+
+    keys.forEach(key => {
+      const arr = sec.data[key];
+      tableHTML += '<tr><td style="font-weight:600">' + key + '</td>';
+      for (let i = 0; i < 6; i++) {
+        let val = arr[i];
+        if (c.preContract && i < 2 && typeof val === 'number' && val === 0) {
+          tableHTML += '<td>\u2014</td>';
+        } else if (key === 'Revenue' || key === 'Budget' || key === 'Actual Cost' || key === 'CPL') {
+          tableHTML += '<td>' + (typeof val === 'number' ? '$' + val.toLocaleString() : val) + '</td>';
+        } else if (typeof val === 'number' && val >= 1000) {
+          tableHTML += '<td>' + val.toLocaleString() + '</td>';
+        } else {
+          tableHTML += '<td>' + val + '</td>';
+        }
+      }
+      const mom = momChange(arr);
+      tableHTML += `<td class="${mom.cls}">${mom.text}</td></tr>`;
+    });
+    tableHTML += '</tbody></table>';
+
+    return `<div class="detail-section">
+      <h3>${sec.title}</h3>
+      <div class="spark-large">${numericSparkData.length > 1 ? sparkline(numericSparkData, 200, 40, sColor) : ''}</div>
+      ${tableHTML}
+    </div>`;
+  }).join('');
+
+  dv.innerHTML = `
+    <button class="back-btn" onclick="showOverview()">\u2190 Back to Overview</button>
+    <div class="detail-header">
+      <span class="detail-name">${c.name}</span>
+      <span class="detail-retainer">${c.retainer}</span>
+      <span class="detail-badge ${c.healthColor}">${c.health} ${healthEmoji(c.healthColor)}</span>
+      <span class="card-trend ${trend.cls}" style="font-size:.9rem">${trend.text}</span>
+    </div>
+    ${sectionsHTML}
+  `;
+}
+
+function showOverview() {
+  document.getElementById('detail-view').style.display = 'none';
+  document.getElementById('overview-view').style.display = 'block';
+}
+
+init();
+</script>
+</body>
+</html>
