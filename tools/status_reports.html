@@ -660,7 +660,7 @@ function renderViewer() {
   let html = `
     <div class="report-header">
       <div class="report-title">${client.name} — Weekly Status Report</div>
-      <button class="copy-btn" onclick="copyReport('${client.id}')">Copy Report</button>
+      <button class="copy-btn" onclick="copyReport('${client.id}')">Copy Markdown</button>
     </div>
     <div class="report-body">
       <div class="report-meta">
@@ -750,7 +750,7 @@ function renderRollup() {
   let html = `
     <div class="report-header">
       <div class="report-title">${r.title}</div>
-      <button class="copy-btn" onclick="copyReport('rollup')">Copy Report</button>
+      <button class="copy-btn" onclick="copyReport('rollup')">Copy Markdown</button>
     </div>
     <div class="report-body">
       <div class="report-meta">
@@ -845,50 +845,58 @@ function selectReport(id) {
 }
 
 function copyReport(id) {
-  let text = '';
-  const date = REPORT_DATE;
+  let md = '';
 
   if (id === 'rollup') {
     const r = ROLLUP;
     const ps = r.portfolioSummary;
-    text += `${r.title}\n${date}\nPrepared for: ${r.preparedFor}\n\n`;
-    text += `ACCOUNTS REQUIRING ATTENTION\n${'='.repeat(40)}\n\n`;
+    md += `# ${r.title}\n\n`;
+    md += `${r.date} · Prepared for: ${r.preparedFor}\n\n`;
+    md += '## Accounts Requiring Attention\n\n';
     r.attentionClients.forEach(ac => {
-      text += `${STATUS_EMOJI[ac.status]} ${ac.name} (Health: ${ac.health}/100)\n`;
-      ac.highlights.forEach(h => { text += `  • ${h}\n`; });
-      text += '\n';
+      md += `### ${ac.name} — ${ac.health} ${STATUS_EMOJI[ac.status]}\n\n`;
+      ac.highlights.forEach(h => { md += `- ${h}\n`; });
+      md += '\n';
     });
-    text += `ACCOUNTS ON TRACK\n${'='.repeat(40)}\n`;
-    r.onTrackClients.forEach(oc => {
-      text += `${STATUS_EMOJI['green']} ${oc.name} (${oc.health}) — ${formatMoney(oc.retainer)} — ${oc.note}\n`;
-    });
-    text += `\nPORTFOLIO SUMMARY\n${'='.repeat(40)}\n`;
-    text += `Total Revenue: ${formatMoney(ps.totalRevenue)}\nAvg Health: ${ps.avgHealth}/100\nUtilization: ${ps.blendedUtilization}%\nGreen: ${ps.greenCount} | Yellow: ${ps.yellowCount} | Red: ${ps.redCount}\nOver SOW: ${ps.overSOW.join(', ')}\n`;
+    md += '## Accounts On Track\n\n';
+    md += '| Client | Health | Retainer | Status Note |\n|--------|--------|----------|-------------|\n';
+    r.onTrackClients.forEach(c => { md += `| ${c.name} | ${c.health} 🟢 | ${formatMoney(c.retainer)}/mo | ${c.note} |\n`; });
+    md += '\n## Portfolio Summary\n\n';
+    md += '| Metric | Value |\n|--------|-------|\n';
+    md += `| Total Monthly Retainer Revenue | ${formatMoney(ps.totalRevenue)} |\n`;
+    md += `| Average Health Score | ${ps.avgHealth} |\n`;
+    md += `| Blended Utilization | ${ps.blendedUtilization}% |\n`;
+    md += `| Account Status | ${ps.greenCount} 🟢 / ${ps.yellowCount} 🟡 / ${ps.redCount} 🔴 |\n`;
+    md += `| Accounts Over SOW Hours | ${ps.overSOW.join(', ')} |\n`;
   } else {
     const client = CLIENTS.find(c => c.id === id);
     if (!client) return;
     const b = client.budget;
-    text += `${client.name} — Weekly Status Report\n${date}\nAccount Director: ${client.accountDirector} | Health: ${client.health}/100\n\n`;
-    text += `PROGRESS THIS WEEK\n${'='.repeat(40)}\n`;
-    client.progress.forEach(p => { text += `• ${p}\n`; });
-    text += `\nBLOCKERS & RISKS\n${'='.repeat(40)}\n`;
-    client.blockers.forEach(bl => { text += `• ${bl}\n`; });
-    text += `\nNEXT STEPS\n${'='.repeat(40)}\n`;
-    client.nextSteps.forEach(n => { text += `• ${n}\n`; });
-    text += `\nBUDGET HEALTH\n${'='.repeat(40)}\n`;
-    text += `SOW: ${b.sowHours}h | Actual: ${b.actualHours}h | Utilization: ${b.utilization}%\nBudget: ${formatMoney(b.monthlyBudget)} | Actual: ${formatMoney(b.actualCost)} | ${b.budgetStatus}\n`;
-    text += `\nKEY METRICS\n${'='.repeat(40)}\n`;
-    if (client.metricsNote) text += `Note: ${client.metricsNote}\n`;
-    client.metrics.forEach(m => { text += `${m.name}: ${m.value} (${m.change})\n`; });
+    md += `# ${client.name} — Weekly Status Report\n\n`;
+    md += `${REPORT_DATE} · Account Director: ${client.accountDirector} · Health: ${client.health} ${STATUS_EMOJI[client.status]}\n\n`;
+    md += '## Progress\n\n';
+    client.progress.forEach(p => { md += `- ${p}\n`; });
+    md += '\n## Blockers\n\n';
+    client.blockers.forEach(bl => { md += `- ${bl}\n`; });
+    md += '\n## Next Steps\n\n';
+    client.nextSteps.forEach(n => { md += `- ${n}\n`; });
+    md += '\n## Budget Health\n\n';
+    md += '| Metric | SOW | Actual | Status |\n|--------|-----|--------|--------|\n';
+    md += `| Monthly Hours | ${b.sowHours} | ${b.actualHours} | ${b.utilization}% |\n`;
+    md += `| Monthly Budget | ${formatMoney(b.monthlyBudget)} | ${formatMoney(b.actualCost)} | ${b.budgetStatus} |\n`;
+    md += '\n## Key Metrics (March 2026)\n\n';
+    if (client.metricsNote) md += `*${client.metricsNote}*\n\n`;
+    md += '| Metric | Value | MoM Change |\n|--------|-------|------------|\n';
+    client.metrics.forEach(m => { md += `| ${m.name} | ${m.value} | ${m.change} |\n`; });
   }
 
-  navigator.clipboard.writeText(text).then(() => {
+  navigator.clipboard.writeText(md).then(() => {
     const btn = document.querySelector('.copy-btn');
     if (btn) {
       btn.textContent = 'Copied!';
       btn.classList.add('copied');
       setTimeout(() => {
-        btn.textContent = 'Copy Report';
+        btn.textContent = 'Copy Markdown';
         btn.classList.remove('copied');
       }, 2000);
     }
