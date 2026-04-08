@@ -1,11 +1,47 @@
 ---
 title: Process Log
-version: 1.8
+version: 1.9
 created: 2026-04-06
 updated: 2026-04-07
 ---
 
 # Process Log
+
+---
+
+## 2026-04-07 — Client Report Generator (Tool 7)
+
+**Prompt:**
+Build an automated client report generator at `tools/client_reports.html` — a single self-contained HTML file with zero dependencies. A tool with two dropdowns (client + month) and a Generate button. Clicking Generate renders a polished, client-facing monthly performance report below. An "Export Markdown" button copies the report as clean markdown.
+
+**What was built:**
+- `tools/client_reports.html` — Automated client report generator with:
+  - Dark header matching existing tools (Sidebar Creative / Client Report Generator / date)
+  - Controls card with client dropdown (8 clients with retainer values), month dropdown (Oct 2025 - Mar 2026)
+  - Default selection: Evergreen Outdoor Co. + Mar 2026, generates on page load
+  - Generate Report button (dark) and Export Markdown button (green, appears after generation)
+  - 6-section professional report: Header with health badge, Executive Summary, Performance Metrics (Traffic/Leads/Social/Email tables with MoM change), Deliverables & SOW, Hours & Budget, Strategic Recommendations
+  - Pre-authored March executive summaries and recommendations for all 8 clients
+  - Template-based summaries and recommendations for non-March months (analyzes data patterns)
+  - All performance data copied exactly from performance_dashboard.html
+  - Full SOW terms (deliverables + hours by discipline) for all 8 clients
+  - Inverted color logic for metrics where lower is better (bounce rate, cost per lead)
+  - Markdown export with proper headings, pipe tables, numbered lists, health emojis
+  - "Copied!" confirmation for 2 seconds after export
+
+**Key decisions:**
+- Copied all data arrays directly from performance_dashboard.html to ensure consistency
+- Used template-based generation for non-March months: counts improved vs declined metrics for tone, identifies best/worst metrics for narrative
+- For October (first month), shows dash in prior/change columns since no prior data exists
+- Moonridge pre-contract months (Oct/Nov) show appropriate messaging
+- Effective rate calculated as actual cost / actual hours delivered
+
+**Files created:**
+- `tools/client_reports.html`
+
+**Files modified:**
+- `docs/process_log.md`
+- `tutorials/07_client_reports.md`
 
 ---
 

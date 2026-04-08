@@ -1,0 +1,1163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Client Report Generator — Sidebar Creative</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: #f5f5f5;
+  color: #222;
+  font-size: 14px;
+}
+
+/* Header */
+.header {
+  background: #1a1a1a;
+  color: #fff;
+  padding: 14px 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.header-left { display: flex; align-items: baseline; gap: 18px; }
+.header-brand { font-size: 1.25rem; font-weight: 700; letter-spacing: .02em; }
+.header-title { font-size: .95rem; font-weight: 400; color: #aaa; }
+.header-date { font-size: .85rem; color: #777; }
+
+/* Controls */
+.controls-card {
+  background: #fff;
+  border-radius: 6px;
+  box-shadow: 0 1px 3px rgba(0,0,0,.08);
+  padding: 20px 28px;
+  margin: 18px 28px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.controls-card label {
+  font-size: .8rem;
+  font-weight: 600;
+  color: #555;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+}
+.controls-card select {
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: .9rem;
+  background: #fff;
+  color: #222;
+  min-width: 180px;
+}
+.btn-generate {
+  padding: 9px 22px;
+  background: #1a1a1a;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  font-size: .9rem;
+  cursor: pointer;
+  font-weight: 600;
+}
+.btn-generate:hover { background: #333; }
+.btn-export {
+  padding: 9px 22px;
+  background: #28a745;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  font-size: .9rem;
+  cursor: pointer;
+  font-weight: 600;
+  display: none;
+}
+.btn-export:hover { background: #218838; }
+
+/* Report Area */
+.report-area {
+  max-width: 900px;
+  margin: 0 auto 40px;
+  padding: 0 28px;
+}
+.report-container {
+  background: #fff;
+  border-radius: 6px;
+  box-shadow: 0 1px 3px rgba(0,0,0,.08);
+  padding: 40px;
+  font-size: 15px;
+  line-height: 1.7;
+  color: #222;
+}
+.report-container h1 {
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin-bottom: 4px;
+  color: #1a1a1a;
+}
+.report-subtitle {
+  font-size: 1rem;
+  color: #666;
+  margin-bottom: 6px;
+}
+.report-meta {
+  font-size: .85rem;
+  color: #999;
+  margin-bottom: 24px;
+}
+.report-branding {
+  font-size: .8rem;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  color: #aaa;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+.health-badge {
+  display: inline-block;
+  padding: 4px 14px;
+  border-radius: 20px;
+  font-size: .85rem;
+  font-weight: 600;
+  color: #fff;
+  margin-bottom: 16px;
+}
+.health-badge.green { background: #28a745; }
+.health-badge.yellow { background: #ffc107; color: #333; }
+.health-badge.red { background: #dc3545; }
+
+.report-container h2 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #333;
+  margin-top: 32px;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid #e8e8e8;
+}
+.report-container h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #444;
+  margin-top: 20px;
+  margin-bottom: 8px;
+}
+.report-container p {
+  margin-bottom: 12px;
+}
+
+/* Tables */
+.report-container table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  margin-bottom: 16px;
+}
+.report-container table th {
+  text-align: left;
+  padding: 8px 10px;
+  border-bottom: 2px solid #ddd;
+  font-weight: 600;
+  color: #555;
+  font-size: .8rem;
+  text-transform: uppercase;
+  letter-spacing: .03em;
+}
+.report-container table td {
+  padding: 7px 10px;
+  border-bottom: 1px solid #f0f0f0;
+}
+.report-container table tr:nth-child(even) td {
+  background: #fafafa;
+}
+.report-container table tr:last-child td { border-bottom: none; }
+
+.mom-pos { color: #28a745; font-weight: 600; }
+.mom-neg { color: #dc3545; font-weight: 600; }
+.mom-na { color: #999; }
+
+.report-container ol {
+  margin: 12px 0 12px 20px;
+}
+.report-container ol li {
+  margin-bottom: 10px;
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-left">
+    <span class="header-brand">Sidebar Creative</span>
+    <span class="header-title">Client Report Generator</span>
+  </div>
+  <span class="header-date" id="header-date"></span>
+</div>
+
+<div class="controls-card">
+  <div>
+    <label for="client-select">Select Client</label><br>
+    <select id="client-select"></select>
+  </div>
+  <div>
+    <label for="month-select">Select Month</label><br>
+    <select id="month-select"></select>
+  </div>
+  <button class="btn-generate" onclick="generateReport()">Generate Report</button>
+  <button class="btn-export" id="btn-export" onclick="exportMarkdown()">Export Markdown</button>
+</div>
+
+<div class="report-area">
+  <div id="report-output"></div>
+</div>
+
+<script>
+const MONTHS = ['Oct 2025', 'Nov 2025', 'Dec 2025', 'Jan 2026', 'Feb 2026', 'Mar 2026'];
+
+const CLIENTS = [
+  {
+    id: 'evergreen',
+    name: 'Evergreen Outdoor Co.',
+    health: 91,
+    healthColor: 'green',
+    retainer: '$45K/mo',
+    retainerValue: 45000,
+    manager: 'Sophie Morales',
+    traffic: {
+      Sessions: [285400, 342100, 418900, 310200, 298600, 325800],
+      Visitors: [198200, 241600, 302500, 218400, 210100, 228900],
+      'Bounce %': [38.2, 35.8, 33.1, 36.5, 37.0, 35.4],
+      Duration: ['3:12','3:28','3:45','3:18','3:15','3:22'],
+      'Pages/Session': [4.1, 4.5, 4.9, 4.2, 4.1, 4.3]
+    },
+    leads: {
+      MQLs: [1840, 2380, 3120, 2050, 1920, 2280],
+      SQLs: [312, 428, 594, 369, 346, 434],
+      'Conv Rate %': [17.0, 18.0, 19.0, 18.0, 18.0, 19.0],
+      Subscribers: [2450, 3680, 5200, 2890, 2650, 3100],
+      CPL: [18.20, 15.60, 13.40, 16.80, 17.50, 15.20]
+    },
+    social: {
+      Instagram: [124500, 128200, 135600, 138400, 141200, 145800],
+      'Eng Rate %': [3.8, 4.1, 4.5, 4.2, 3.9, 4.0],
+      TikTok: [45200, 52800, 68400, 72100, 74600, 78900],
+      'FB Reach': [180400, 210600, 258200, 225800, 215400, 232600],
+      Pinterest: [1200000, 1450000, 1820000, 1580000, 1420000, 1560000]
+    },
+    email: {
+      'List Size': [82400, 85800, 91000, 93200, 95100, 98400],
+      Sends: [8, 10, 12, 8, 8, 9],
+      'Open Rate %': [28.5, 31.2, 33.8, 27.4, 28.1, 29.6],
+      'Click Rate %': [4.2, 5.1, 5.8, 3.8, 4.0, 4.5],
+      Revenue: [142000, 218000, 385000, 125000, 138000, 168000]
+    },
+    hours: {
+      'SOW Hours': [200, 200, 200, 257, 257, 257],
+      Delivered: [195, 218, 232, 250, 245, 252],
+      'Util %': [98, 109, 116, 97, 95, 98],
+      Budget: [35000, 35000, 35000, 45000, 45000, 45000],
+      'Actual Cost': [34125, 38150, 40600, 43750, 42875, 44100]
+    },
+    sow: {
+      'Account Management': { deliverables: 'Weekly status calls, monthly performance review, quarterly business review (QBR)', hours: 20 },
+      'Strategy': { deliverables: 'Campaign strategy, audience research, brand audits', hours: 24 },
+      'Design': { deliverables: '4-6 campaigns/mo, Shopify assets, brand collateral', hours: 80 },
+      'Development': { deliverables: 'Shopify Plus maintenance, feature development, landing pages', hours: 60 },
+      'Content': { deliverables: '8 blog posts, 20 social posts, 8 email sends', hours: 40 },
+      'Paid Media': { deliverables: 'Meta/Google/Pinterest management, $85K media spend', hours: 33 }
+    },
+    sowTotalHours: 257
+  },
+  {
+    id: 'brightwash',
+    name: 'Brightwash Home',
+    health: 78,
+    healthColor: 'green',
+    retainer: '$38K/mo',
+    retainerValue: 38000,
+    manager: 'Tomás Reyes',
+    traffic: {
+      Sessions: [156200, 178500, 192300, 168400, 172800, 180100],
+      Visitors: [112400, 128900, 138200, 121600, 124800, 130200],
+      'Bounce %': [42.1, 40.5, 39.8, 41.2, 40.8, 40.0],
+      Duration: ['2:48','2:55','3:02','2:50','2:52','2:58'],
+      'Pages/Session': [3.4, 3.6, 3.7, 3.5, 3.5, 3.6]
+    },
+    leads: {
+      MQLs: [980, 1220, 1380, 1050, 1100, 1180],
+      SQLs: [142, 183, 214, 158, 165, 183],
+      'Conv Rate %': [14.5, 15.0, 15.5, 15.0, 15.0, 15.5],
+      Subscribers: [1450, 1850, 2100, 1520, 1580, 1680],
+      CPL: [24.80, 22.10, 20.50, 23.40, 22.80, 21.60]
+    },
+    social: {
+      Instagram: [48200, 49800, 51500, 52400, 53600, 55100],
+      'Eng Rate %': [2.8, 3.0, 3.1, 2.9, 2.9, 3.0],
+      Facebook: [32100, 32800, 33400, 33800, 34200, 34800],
+      Pinterest: [680000, 720000, 780000, 710000, 730000, 760000],
+      LinkedIn: [8400, 8650, 8900, 9100, 9300, 9550]
+    },
+    email: {
+      'List Size': [45200, 47100, 49200, 50400, 51800, 53500],
+      Sends: [12, 14, 14, 12, 12, 13],
+      'Open Rate %': [24.8, 26.2, 27.5, 25.0, 25.4, 26.0],
+      'Click Rate %': [3.4, 3.8, 4.1, 3.5, 3.6, 3.7],
+      Revenue: [62000, 78000, 92000, 65000, 68000, 74000]
+    },
+    hours: {
+      'SOW Hours': [224, 224, 224, 224, 224, 224],
+      Delivered: [235, 248, 242, 238, 240, 236],
+      'Util %': [105, 111, 108, 106, 107, 105],
+      Budget: [38000, 38000, 38000, 38000, 38000, 38000],
+      'Actual Cost': [39950, 42160, 41140, 40460, 40800, 40120]
+    },
+    sow: {
+      'Account Management': { deliverables: 'Weekly syncs, reporting, stakeholder management', hours: 18 },
+      'Strategy': { deliverables: 'Campaign planning, competitive analysis, CRO strategy', hours: 16 },
+      'Design': { deliverables: '12 email templates, 16 social posts, 2-3 landing pages', hours: 65 },
+      'Development': { deliverables: 'Platform maintenance, A/B tests, subscription module', hours: 55 },
+      'Content': { deliverables: 'Product copy, 6 blog posts, email/social copy', hours: 35 },
+      'Paid Media': { deliverables: 'Meta/Google management, $60K media spend', hours: 35 }
+    },
+    sowTotalHours: 224
+  },
+  {
+    id: 'vello',
+    name: 'Vello Cycling',
+    health: 44,
+    healthColor: 'red',
+    retainer: '$32K/mo',
+    retainerValue: 32000,
+    manager: 'Sophie Morales',
+    traffic: {
+      Sessions: [142800, 138200, 128400, 118600, 112400, 108200],
+      Visitors: [98400, 94800, 87600, 80200, 75800, 72400],
+      'Bounce %': [44.5, 45.2, 46.8, 48.1, 49.5, 50.2],
+      Duration: ['2:35','2:28','2:22','2:15','2:10','2:05'],
+      'Pages/Session': [3.1, 2.9, 2.8, 2.7, 2.6, 2.5]
+    },
+    leads: {
+      MQLs: [680, 620, 540, 480, 450, 420],
+      SQLs: [88, 74, 59, 48, 41, 36],
+      'Conv Rate %': [12.9, 11.9, 10.9, 10.0, 9.1, 8.6],
+      Subscribers: [820, 710, 580, 440, 380, 340],
+      CPL: [32.40, 35.80, 40.20, 44.50, 48.20, 52.00]
+    },
+    social: {
+      Instagram: [62400, 62100, 61500, 61200, 60800, 60200],
+      'Eng Rate %': [2.4, 2.2, 2.0, 1.8, 1.7, 1.6],
+      Strava: [8200, 8150, 8050, 7980, 7900, 7820],
+      'FB Reach': [95400, 88200, 82400, 76800, 72100, 68500],
+      YouTube: [12800, 12650, 12500, 12400, 12300, 12150]
+    },
+    email: {
+      'List Size': [34800, 35200, 35400, 35200, 34800, 34400],
+      Sends: [6, 6, 5, 6, 5, 6],
+      'Open Rate %': [22.4, 21.0, 19.8, 18.5, 17.2, 16.5],
+      'Click Rate %': [2.8, 2.5, 2.2, 2.0, 1.8, 1.6],
+      Revenue: [38000, 32000, 26000, 22000, 18000, 15000]
+    },
+    hours: {
+      'SOW Hours': [183, 183, 183, 183, 183, 183],
+      Delivered: [195, 208, 198, 225, 218, 215],
+      'Util %': [107, 114, 108, 123, 119, 117],
+      Budget: [32000, 32000, 32000, 32000, 32000, 32000],
+      'Actual Cost': [34125, 36400, 34650, 39375, 38150, 37625]
+    },
+    sow: {
+      'Account Management': { deliverables: 'Weekly calls, reporting, VP Marketing onboarding', hours: 16 },
+      'Strategy': { deliverables: 'Brand positioning, campaign strategy, market analysis', hours: 20 },
+      'Design': { deliverables: '3-4 campaigns, web updates, event collateral', hours: 60 },
+      'Development': { deliverables: 'Website maintenance, landing pages, e-commerce', hours: 42 },
+      'Content': { deliverables: '4 blog posts, 12 social posts, 6 email sends', hours: 25 },
+      'Paid Media': { deliverables: 'Meta/Google management, $40K media spend', hours: 20 }
+    },
+    sowTotalHours: 183
+  },
+  {
+    id: 'petal',
+    name: 'Petal & Thorn',
+    health: 86,
+    healthColor: 'green',
+    retainer: '$28K/mo',
+    retainerValue: 28000,
+    manager: 'Alina Park',
+    traffic: {
+      Sessions: [88400, 105200, 148600, 118200, 172400, 95600],
+      Visitors: [62200, 74800, 108400, 84600, 126800, 68200],
+      'Bounce %': [40.5, 38.2, 35.5, 37.0, 33.8, 39.8],
+      Duration: ['2:55','3:10','3:25','3:15','3:35','3:00'],
+      'Pages/Session': [3.8, 4.1, 4.5, 4.2, 4.8, 3.9]
+    },
+    leads: {
+      MQLs: [520, 680, 1020, 740, 1280, 560],
+      SQLs: [88, 122, 194, 133, 256, 95],
+      'Conv Rate %': [16.9, 17.9, 19.0, 18.0, 20.0, 17.0],
+      Subscribers: [780, 1050, 1680, 1120, 2100, 840],
+      CPL: [22.50, 19.80, 16.40, 18.90, 14.20, 21.50]
+    },
+    social: {
+      Instagram: [38400, 40200, 43800, 45200, 49600, 50800],
+      'Eng Rate %': [4.2, 4.5, 5.1, 4.8, 5.5, 4.4],
+      Pinterest: [520000, 640000, 890000, 780000, 1120000, 680000],
+      TikTok: [18200, 20800, 25400, 27200, 32800, 33600],
+      'FB Reach': [65400, 78200, 102600, 88400, 128400, 72800]
+    },
+    email: {
+      'List Size': [28400, 29500, 31200, 32200, 34400, 35100],
+      Sends: [6, 8, 10, 8, 12, 6],
+      'Open Rate %': [26.2, 28.5, 32.0, 29.8, 34.5, 27.0],
+      'Click Rate %': [3.8, 4.4, 5.6, 4.8, 6.2, 3.9],
+      Revenue: [42000, 58000, 105000, 62000, 148000, 45000]
+    },
+    hours: {
+      'SOW Hours': [170, 170, 238, 238, 238, 170],
+      Delivered: [155, 168, 230, 225, 235, 158],
+      'Util %': [91, 99, 97, 95, 99, 93],
+      Budget: [28000, 28000, 39270, 39270, 39270, 28000],
+      'Actual Cost': [25575, 27720, 37950, 37125, 38775, 26070]
+    },
+    sow: {
+      'Account Management': { deliverables: 'Bi-weekly syncs, seasonal planning', hours: 14 },
+      'Strategy': { deliverables: 'Seasonal campaigns, audience segmentation', hours: 12 },
+      'Design': { deliverables: 'E-commerce updates, campaign creative, email templates', hours: 55 },
+      'Development': { deliverables: 'Shopify maintenance, seasonal landing pages, checkout optimization', hours: 40 },
+      'Content': { deliverables: 'Product descriptions, 4 blog posts, 12 social posts, 6 emails', hours: 30 },
+      'Paid Media': { deliverables: 'Meta/Google management, $30K media spend', hours: 19 }
+    },
+    sowTotalHours: 170
+  },
+  {
+    id: 'kova',
+    name: 'Kova Skincare',
+    health: 64,
+    healthColor: 'yellow',
+    retainer: '$25K/mo',
+    retainerValue: 25000,
+    manager: 'Tomás Reyes',
+    traffic: {
+      Sessions: [98200, 95600, 102400, 94800, 100200, 101800],
+      Visitors: [72400, 70200, 75800, 69600, 73800, 74600],
+      'Bounce %': [48.5, 49.2, 47.8, 49.5, 46.2, 45.8],
+      Duration: ['2:15','2:10','2:18','2:08','2:22','2:25'],
+      'Pages/Session': [2.8, 2.7, 2.9, 2.7, 3.0, 3.1]
+    },
+    leads: {
+      MQLs: [580, 540, 610, 520, 560, 570],
+      SQLs: [75, 65, 79, 62, 70, 74],
+      'Conv Rate %': [12.9, 12.0, 12.9, 11.9, 12.5, 13.0],
+      Subscribers: [680, 620, 740, 580, 640, 660],
+      CPL: [28.40, 30.50, 27.20, 31.80, 29.60, 28.80]
+    },
+    social: {
+      Instagram: [72800, 73200, 74100, 74600, 75400, 76200],
+      'Eng Rate %': [2.5, 2.4, 2.6, 2.3, 2.4, 2.5],
+      TikTok: [28400, 28800, 29500, 29800, 30400, 31000],
+      YouTube: [5200, 5250, 5350, 5380, 5450, 5520],
+      Pinterest: [380000, 375000, 395000, 370000, 385000, 390000]
+    },
+    email: {
+      'List Size': [38600, 39100, 39800, 40200, 40800, 41400],
+      Sends: [8, 8, 10, 8, 8, 9],
+      'Open Rate %': [20.5, 19.8, 21.2, 19.5, 20.8, 21.0],
+      'Click Rate %': [2.4, 2.2, 2.6, 2.1, 2.5, 2.5],
+      Revenue: [28000, 25000, 32000, 24000, 29000, 30000]
+    },
+    hours: {
+      'SOW Hours': [147, 147, 147, 147, 147, 147],
+      Delivered: [152, 148, 160, 155, 165, 150],
+      'Util %': [103, 101, 109, 105, 112, 102],
+      Budget: [25000, 25000, 25000, 25000, 25000, 25000],
+      'Actual Cost': [25840, 25160, 27200, 26350, 28050, 25500]
+    },
+    sow: {
+      'Account Management': { deliverables: 'Weekly syncs, growth tracking', hours: 14 },
+      'Strategy': { deliverables: 'Growth strategy, CRO roadmap', hours: 16 },
+      'Design': { deliverables: 'Web iterations, 8 email templates, 12 social posts', hours: 45 },
+      'Development': { deliverables: 'Website optimization, A/B testing, Klaviyo, page speed', hours: 38 },
+      'Content': { deliverables: '3 blog posts, email/social copy', hours: 18 },
+      'Paid Media': { deliverables: 'Meta/Google management, $35K media spend', hours: 16 }
+    },
+    sowTotalHours: 147
+  },
+  {
+    id: 'drift',
+    name: 'Drift Coffee Roasters',
+    health: 83,
+    healthColor: 'green',
+    retainer: '$22K/mo',
+    retainerValue: 22000,
+    manager: 'Priya Nair',
+    traffic: {
+      Sessions: [68200, 72400, 82600, 70800, 71600, 74200],
+      Visitors: [48400, 51600, 59200, 50200, 50800, 52800],
+      'Bounce %': [42.8, 41.5, 39.8, 42.0, 41.8, 41.0],
+      Duration: ['2:40','2:45','2:55','2:42','2:44','2:48'],
+      'Pages/Session': [3.2, 3.3, 3.5, 3.2, 3.3, 3.4]
+    },
+    leads: {
+      MQLs: [380, 420, 510, 395, 405, 430],
+      SQLs: [61, 71, 92, 67, 69, 77],
+      'Conv Rate %': [16.1, 16.9, 18.0, 17.0, 17.0, 17.9],
+      Subscriptions: [245, 285, 380, 260, 268, 290],
+      CPL: [20.50, 18.80, 15.20, 19.50, 19.00, 17.80]
+    },
+    social: {
+      Instagram: [32400, 33200, 34600, 35200, 35900, 36800],
+      'Eng Rate %': [3.5, 3.6, 3.9, 3.5, 3.6, 3.7],
+      TikTok: [12800, 13500, 14800, 15200, 15800, 16500],
+      'FB Reach': [42600, 44800, 48200, 44400, 45600, 47200],
+      'Google Reviews': ['4.7 (1,240)', '4.7 (1,285)', '4.7 (1,340)', '4.7 (1,380)', '4.8 (1,425)', '4.8 (1,470)']
+    },
+    email: {
+      'List Size': [22400, 22900, 23800, 24200, 24600, 25200],
+      Sends: [4, 5, 6, 4, 4, 5],
+      'Open Rate %': [28.5, 29.2, 31.5, 28.0, 28.8, 29.5],
+      'Click Rate %': [4.2, 4.5, 5.0, 4.0, 4.2, 4.4],
+      Revenue: [18500, 22800, 32400, 17800, 18600, 21200]
+    },
+    hours: {
+      'SOW Hours': [138, 138, 138, 138, 138, 138],
+      Delivered: [130, 135, 140, 128, 132, 130],
+      'Util %': [94, 98, 101, 93, 96, 94],
+      Budget: [22000, 22000, 22000, 22000, 22000, 22000],
+      'Actual Cost': [20800, 21600, 22400, 20480, 21120, 20800]
+    },
+    sow: {
+      'Account Management': { deliverables: 'Bi-weekly syncs, reporting', hours: 10 },
+      'Strategy': { deliverables: 'Subscription growth strategy, retention analysis', hours: 10 },
+      'Design': { deliverables: 'Shopify updates, 6 email templates, 10 social posts', hours: 40 },
+      'Development': { deliverables: 'Subscription platform, Shopify maintenance', hours: 38 },
+      'Content': { deliverables: '3 blog posts, social, email, product stories', hours: 24 },
+      'Paid Media': { deliverables: 'Meta/Google management, $20K media spend', hours: 16 }
+    },
+    sowTotalHours: 138
+  },
+  {
+    id: 'summit',
+    name: 'Summit Pet Supply',
+    health: 84,
+    healthColor: 'green',
+    retainer: '$18K/mo',
+    retainerValue: 18000,
+    manager: 'James Whitfield',
+    traffic: {
+      Sessions: [52400, 58800, 68200, 62400, 66800, 72600],
+      Visitors: [38200, 43200, 50400, 45800, 49200, 53800],
+      'Bounce %': [46.5, 44.8, 42.5, 43.8, 43.0, 41.5],
+      Duration: ['2:20','2:28','2:38','2:32','2:36','2:42'],
+      'Pages/Session': [2.8, 3.0, 3.2, 3.1, 3.2, 3.3]
+    },
+    leads: {
+      MQLs: [280, 340, 420, 360, 395, 440],
+      SQLs: [39, 51, 67, 54, 63, 75],
+      'Conv Rate %': [13.9, 15.0, 16.0, 15.0, 15.9, 17.0],
+      Subscribers: [420, 520, 680, 540, 600, 680],
+      CPL: [26.80, 23.50, 20.20, 22.80, 21.50, 19.80]
+    },
+    social: {
+      Instagram: [18200, 20400, 23600, 25400, 27800, 30600],
+      'Eng Rate %': [3.8, 4.1, 4.4, 4.2, 4.3, 4.5],
+      TikTok: [8400, 10200, 13800, 15600, 17800, 20400],
+      'FB Reach': [28600, 32400, 38200, 36400, 38800, 42200],
+      YouTube: [2800, 3200, 3800, 4100, 4500, 5000]
+    },
+    email: {
+      'List Size': [12400, 13600, 15200, 16400, 17600, 19200],
+      Sends: [4, 5, 6, 4, 5, 5],
+      'Open Rate %': [25.8, 27.2, 29.5, 26.8, 27.5, 28.8],
+      'Click Rate %': [3.5, 3.8, 4.4, 3.6, 3.9, 4.2],
+      Revenue: [14200, 18400, 26800, 15800, 19200, 22600]
+    },
+    hours: {
+      'SOW Hours': [113, 113, 113, 113, 113, 113],
+      Delivered: [105, 110, 115, 108, 112, 108],
+      'Util %': [93, 97, 102, 96, 99, 96],
+      Budget: [18000, 18000, 18000, 18000, 18000, 18000],
+      'Actual Cost': [16800, 17600, 18400, 17280, 17920, 17280]
+    },
+    sow: {
+      'Account Management': { deliverables: 'Weekly syncs, reporting', hours: 10 },
+      'Strategy': { deliverables: 'Growth roadmap, competitive positioning', hours: 8 },
+      'Design': { deliverables: 'Web updates, 4 email templates, 8 social posts', hours: 35 },
+      'Development': { deliverables: 'Shopify development, site performance, features', hours: 30 },
+      'Content': { deliverables: '4 blog posts, product copy, email/social', hours: 20 },
+      'Paid Media': { deliverables: 'Meta management, $15K media spend', hours: 10 }
+    },
+    sowTotalHours: 113
+  },
+  {
+    id: 'moonridge',
+    name: 'Moonridge Spirits',
+    health: 60,
+    healthColor: 'yellow',
+    retainer: '$12K/mo',
+    retainerValue: 12000,
+    manager: 'Alina Park',
+    preContract: true,
+    traffic: {
+      Sessions: [0, 0, 4200, 6800, 8400, 10200],
+      Visitors: [0, 0, 3100, 5200, 6400, 7800],
+      'Bounce %': [0, 0, 55.2, 52.8, 50.5, 48.2],
+      Duration: ['\u2014','\u2014','1:45','1:52','2:00','2:08'],
+      'Pages/Session': [0, 0, 2.1, 2.3, 2.5, 2.6]
+    },
+    leads: {
+      MQLs: [0, 0, 45, 72, 88, 105],
+      SQLs: [0, 0, 5, 9, 12, 15],
+      'Conv Rate %': [0, 0, 11.1, 12.5, 13.6, 14.3],
+      Subscribers: [120, 180, 210, 280, 340, 420],
+      CPL: [0, 0, 48.00, 42.00, 38.50, 35.00]
+    },
+    social: {
+      Instagram: [2400, 3100, 4200, 5000, 5800, 6800],
+      'Eng Rate %': [5.2, 5.5, 5.8, 5.4, 5.1, 5.0],
+      TikTok: [800, 1200, 1800, 2400, 3000, 3800],
+      'FB Reach': [4200, 5800, 8400, 9200, 10600, 12400],
+      Events: [85, 120, 180, 95, 110, 145]
+    },
+    email: {
+      'List Size': [1200, 1800, 2400, 3100, 3800, 4600],
+      Sends: [2, 2, 3, 3, 3, 4],
+      'Open Rate %': [32.0, 30.5, 29.8, 28.5, 27.2, 26.8],
+      'Click Rate %': [5.5, 5.0, 4.8, 4.5, 4.2, 4.0],
+      Revenue: [2800, 3400, 4200, 5100, 5800, 6500]
+    },
+    hours: {
+      'SOW Hours': [0, 0, 77, 77, 77, 77],
+      Delivered: [0, 0, 92, 88, 95, 82],
+      'Util %': [0, 0, 119, 114, 123, 106],
+      Budget: [0, 0, 12000, 12000, 12000, 12000],
+      'Actual Cost': [0, 0, 14260, 13640, 14725, 12710]
+    },
+    sow: {
+      'Account Management': { deliverables: 'Bi-weekly syncs, reporting', hours: 8 },
+      'Strategy': { deliverables: 'Brand positioning, launch strategy', hours: 5 },
+      'Design': { deliverables: 'Brand identity, packaging, 6 social posts', hours: 28 },
+      'Development': { deliverables: 'Website build, landing pages', hours: 16 },
+      'Content': { deliverables: 'Brand story, social content, event copy', hours: 14 },
+      'Paid Media': { deliverables: 'Social ads, $8K media spend', hours: 6 }
+    },
+    sowTotalHours: 77
+  }
+];
+
+// Pre-authored March executive summaries
+const MARCH_SUMMARIES = {
+  evergreen: "Evergreen Outdoor had a strong March, with website traffic rebounding 9.1% to 325,800 sessions and the email program generating $168K in attributed revenue across 9 sends. The spring campaign creative is complete and ready to launch pending client approval on the Q2 brief. Hours remained well-managed at 98% of SOW allocation.",
+  brightwash: "Brightwash Home delivered a steady March with traffic up 4.2% to 180,100 sessions and the subscription platform continuing to gain traction. Email revenue grew 8.8% to $74K. The persistent scope creep issue continues \u2014 hours came in at 105% of SOW for the sixth consecutive month, with an estimated 12-16 unbilled hours from small client requests.",
+  vello: "Vello Cycling continues to face headwinds in March, with all key metrics declining for the sixth consecutive month. Website sessions fell to 108,200 (-3.7%) while cost per lead rose to $52.00. The account recovery plan is in progress with Derek Okafor now attending all client calls and a restructured SOW proposal due April 10.",
+  petal: "Petal & Thorn had an expected seasonal cooldown in March following the record-breaking Valentine\u2019s campaign. Traffic normalized to 95,600 sessions and email revenue returned to $45K after February\u2019s $148K peak. Hours came in under SOW at 93%, reflecting the efficient transition back to base-level operations. Mother\u2019s Day campaign planning is now the priority.",
+  kova: "Kova Skincare showed marginal improvement in March, with sessions up 1.6% and the web redesign (launched February) beginning to reduce bounce rates. However, lead generation and conversion remain flat \u2014 the client\u2019s 15% traffic growth and 10% conversion improvement targets are not being met. The CRO roadmap was delivered and the first experiment launches in early April.",
+  drift: "Drift Coffee Roasters had a solid March with subscription signups up 8.2% to 290 and email revenue growing 14% to $21,200. The annual brand refresh kicked off with mood board approval. Google Reviews reached 4.8 stars with 1,470 total reviews. Hours remained efficiently managed at 94% of SOW.",
+  summit: "Summit Pet Supply posted its strongest month since the engagement began. Website traffic grew 8.7% to 72,600 sessions, MQLs jumped 11.4% to 440, and Instagram surpassed 30,000 followers. The product recommendation engine launched successfully. The client has signaled readiness for scope expansion \u2014 a $25-30K retainer proposal is being prepared.",
+  moonridge: "Moonridge Spirits continues to build from a small base, with website traffic up 21.4% to 10,200 sessions ahead of the planned full launch. Instagram engagement remains strong at 5.0%, and the March tasting event drew 145 attendees. The brand identity phase remains the primary concern \u2014 now in month 5 of a 3-month budget, with revision cycles running 2x the contracted limit."
+};
+
+// Pre-authored March recommendations
+const MARCH_RECS = {
+  evergreen: [
+    "Launch the spring paid media campaign immediately upon Q2 brief approval \u2014 the $85K media budget is ready and seasonal timing is critical.",
+    "Prioritize summer collection landing page design to avoid a content bottleneck once product photography arrives April 15.",
+    "Use the upcoming QBR (April 18) to present the H1 performance story and propose H2 growth targets with the CMO.",
+    "Continue the Pinterest strategy momentum \u2014 1.56M monthly views represents a significant organic channel that can be amplified with promoted pins."
+  ],
+  brightwash: [
+    "Schedule a scope management conversation with the client to address the persistent 5-7% hour overruns \u2014 propose either a formal change order process or a retainer adjustment to $40-42K.",
+    "Resolve the Klaviyo subscription sync issue by April 11 \u2014 intermittent delays are creating a poor customer experience for the subscription program.",
+    "Commission a competitive analysis refresh to inform Q2 strategy \u2014 the DTC cleaning market is getting more crowded.",
+    "Implement time tracking for small client requests to quantify the scope creep and build the case for a retainer adjustment."
+  ],
+  vello: [
+    "Present the relationship recovery plan to the VP Marketing on April 10 with concrete deliverables for the next 30 days \u2014 focus on measurable \"quick wins.\"",
+    "Propose restructuring the SOW to shift budget from underperforming content ($25/mo, 25 hrs) toward performance marketing \u2014 the current content strategy isn\u2019t resonating with the new leadership.",
+    "Implement weekly performance check-ins (vs. current bi-weekly) to demonstrate responsiveness during the 60-day recovery window.",
+    "Prepare a competitive differentiation brief highlighting Sidebar\u2019s deep expertise in the cycling and outdoor category \u2014 this is the strongest argument against switching agencies."
+  ],
+  petal: [
+    "Begin Mother\u2019s Day campaign planning immediately \u2014 the Valentine\u2019s campaign generated $148K in email revenue and set expectations for another strong seasonal push.",
+    "Coordinate spring product photography (April 14-16) and build the Mother\u2019s Day landing page and email sequences in parallel to meet the late April launch window.",
+    "Review the seasonal promotional calendar with the client (April 11) to align on Q2 priorities and pre-approve budgets for Mother\u2019s Day media spend."
+  ],
+  kova: [
+    "Launch the first CRO experiment (product page social proof test) on April 8 \u2014 demonstrating measurable improvement in conversion is critical before the July quarterly review.",
+    "Prepare a mid-quarter ROI analysis for the client by April 15 showing the redesign\u2019s UX improvements (bounce rate, pages/session) and the CRO roadmap\u2019s expected impact on conversion.",
+    "Optimize the Klaviyo abandoned cart flow \u2014 this is the highest-leverage conversion opportunity that doesn\u2019t require client approval.",
+    "Develop a \"quick wins\" plan that can show measurable results within 60 days to protect against the potential retainer downsize."
+  ],
+  drift: [
+    "Deliver brand refresh concepts (round 1) by April 14 \u2014 keep the momentum from the approved mood boards to avoid the project stretching beyond Q2.",
+    "Launch a spring subscription promotion to capitalize on the 8.2% MoM signup growth \u2014 consider a limited-time offer tied to seasonal blends.",
+    "Prioritize a Shopify page speed optimization sprint \u2014 site performance directly impacts the subscription checkout experience."
+  ],
+  summit: [
+    "Prepare and present the scope expansion proposal ($25-30K retainer) while the client\u2019s enthusiasm is high \u2014 include paid media management and expanded content production.",
+    "Build on the Instagram momentum (30K+ followers, 4.5% engagement) by testing paid social amplification within the current $15K media budget.",
+    "Accelerate the loyalty program feature build \u2014 this is the next Shopify development priority and aligns with the client\u2019s retention goals."
+  ],
+  moonridge: [
+    "Set a firm deadline for brand identity sign-off on April 18 \u2014 communicate clearly that additional revisions beyond this date will require a change order.",
+    "Finalize the full website launch plan for late April \u2014 the soft-launch site at 10,200 sessions/mo is ready for broader promotion.",
+    "Prepare a scope transition proposal that shifts from the brand identity phase to ongoing retainer deliverables (social, email, events) with enforced revision limits.",
+    "Recommend a retainer increase to $15-18K to cover actual hours \u2014 the current $12K doesn\u2019t support the 82-95 hours/month the account consistently requires."
+  ]
+};
+
+// --- Utilities ---
+
+function fmtNum(v) {
+  if (typeof v === 'string') return v;
+  if (v >= 1000000) return (v / 1000000).toFixed(1) + 'M';
+  if (v >= 1000) return (v / 1000).toFixed(v >= 10000 ? 0 : 1) + 'K';
+  return v.toLocaleString();
+}
+
+function fmtDollar(v) {
+  if (v >= 1000000) return '$' + (v / 1000000).toFixed(1) + 'M';
+  if (v >= 1000) return '$' + (v / 1000).toFixed(v >= 10000 ? 0 : 1) + 'K';
+  return '$' + v.toLocaleString();
+}
+
+function fmtPct(curr, prev, invertColor) {
+  if (prev === 0 || prev === undefined || prev === null) return { text: '\u2014', cls: 'mom-na' };
+  const pct = ((curr - prev) / prev * 100).toFixed(1);
+  const positive = pct > 0;
+  const negative = pct < 0;
+  let cls = 'mom-na';
+  if (invertColor) {
+    cls = positive ? 'mom-neg' : negative ? 'mom-pos' : 'mom-na';
+  } else {
+    cls = positive ? 'mom-pos' : negative ? 'mom-neg' : 'mom-na';
+  }
+  const sign = positive ? '+' : '';
+  return { text: sign + pct + '%', cls };
+}
+
+function healthLabel(color) {
+  if (color === 'green') return 'Healthy';
+  if (color === 'yellow') return 'At Risk';
+  return 'Critical';
+}
+
+function healthEmoji(color) {
+  if (color === 'green') return '\uD83D\uDFE2';
+  if (color === 'yellow') return '\uD83D\uDFE1';
+  return '\uD83D\uDD34';
+}
+
+// --- Initialization ---
+
+const clientSelect = document.getElementById('client-select');
+const monthSelect = document.getElementById('month-select');
+
+CLIENTS.forEach((c, i) => {
+  const opt = document.createElement('option');
+  opt.value = i;
+  opt.textContent = c.name + ' (' + c.retainer + ')';
+  clientSelect.appendChild(opt);
+});
+
+MONTHS.forEach((m, i) => {
+  const opt = document.createElement('option');
+  opt.value = i;
+  opt.textContent = m;
+  monthSelect.appendChild(opt);
+});
+
+// Defaults: Evergreen + Mar 2026
+clientSelect.value = 0;
+monthSelect.value = 5;
+
+document.getElementById('header-date').textContent = new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+
+// Store last generated report data for markdown export
+let lastReport = null;
+
+function generateReport() {
+  const client = CLIENTS[parseInt(clientSelect.value)];
+  const mi = parseInt(monthSelect.value);
+  const month = MONTHS[mi];
+  const prevMi = mi - 1;
+  const hasPrior = prevMi >= 0;
+
+  // For Moonridge, months before Dec 2025 (index 2) are pre-contract
+  const isPreContract = client.preContract && mi < 2;
+  if (isPreContract) {
+    document.getElementById('report-output').innerHTML = '<div class="report-container"><p>No data available for this client in the selected month (pre-contract period).</p></div>';
+    document.getElementById('btn-export').style.display = 'none';
+    return;
+  }
+
+  // Build executive summary
+  let summary = '';
+  if (mi === 5) {
+    summary = MARCH_SUMMARIES[client.id];
+  } else {
+    summary = generateTemplateSummary(client, mi);
+  }
+
+  // Build recommendations
+  let recs = [];
+  if (mi === 5) {
+    recs = MARCH_RECS[client.id];
+  } else {
+    recs = generateTemplateRecs(client, mi);
+  }
+
+  // Determine if prior month data is available
+  const priorAvail = hasPrior && !(client.preContract && prevMi < 2);
+  // For Moonridge Oct/Nov have 0s, so check SOW Hours
+  const priorHasData = priorAvail && (client.hours['SOW Hours'][prevMi] > 0 || !client.preContract);
+
+  const html = buildReportHTML(client, mi, month, summary, recs, priorHasData);
+  document.getElementById('report-output').innerHTML = html;
+  document.getElementById('btn-export').style.display = 'inline-block';
+
+  // Store for markdown export
+  lastReport = { client, mi, month, summary, recs, priorHasData };
+}
+
+function generateTemplateSummary(client, mi) {
+  const prevMi = mi - 1;
+  // Count improved vs declined metrics
+  let improved = 0, declined = 0;
+  const checks = [
+    { curr: client.traffic.Sessions[mi], prev: prevMi >= 0 ? client.traffic.Sessions[prevMi] : null },
+    { curr: client.leads.MQLs[mi], prev: prevMi >= 0 ? client.leads.MQLs[prevMi] : null },
+    { curr: client.email.Revenue[mi], prev: prevMi >= 0 ? client.email.Revenue[prevMi] : null },
+    { curr: client.hours['Util %'][mi], prev: prevMi >= 0 ? client.hours['Util %'][prevMi] : null }
+  ];
+  checks.forEach(c => {
+    if (c.prev && c.prev > 0) {
+      if (c.curr > c.prev) improved++;
+      else if (c.curr < c.prev) declined++;
+    }
+  });
+  const tone = improved > declined ? 'strong' : improved === declined ? 'steady' : 'challenging';
+
+  // Best metric
+  let bestMetric = '', bestChange = -Infinity;
+  let worstMetric = '', worstChange = Infinity;
+  const metricNames = ['website traffic', 'lead generation', 'email revenue', 'utilization'];
+  checks.forEach((c, i) => {
+    if (c.prev && c.prev > 0) {
+      const pct = (c.curr - c.prev) / c.prev * 100;
+      if (pct > bestChange) { bestChange = pct; bestMetric = metricNames[i]; }
+      if (pct < worstChange) { worstChange = pct; worstMetric = metricNames[i]; }
+    }
+  });
+
+  const monthName = MONTHS[mi];
+  const bestDir = bestChange > 0 ? 'up' : 'down';
+  const bestPct = Math.abs(bestChange).toFixed(1);
+  const worstDir = worstChange > 0 ? 'up' : 'down';
+  const worstPct = Math.abs(worstChange).toFixed(1);
+
+  let line2 = bestMetric ? `${bestMetric.charAt(0).toUpperCase() + bestMetric.slice(1)} was the strongest area, ${bestDir} ${bestPct}% month-over-month.` : '';
+  let line3 = worstMetric && worstMetric !== bestMetric ? `${worstMetric.charAt(0).toUpperCase() + worstMetric.slice(1)} ${worstChange < 0 ? 'declined' : 'held steady'} and warrants attention.` : '';
+
+  if (mi === 0) {
+    return `${client.name} began the reporting period in ${monthName}. This is the first month of tracked data, establishing baseline metrics across all channels.`;
+  }
+
+  return `${client.name} had a ${tone} ${monthName.split(' ')[0]}. ${line2} ${line3}`.trim();
+}
+
+function generateTemplateRecs(client, mi) {
+  const prevMi = mi - 1;
+  const recs = [];
+
+  if (prevMi < 0 || (client.preContract && prevMi < 2)) {
+    return ["Establish baseline KPIs and set performance targets for next month.", "Review SOW deliverables to ensure alignment with client priorities.", "Schedule a strategy session to define Q1 goals."];
+  }
+
+  // 1. Biggest decline
+  const metrics = [
+    { name: 'website traffic', curr: client.traffic.Sessions[mi], prev: client.traffic.Sessions[prevMi] },
+    { name: 'lead generation (MQLs)', curr: client.leads.MQLs[mi], prev: client.leads.MQLs[prevMi] },
+    { name: 'email revenue', curr: client.email.Revenue[mi], prev: client.email.Revenue[prevMi] },
+  ];
+  let worstIdx = 0, worstPct = Infinity;
+  metrics.forEach((m, i) => {
+    if (m.prev > 0) {
+      const pct = (m.curr - m.prev) / m.prev * 100;
+      if (pct < worstPct) { worstPct = pct; worstIdx = i; }
+    }
+  });
+  const worst = metrics[worstIdx];
+  const wPct = Math.abs(((worst.curr - worst.prev) / worst.prev) * 100).toFixed(1);
+  if (worstPct < 0) {
+    recs.push(`Address the ${worst.name} decline \u2014 ${worst.name} dropped ${wPct}% this month and needs a focused recovery plan.`);
+  } else {
+    recs.push(`Maintain momentum in ${worst.name} \u2014 even the weakest channel showed growth this month. Identify opportunities to accelerate.`);
+  }
+
+  // 2. Hours vs SOW
+  const util = client.hours['Util %'][mi];
+  if (util > 105) {
+    recs.push(`Address scope management \u2014 hours came in at ${util}% of SOW this month. Consider a change order or retainer adjustment to align capacity with demand.`);
+  } else if (util < 90) {
+    recs.push(`Improve capacity utilization \u2014 hours came in at ${util}% of SOW this month. Identify strategic initiatives to fill the available capacity and maximize value for the client.`);
+  } else {
+    recs.push(`Continue disciplined scope management \u2014 hours at ${util}% of SOW reflect healthy alignment between deliverables and capacity.`);
+  }
+
+  // 3. Strongest metric
+  let bestIdx = 0, bestPct = -Infinity;
+  metrics.forEach((m, i) => {
+    if (m.prev > 0) {
+      const pct = (m.curr - m.prev) / m.prev * 100;
+      if (pct > bestPct) { bestPct = pct; bestIdx = i; }
+    }
+  });
+  const best = metrics[bestIdx];
+  const bPct = Math.abs(((best.curr - best.prev) / best.prev) * 100).toFixed(1);
+  if (bestPct > 0) {
+    recs.push(`Build on the ${best.name} momentum \u2014 ${best.name} grew ${bPct}% this month. Double down on the strategies driving this growth.`);
+  } else {
+    recs.push(`Conduct a comprehensive performance review \u2014 all tracked metrics declined this month. Schedule a strategy session to identify root causes and corrective actions.`);
+  }
+
+  return recs;
+}
+
+function buildMetricTable(sectionData, mi, priorHasData, invertKeys) {
+  invertKeys = invertKeys || [];
+  const keys = Object.keys(sectionData);
+  let html = '<table><tr><th>Metric</th><th>' + MONTHS[mi] + '</th>';
+  if (mi > 0) html += '<th>' + MONTHS[mi - 1] + '</th><th>MoM Change</th>';
+  html += '</tr>';
+
+  keys.forEach(key => {
+    const curr = sectionData[key][mi];
+    const prev = mi > 0 ? sectionData[key][mi - 1] : null;
+    const isInvert = invertKeys.includes(key);
+
+    let currDisplay = formatMetricValue(key, curr);
+    let prevDisplay = '\u2014';
+    let changeDisplay = { text: '\u2014', cls: 'mom-na' };
+
+    if (mi > 0 && priorHasData) {
+      prevDisplay = formatMetricValue(key, prev);
+      if (typeof curr === 'number' && typeof prev === 'number' && prev > 0) {
+        changeDisplay = fmtPct(curr, prev, isInvert);
+      } else if (typeof curr === 'string' || typeof prev === 'string') {
+        changeDisplay = { text: '\u2014', cls: 'mom-na' };
+      }
+    }
+
+    html += '<tr><td>' + key + '</td><td>' + currDisplay + '</td>';
+    if (mi > 0) {
+      html += '<td>' + prevDisplay + '</td>';
+      html += '<td class="' + changeDisplay.cls + '">' + changeDisplay.text + '</td>';
+    }
+    html += '</tr>';
+  });
+
+  html += '</table>';
+  return html;
+}
+
+function formatMetricValue(key, val) {
+  if (typeof val === 'string') return val;
+  if (val === 0 && (key === 'Sessions' || key === 'Visitors' || key === 'MQLs' || key === 'SQLs')) return '\u2014';
+  if (key.includes('Revenue') || key === 'Budget' || key === 'Actual Cost') return fmtDollar(val);
+  if (key.includes('%')) return val.toFixed(1) + '%';
+  if (key === 'CPL') return '$' + val.toFixed(2);
+  return fmtNum(val);
+}
+
+function buildReportHTML(client, mi, month, summary, recs, priorHasData) {
+  const today = new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+
+  let html = '<div class="report-container">';
+
+  // 1. Report Header
+  html += '<div class="report-branding">Sidebar Creative</div>';
+  html += '<h1>' + client.name + '</h1>';
+  html += '<div class="report-subtitle">' + month + ' \u2014 Monthly Performance Report</div>';
+  html += '<div class="health-badge ' + client.healthColor + '">Health Score: ' + client.health + ' \u2014 ' + healthLabel(client.healthColor) + '</div>';
+  html += '<div class="report-meta">Account Director: ' + client.manager + ' &nbsp;|&nbsp; Generated: ' + today + '</div>';
+
+  // 2. Executive Summary
+  html += '<h2>Executive Summary</h2>';
+  html += '<p>' + summary + '</p>';
+
+  // 3. Performance Metrics
+  html += '<h2>Performance Metrics</h2>';
+
+  html += '<h3>Traffic</h3>';
+  html += buildMetricTable(client.traffic, mi, priorHasData, ['Bounce %']);
+
+  html += '<h3>Leads</h3>';
+  html += buildMetricTable(client.leads, mi, priorHasData, ['CPL']);
+
+  html += '<h3>Social</h3>';
+  html += buildMetricTable(client.social, mi, priorHasData, []);
+
+  html += '<h3>Email</h3>';
+  html += buildMetricTable(client.email, mi, priorHasData, []);
+
+  // 4. Deliverables & SOW
+  html += '<h2>Deliverables & SOW</h2>';
+  html += '<table><tr><th>Discipline</th><th>SOW Deliverables</th><th>Monthly Hours</th></tr>';
+  let totalSowHours = 0;
+  Object.entries(client.sow).forEach(([disc, info]) => {
+    html += '<tr><td>' + disc + '</td><td>' + info.deliverables + '</td><td>' + info.hours + '</td></tr>';
+    totalSowHours += info.hours;
+  });
+  html += '<tr style="font-weight:600;border-top:2px solid #ddd"><td>Total</td><td></td><td>' + totalSowHours + '</td></tr>';
+  html += '</table>';
+
+  // 5. Hours & Budget
+  html += '<h2>Hours & Budget</h2>';
+  const sowHrs = client.hours['SOW Hours'][mi];
+  const actHrs = client.hours.Delivered[mi];
+  const utilPct = client.hours['Util %'][mi];
+  const budget = client.hours.Budget[mi];
+  const actCost = client.hours['Actual Cost'][mi];
+  const effRate = actHrs > 0 ? (actCost / actHrs).toFixed(2) : '0.00';
+
+  html += '<table><tr><th>Metric</th><th>Value</th></tr>';
+  html += '<tr><td>SOW Hours</td><td>' + sowHrs + '</td></tr>';
+  html += '<tr><td>Actual Hours</td><td>' + actHrs + '</td></tr>';
+  html += '<tr><td>Utilization</td><td>' + utilPct + '%</td></tr>';
+  html += '<tr><td>Monthly Budget</td><td>' + fmtDollar(budget) + '</td></tr>';
+  html += '<tr><td>Actual Cost</td><td>' + fmtDollar(actCost) + '</td></tr>';
+  html += '<tr><td>Effective Rate</td><td>$' + effRate + '/hr</td></tr>';
+  html += '</table>';
+
+  // 6. Strategic Recommendations
+  html += '<h2>Strategic Recommendations</h2>';
+  html += '<ol>';
+  recs.forEach(r => {
+    html += '<li>' + r + '</li>';
+  });
+  html += '</ol>';
+
+  html += '</div>';
+  return html;
+}
+
+// --- Markdown Export ---
+
+function exportMarkdown() {
+  if (!lastReport) return;
+  const { client, mi, month, summary, recs, priorHasData } = lastReport;
+  const today = new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+
+  let md = '';
+
+  // Header
+  md += '# ' + client.name + ' \u2014 ' + month + ' Monthly Performance Report\n\n';
+  md += '**Sidebar Creative** | Account Director: ' + client.manager + ' | Generated: ' + today + '\n\n';
+  md += 'Health Score: ' + client.health + ' ' + healthEmoji(client.healthColor) + ' ' + healthLabel(client.healthColor) + '\n\n';
+
+  // Executive Summary
+  md += '## Executive Summary\n\n';
+  md += summary + '\n\n';
+
+  // Performance Metrics
+  md += '## Performance Metrics\n\n';
+
+  md += '### Traffic\n\n';
+  md += buildMetricTableMD(client.traffic, mi, priorHasData, ['Bounce %']);
+
+  md += '### Leads\n\n';
+  md += buildMetricTableMD(client.leads, mi, priorHasData, ['CPL']);
+
+  md += '### Social\n\n';
+  md += buildMetricTableMD(client.social, mi, priorHasData, []);
+
+  md += '### Email\n\n';
+  md += buildMetricTableMD(client.email, mi, priorHasData, []);
+
+  // Deliverables & SOW
+  md += '## Deliverables & SOW\n\n';
+  md += '| Discipline | SOW Deliverables | Monthly Hours |\n';
+  md += '| --- | --- | --- |\n';
+  let totalSowHours = 0;
+  Object.entries(client.sow).forEach(([disc, info]) => {
+    md += '| ' + disc + ' | ' + info.deliverables + ' | ' + info.hours + ' |\n';
+    totalSowHours += info.hours;
+  });
+  md += '| **Total** | | **' + totalSowHours + '** |\n\n';
+
+  // Hours & Budget
+  md += '## Hours & Budget\n\n';
+  const sowHrs = client.hours['SOW Hours'][mi];
+  const actHrs = client.hours.Delivered[mi];
+  const utilPct = client.hours['Util %'][mi];
+  const budget = client.hours.Budget[mi];
+  const actCost = client.hours['Actual Cost'][mi];
+  const effRate = actHrs > 0 ? (actCost / actHrs).toFixed(2) : '0.00';
+
+  md += '| Metric | Value |\n';
+  md += '| --- | --- |\n';
+  md += '| SOW Hours | ' + sowHrs + ' |\n';
+  md += '| Actual Hours | ' + actHrs + ' |\n';
+  md += '| Utilization | ' + utilPct + '% |\n';
+  md += '| Monthly Budget | ' + fmtDollar(budget) + ' |\n';
+  md += '| Actual Cost | ' + fmtDollar(actCost) + ' |\n';
+  md += '| Effective Rate | $' + effRate + '/hr |\n\n';
+
+  // Strategic Recommendations
+  md += '## Strategic Recommendations\n\n';
+  recs.forEach((r, i) => {
+    md += (i + 1) + '. ' + r + '\n';
+  });
+
+  navigator.clipboard.writeText(md).then(() => {
+    const btn = document.getElementById('btn-export');
+    const orig = btn.textContent;
+    btn.textContent = 'Copied!';
+    setTimeout(() => { btn.textContent = orig; }, 2000);
+  });
+}
+
+function buildMetricTableMD(sectionData, mi, priorHasData, invertKeys) {
+  invertKeys = invertKeys || [];
+  const keys = Object.keys(sectionData);
+  let md = '| Metric | ' + MONTHS[mi];
+  if (mi > 0) md += ' | ' + MONTHS[mi - 1] + ' | MoM Change';
+  md += ' |\n';
+  md += '| ---';
+  md += ' | ---';
+  if (mi > 0) md += ' | --- | ---';
+  md += ' |\n';
+
+  keys.forEach(key => {
+    const curr = sectionData[key][mi];
+    const prev = mi > 0 ? sectionData[key][mi - 1] : null;
+    const isInvert = invertKeys.includes(key);
+
+    let currDisplay = formatMetricValue(key, curr);
+    let prevDisplay = '\u2014';
+    let changeText = '\u2014';
+
+    if (mi > 0 && priorHasData) {
+      prevDisplay = formatMetricValue(key, prev);
+      if (typeof curr === 'number' && typeof prev === 'number' && prev > 0) {
+        const info = fmtPct(curr, prev, isInvert);
+        changeText = info.text;
+      }
+    }
+
+    md += '| ' + key + ' | ' + currDisplay;
+    if (mi > 0) md += ' | ' + prevDisplay + ' | ' + changeText;
+    md += ' |\n';
+  });
+  md += '\n';
+  return md;
+}
+
+// Generate on page load with defaults
+generateReport();
+</script>
+</body>
+</html>
