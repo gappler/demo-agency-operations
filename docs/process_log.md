@@ -1,11 +1,45 @@
 ---
 title: Process Log
-version: 1.3
+version: 1.4
 created: 2026-04-06
 updated: 2026-04-07
 ---
 
 # Process Log
+
+---
+
+## 2026-04-07 — Capacity Planner (Tool 3)
+
+**Prompt:**
+Build a capacity planner for Sidebar Creative. Read the team roster, current project allocations, and upcoming project pipeline. Forecast team capacity for the next quarter — show where bottlenecks will form, which roles need hiring or contracting, and when bench time opens up. Let me add hypothetical new projects and see how they impact capacity. Output as an interactive HTML file.
+
+**What was built:**
+- `tools/capacity_planner.html` — Interactive capacity planner with:
+  - Split-view layout: department capacity forecast (top), project list (bottom), risk toggles (sidebar)
+  - 5 department rows (Design, Dev, Strategy, Content, Account/PM) x 3 month columns (Apr/May/Jun)
+  - Color-coded capacity bars: red (>100% bottleneck), yellow (90-100% tight), gray (70-90% normal), green (<70% bench)
+  - Expandable department rows showing individual team member capacity
+  - Auto-generated hiring signals (bottleneck warnings, bench time alerts)
+  - Project list with monthly hours, timeline indicators, and project end dates
+  - 3 pipeline risk toggles: Vello Churns, Kova Downsizes, Summit Expands
+  - Hypothetical project feature: add new projects with department-level hours per month
+  - 4 summary stat cards: bottlenecks, bench openings, hypothetical count, net capacity change
+  - All calculations update in real time on toggle/edit
+
+**Key decisions:**
+- Monthly granularity (not weekly) — matches how agencies budget and plan
+- Split view — top answers "where are bottlenecks?", bottom answers "which projects cause them?"
+- Risk toggles over scenario builder — independent toggles are more flexible and simpler
+- Inline hypothetical projects — consistent with resource allocator interaction pattern
+- Department-level forecasting (not individual) — resource allocator handles person-level
+
+**Files created/modified:**
+- `tools/capacity_planner.html` (created)
+- `docs/superpowers/specs/2026-04-07-capacity-planner-design.md` (created)
+- `docs/superpowers/plans/2026-04-07-capacity-planner.md` (created)
+- `tutorials/03_capacity_planner.md` (created)
+- `docs/process_log.md` (modified)
 
 ---
 
