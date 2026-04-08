@@ -188,9 +188,9 @@ body {
 <div class="hero">
   <div class="hero-brand">Sidebar Creative</div>
   <div class="hero-title">Agency Operations Suite</div>
-  <div class="hero-subtitle">A complete suite of operational tools built entirely with Claude Code. Five interactive dashboards that replace fragmented spreadsheets, manual Friday reports, and hallway-conversation resource planning with data-driven, real-time visibility.</div>
+  <div class="hero-subtitle">A complete suite of operational tools built entirely with Claude Code. Seven interactive dashboards that replace fragmented spreadsheets, manual Friday reports, and hallway-conversation resource planning with data-driven, real-time visibility.</div>
   <div class="hero-stats">
-    <div><div class="hero-stat-value">5</div><div class="hero-stat-label">Tools Built</div></div>
+    <div><div class="hero-stat-value">7</div><div class="hero-stat-label">Tools Built</div></div>
     <div><div class="hero-stat-value green">40</div><div class="hero-stat-label">Team Members</div></div>
     <div><div class="hero-stat-value">8</div><div class="hero-stat-label">Retainer Clients</div></div>
     <div><div class="hero-stat-value red">$69K</div><div class="hero-stat-label">Revenue at Risk</div></div>
@@ -204,7 +204,9 @@ body {
   <a href="#tool-2">2. Resource Allocator</a>
   <a href="#tool-3">3. Capacity Planner</a>
   <a href="#tool-4">4. Status Reports</a>
-  <a href="#tool-5">5. Health Scorer</a>
+  <a href="#tool-5">5. Performance Dashboard</a>
+  <a href="#tool-6">6. Health Scorer</a>
+  <a href="#tool-7">7. Client Reports</a>
 </nav>
 
 <!-- Intro -->
@@ -212,7 +214,7 @@ body {
   <h2>Building an Agency Operations Suite with Claude Code</h2>
   <p><strong>Sidebar Creative</strong> is a 40-person digital agency in Portland doing $6.5M in annual revenue. Like many agencies that have grown fast, their operational infrastructure hasn't kept pace. Scope creep is endemic. Resource loading is invisible. Profitability is a black box until quarter-end. And every Friday afternoon, account directors spend 2-3 hours per client manually assembling performance reports in Google Slides.</p>
   <p>This project demonstrates how Claude Code can build a complete suite of interconnected operational tools from a single brand definition and data set. Each tool was built in a single conversation using natural language prompts — no frameworks, no dependencies, no build steps. Every tool is a self-contained HTML file that opens in any browser.</p>
-  <p>The five tools work together as a system: the <strong>Timeline Dashboard</strong> shows project status at a glance, the <strong>Resource Allocator</strong> reveals who's overloaded and who has capacity, the <strong>Capacity Planner</strong> forecasts where bottlenecks will form next quarter, the <strong>Status Reports</strong> eliminate the Friday reporting grind, and the <strong>Health Scorer</strong> surfaces which clients need intervention before it's too late.</p>
+  <p>The seven tools split into two groups. <strong>Project management tools</strong> (1-3) cover the internal operational view: the <strong>Timeline Dashboard</strong> shows project status at a glance, the <strong>Resource Allocator</strong> reveals who's overloaded and who has capacity, and the <strong>Capacity Planner</strong> forecasts where bottlenecks will form next quarter. <strong>Client reporting tools</strong> (4-7) cover the external-facing view: <strong>Status Reports</strong> eliminate the Friday reporting grind, the <strong>Performance Dashboard</strong> shows 6-month trends across the portfolio, the <strong>Health Scorer</strong> surfaces which clients need intervention, and the <strong>Client Report Generator</strong> produces polished monthly reports ready to send to clients.</p>
 </div>
 
 <!-- Tool 1: Project Timeline -->
@@ -307,11 +309,34 @@ body {
   </div>
 </div>
 
-<!-- Tool 5: Client Health Scorer -->
+<!-- Tool 5: Performance Dashboard -->
 <div class="divider"><hr></div>
 <div class="tool-section" id="tool-5">
   <div class="tool-header">
     <div class="tool-number">5</div>
+    <div class="tool-name">Multi-Client Performance Dashboard</div>
+  </div>
+  <div class="tool-problem">
+    <strong>Problem it solves:</strong> No way to see performance trends across the entire client portfolio at a glance. Account directors tracked their own clients but nobody had the cross-portfolio view needed to spot patterns — which clients are growing, which are declining, and how metrics compare.
+  </div>
+  <div class="tool-prompt">
+    Build a multi-client performance dashboard for Sidebar Creative. Read the 6 months of historical client performance data. Show all 8 clients at a glance &mdash; <em>website traffic trends, lead generation, social media growth, email performance</em>, and hours delivered vs. SOW allocation. Let me <em>click into any client</em> for a detailed view. Output as an interactive HTML file.
+  </div>
+  <div class="tool-preview">
+    <div class="tool-preview-bar">
+      <div class="tool-preview-dots"><span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span></div>
+      <span class="tool-preview-file">tools/performance_dashboard.html</span>
+      <a href="tools/performance_dashboard.html" target="_blank" class="tool-preview-open">Open Full Size &rarr;</a>
+    </div>
+    <iframe src="tools/performance_dashboard.html" loading="lazy"></iframe>
+  </div>
+</div>
+
+<!-- Tool 6: Client Health Scorer -->
+<div class="divider"><hr></div>
+<div class="tool-section" id="tool-6">
+  <div class="tool-header">
+    <div class="tool-number">6</div>
     <div class="tool-name">Client Health Scorer</div>
   </div>
   <div class="tool-problem">
@@ -330,11 +355,34 @@ body {
   </div>
 </div>
 
+<!-- Tool 7: Client Report Generator -->
+<div class="divider"><hr></div>
+<div class="tool-section" id="tool-7">
+  <div class="tool-header">
+    <div class="tool-number">7</div>
+    <div class="tool-name">Automated Client Report Generator</div>
+  </div>
+  <div class="tool-problem">
+    <strong>Problem it solves:</strong> Every Friday afternoon, account directors spent 2-3 hours per client manually assembling performance reports in Google Slides — pulling data from Google Analytics, social platforms, email tools, and the CRM. That's 16-24 hours of senior account time per month spent on formatting instead of strategic thinking.
+  </div>
+  <div class="tool-prompt">
+    Build an automated client report generator for Sidebar Creative. Read the client performance data, SOW terms, and health scores. Generate a <em>polished monthly report</em> for any selected client &mdash; executive summary, performance metrics with month-over-month trends, deliverables completed vs. SOW, hours used vs. allocated, and <em>strategic recommendations</em>. Let me select a client and a month, then generate the report. Output as an interactive HTML file that can also <em>export the report as formatted markdown</em>.
+  </div>
+  <div class="tool-preview">
+    <div class="tool-preview-bar">
+      <div class="tool-preview-dots"><span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span></div>
+      <span class="tool-preview-file">tools/client_reports.html</span>
+      <a href="tools/client_reports.html" target="_blank" class="tool-preview-open">Open Full Size &rarr;</a>
+    </div>
+    <iframe src="tools/client_reports.html" loading="lazy"></iframe>
+  </div>
+</div>
+
 <!-- Footer -->
 <div class="footer">
   <p><strong>Sidebar Creative — Agency Operations Suite</strong></p>
   <p>Built with Claude Code. Every tool is a single self-contained HTML file with zero external dependencies.</p>
-  <p>5 tools &middot; 5 tutorials &middot; 4 data files &middot; 1 brand definition &middot; 0 frameworks</p>
+  <p>7 tools &middot; 7 tutorials &middot; 4 data files &middot; 1 brand definition &middot; 0 frameworks</p>
 </div>
 
 </body>
