@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Capacity Planner — Sidebar Creative</title>
+<style>
+/* Reset & Base */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 14px; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: #f5f5f5;
+  color: #222;
+  min-width: 1200px;
+}
+
+/* Header */
+.header {
+  background: #1a1a1a;
+  color: #fff;
+  padding: 14px 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.header-left { display: flex; align-items: baseline; gap: 18px; }
+.header-brand { font-size: 1.25rem; font-weight: 700; letter-spacing: .02em; }
+.header-title { font-size: .95rem; font-weight: 400; color: #aaa; }
+.header-date { font-size: .85rem; color: #777; }
+
+/* Stats Row */
+.stats-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  padding: 18px 28px;
+}
+.stat-card {
+  background: #fff;
+  border-radius: 6px;
+  padding: 16px 20px;
+  box-shadow: 0 1px 3px rgba(0,0,0,.08);
+}
+.stat-label { font-size: .75rem; text-transform: uppercase; letter-spacing: .06em; color: #777; margin-bottom: 4px; }
+.stat-value { font-size: 1.6rem; font-weight: 700; }
+.stat-value.red { color: #dc3545; }
+.stat-value.green { color: #28a745; }
+.stat-value.blue { color: #007bff; }
+
+/* Layout */
+.layout {
+  display: flex;
+  gap: 14px;
+  padding: 0 28px 28px;
+}
+.main-content {
+  flex: 3;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-width: 0;
+}
+.sidebar {
+  flex: 0 0 260px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* Panel */
+.panel {
+  background: #fff;
+  border-radius: 6px;
+  box-shadow: 0 1px 3px rgba(0,0,0,.08);
+  overflow: hidden;
+}
+.panel-header {
+  background: #1a1a1a;
+  color: #fff;
+  padding: 10px 16px;
+  font-size: .85rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.panel-header-title { flex: 1; }
+.panel-body {
+  padding: 16px;
+}
+
+/* Forecast table */
+.forecast-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+.forecast-table th {
+  padding: 6px 10px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  color: #777;
+  border-bottom: 1px solid #eee;
+}
+.forecast-table th.month-col {
+  text-align: center;
+  min-width: 100px;
+}
+.forecast-table td {
+  padding: 5px 10px;
+  border-bottom: 1px solid #f0f0f0;
+  vertical-align: middle;
+}
+.forecast-table td.month-cell {
+  text-align: center;
+}
+.forecast-table tr:last-child td { border-bottom: 0; }
+.dept-label { font-weight: 600; font-size: 13px; }
+.dept-sublabel { font-size: 11px; color: #888; margin-top: 1px; }
+.dept-row { cursor: pointer; }
+.dept-row:hover td { background: #fafafa; }
+
+.capacity-bar-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.capacity-bar-bg {
+  flex: 1;
+  height: 8px;
+  background: #eee;
+  border-radius: 4px;
+  overflow: hidden;
+  max-width: 120px;
+}
+.capacity-bar-fill {
+  height: 100%;
+  border-radius: 4px;
+  transition: width .3s;
+}
+.capacity-pct { font-size: 12px; font-weight: 700; min-width: 38px; }
+.capacity-label { font-size: 11px; color: #888; }
+
+/* Person sub-rows */
+.person-subrow td {
+  background: #fafafa;
+  padding: 4px 10px 4px 24px;
+  border-bottom: 1px solid #f5f5f5;
+  font-size: 12px;
+}
+.person-subrow:last-child td { border-bottom: 1px solid #f0f0f0; }
+.person-name-small { color: #444; }
+.person-role-small { font-size: 10px; color: #aaa; }
+
+/* Month header row */
+.month-header-row th {
+  background: #f5f5f5;
+  color: #555;
+  padding: 4px 10px;
+  text-align: center;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  border-bottom: 1px solid #e0e0e0;
+}
+.month-header-row th:first-child { text-align: left; }
+
+/* Timeline tag */
+.timeline-tag { font-size: 11px; font-weight: 600; }
+
+/* Projects panel */
+.projects-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+.projects-table th {
+  padding: 6px 10px;
+  font-weight: 600;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  color: #777;
+  border-bottom: 1px solid #eee;
+  text-align: left;
+}
+.projects-table th.center { text-align: center; }
+.projects-table td {
+  padding: 7px 10px;
+  border-bottom: 1px solid #f0f0f0;
+  vertical-align: middle;
+}
+.projects-table tr:last-child td { border-bottom: 0; }
+.project-name { font-weight: 600; }
+.project-meta-small { font-size: 11px; color: #888; margin-top: 1px; }
+.health-dot { width: 7px; height: 7px; border-radius: 50%; display: inline-block; vertical-align: middle; }
+.hours-cell { text-align: center; font-weight: 600; font-size: 13px; }
+.hours-zero { color: #ccc; font-size: 12px; }
+.risk-badge {
+  font-size: 10px;
+  padding: 1px 5px;
+  border-radius: 3px;
+  font-weight: 600;
+  margin-left: 4px;
+}
+.risk-badge.removed { background: #fff3f3; color: #dc3545; }
+.risk-badge.increased { background: #f0fff4; color: #28a745; }
+
+/* Risks panel */
+.risk-item {
+  padding: 12px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+.risk-item:last-child { border-bottom: 0; }
+.risk-item-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+.risk-name { font-weight: 600; font-size: 13px; }
+.risk-value { font-size: 11px; color: #888; }
+.risk-desc { font-size: 12px; color: #666; margin-bottom: 8px; line-height: 1.4; }
+.risk-toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.risk-toggle-label { font-size: 11px; color: #888; }
+.toggle-switch {
+  position: relative;
+  display: inline-block;
+  width: 36px;
+  height: 20px;
+}
+.toggle-switch input { display: none; }
+.toggle-slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: #ccc;
+  border-radius: 20px;
+  transition: background .2s;
+}
+.toggle-slider::before {
+  content: '';
+  position: absolute;
+  height: 14px; width: 14px;
+  left: 3px; bottom: 3px;
+  background: #fff;
+  border-radius: 50%;
+  transition: transform .2s;
+}
+.toggle-switch input:checked + .toggle-slider { background: #dc3545; }
+.toggle-switch input:checked + .toggle-slider::before { transform: translateX(16px); }
+.toggle-switch.green input:checked + .toggle-slider { background: #28a745; }
+
+/* Hypothetical projects */
+.hypo-add-btn {
+  width: 100%;
+  padding: 8px;
+  border: 1px dashed #ccc;
+  background: transparent;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+  font-family: inherit;
+  color: #888;
+  margin-top: 12px;
+  transition: border-color .15s, color .15s;
+}
+.hypo-add-btn:hover { border-color: #007bff; color: #007bff; }
+
+.hypo-form {
+  background: #f8f9ff;
+  border: 1px solid #d0d8ff;
+  border-radius: 6px;
+  padding: 12px;
+  margin-top: 12px;
+}
+.hypo-form label { display: block; font-size: 11px; color: #555; margin-bottom: 3px; margin-top: 8px; font-weight: 600; }
+.hypo-form label:first-child { margin-top: 0; }
+.hypo-form input, .hypo-form select {
+  width: 100%;
+  padding: 5px 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 12px;
+  font-family: inherit;
+  outline: none;
+}
+.hypo-form input:focus, .hypo-form select:focus { border-color: #007bff; }
+.hypo-hours-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 6px;
+  margin-top: 4px;
+}
+.hypo-hours-grid label { margin: 0; }
+.hypo-hours-grid input { margin-top: 2px; }
+.hypo-form-actions { display: flex; gap: 6px; margin-top: 10px; }
+.hypo-btn {
+  flex: 1;
+  padding: 6px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+  font-family: inherit;
+  font-weight: 600;
+}
+.hypo-btn.add { background: #007bff; color: #fff; }
+.hypo-btn.add:hover { background: #0069d9; }
+.hypo-btn.cancel { background: #eee; color: #555; }
+.hypo-btn.cancel:hover { background: #ddd; }
+
+.hypo-item {
+  background: #f0f4ff;
+  border: 1px solid #c0d0ff;
+  border-radius: 4px;
+  padding: 8px 10px;
+  margin-top: 8px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+}
+.hypo-item-name { font-weight: 600; font-size: 12px; color: #007bff; }
+.hypo-item-detail { font-size: 11px; color: #666; margin-top: 2px; }
+.hypo-remove {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #aaa;
+  font-size: 14px;
+  line-height: 1;
+  padding: 0;
+  flex-shrink: 0;
+}
+.hypo-remove:hover { color: #dc3545; }
+
+/* Net change indicator */
+.net-positive { color: #28a745; }
+.net-negative { color: #dc3545; }
+.net-neutral { color: #555; }
+
+/* Expand caret */
+.caret {
+  display: inline-block;
+  font-size: 10px;
+  margin-right: 4px;
+  transition: transform .2s;
+  color: #aaa;
+}
+.caret.open { transform: rotate(90deg); }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-left">
+    <div class="header-brand">Sidebar Creative</div>
+    <div class="header-title">Capacity Planner</div>
+  </div>
+  <div class="header-date" id="headerDate"></div>
+</div>
+
+<div class="stats-row">
+  <div class="stat-card">
+    <div class="stat-label">Bottlenecks (&gt;100%)</div>
+    <div class="stat-value red" id="statBottlenecks">—</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">Bench Openings (&lt;70%)</div>
+    <div class="stat-value green" id="statBench">—</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">Hypothetical Projects</div>
+    <div class="stat-value blue" id="statHypothetical">—</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">Net Capacity Change</div>
+    <div class="stat-value" id="statNetChange">—</div>
+  </div>
+</div>
+
+<div class="layout">
+  <div class="main-content">
+    <div class="panel" id="forecastPanel">
+      <div class="panel-header">
+        <span class="panel-header-title">Capacity Forecast &mdash; Q2 2026 (Apr / May / Jun)</span>
+      </div>
+      <div class="panel-body" id="forecastBody"></div>
+    </div>
+    <div class="panel" id="projectsPanel">
+      <div class="panel-header">
+        <span class="panel-header-title">Projects Driving Demand</span>
+      </div>
+      <div class="panel-body" id="projectsBody"></div>
+    </div>
+  </div>
+  <div class="sidebar">
+    <div class="panel" id="risksPanel">
+      <div class="panel-header">
+        <span class="panel-header-title">Pipeline Risks</span>
+      </div>
+      <div class="panel-body" id="risksBody"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── CONSTANTS ─────────────────────────────────────────────────────────────────
+const MONTHS = ['apr', 'may', 'jun'];
+const MONTH_LABELS = { apr: 'April', may: 'May', jun: 'June' };
+const DEPTS = ['design', 'development', 'strategy', 'content', 'account'];
+const DEPT_LABELS = { design: 'Design', development: 'Development', strategy: 'Strategy', content: 'Content', account: 'Account/PM' };
+const WEEK_MONTH_FACTOR = 4.33;
+const HEALTH_COLORS = { green: '#28a745', yellow: '#ffc107', red: '#dc3545' };
+
+// ── TEAM ROSTER (33 billable staff) ──────────────────────────────────────────
+const TEAM = [
+  // Account/PM
+  { id: 'sophie_morales',   name: 'Sophie Morales',   initials: 'SM', role: 'Account Director',          dept: 'account',     capacity: 40, billableTarget: 32, currentLoad: 42 },
+  { id: 'tomas_reyes',      name: 'Tomás Reyes',       initials: 'TR', role: 'Sr. Account Manager',       dept: 'account',     capacity: 40, billableTarget: 32, currentLoad: 34 },
+  { id: 'alina_park',       name: 'Alina Park',        initials: 'AP', role: 'Account Manager',           dept: 'account',     capacity: 40, billableTarget: 32, currentLoad: 30 },
+  { id: 'james_whitfield',  name: 'James Whitfield',   initials: 'JW', role: 'Sr. Project Manager',       dept: 'account',     capacity: 40, billableTarget: 32, currentLoad: 36 },
+  { id: 'priya_nair',       name: 'Priya Nair',        initials: 'PN', role: 'Project Manager',           dept: 'account',     capacity: 40, billableTarget: 32, currentLoad: 28 },
+  { id: 'casey_liu',        name: 'Casey Liu',         initials: 'CL', role: 'Project Coordinator',       dept: 'account',     capacity: 40, billableTarget: 32, currentLoad: 21 },
+
+  // Design
+  { id: 'nico_strand',      name: 'Nico Strand',       initials: 'NS', role: 'Sr. Designer / Art Dir.',   dept: 'design',      capacity: 40, billableTarget: 34, currentLoad: 48 },
+  { id: 'yuki_tanaka',      name: 'Yuki Tanaka',       initials: 'YT', role: 'Senior Designer',           dept: 'design',      capacity: 40, billableTarget: 34, currentLoad: 36 },
+  { id: 'bea_cortez',       name: 'Bea Cortez',        initials: 'BC', role: 'Mid Designer',              dept: 'design',      capacity: 40, billableTarget: 34, currentLoad: 41 },
+  { id: 'finn_gallagher',   name: 'Finn Gallagher',    initials: 'FG', role: 'Mid Designer',              dept: 'design',      capacity: 40, billableTarget: 34, currentLoad: 35 },
+  { id: 'ava_lindstrom',    name: 'Ava Lindström',     initials: 'AL', role: 'Mid Designer',              dept: 'design',      capacity: 40, billableTarget: 34, currentLoad: 22 },
+  { id: 'jordan_tate',      name: 'Jordan Tate',       initials: 'JT', role: 'Mid Designer',              dept: 'design',      capacity: 40, billableTarget: 34, currentLoad: 33 },
+  { id: 'zara_osei',        name: 'Zara Osei',         initials: 'ZO', role: 'Junior Designer',           dept: 'design',      capacity: 40, billableTarget: 34, currentLoad: 30 },
+  { id: 'milo_varga',       name: 'Milo Varga',        initials: 'MV', role: 'Junior Designer',           dept: 'design',      capacity: 40, billableTarget: 34, currentLoad: 28 },
+  { id: 'iris_chung',       name: 'Iris Chung',        initials: 'IC', role: 'Motion Designer',           dept: 'design',      capacity: 40, billableTarget: 34, currentLoad: 32 },
+  { id: 'kai_bergstrom',    name: 'Kai Bergström',     initials: 'KB', role: 'UX Designer',               dept: 'design',      capacity: 40, billableTarget: 34, currentLoad: 35 },
+  { id: 'luna_esperanza',   name: 'Luna Esperanza',    initials: 'LE', role: 'Brand Designer',            dept: 'design',      capacity: 40, billableTarget: 34, currentLoad: 34 },
+  { id: 'sam_delacroix',    name: 'Sam Delacroix',     initials: 'SD', role: 'Production Designer',       dept: 'design',      capacity: 40, billableTarget: 34, currentLoad: 31 },
+
+  // Development
+  { id: 'owen_marsh',       name: 'Owen Marsh',        initials: 'OM', role: 'Lead Developer',            dept: 'development', capacity: 40, billableTarget: 34, currentLoad: 46 },
+  { id: 'diana_kovac',      name: 'Diana Kovač',       initials: 'DK', role: 'Senior Developer',          dept: 'development', capacity: 40, billableTarget: 34, currentLoad: 38 },
+  { id: 'leo_farias',       name: 'Leo Farias',        initials: 'LF', role: 'Mid Developer',             dept: 'development', capacity: 40, billableTarget: 34, currentLoad: 34 },
+  { id: 'nadia_volkov',     name: 'Nadia Volkov',      initials: 'NV', role: 'Mid Developer',             dept: 'development', capacity: 40, billableTarget: 34, currentLoad: 36 },
+  { id: 'ravi_subramanian', name: 'Ravi Subramanian',  initials: 'RS', role: 'Mid Developer',             dept: 'development', capacity: 40, billableTarget: 34, currentLoad: 32 },
+  { id: 'elodie_blanc',     name: 'Elodie Blanc',      initials: 'EB', role: 'Junior Developer',          dept: 'development', capacity: 40, billableTarget: 34, currentLoad: 19 },
+  { id: 'marcus_webb',      name: 'Marcus Webb',       initials: 'MW', role: 'Junior Developer',          dept: 'development', capacity: 40, billableTarget: 34, currentLoad: 30 },
+  { id: 'hana_yoshida',     name: 'Hana Yoshida',      initials: 'HY', role: 'Front-End Developer',       dept: 'development', capacity: 40, billableTarget: 34, currentLoad: 33 },
+
+  // Strategy
+  { id: 'celeste_durand',   name: 'Celeste Durand',    initials: 'CD', role: 'Senior Strategist',         dept: 'strategy',    capacity: 40, billableTarget: 30, currentLoad: 38 },
+  { id: 'andre_kim',        name: 'Andre Kim',         initials: 'AK', role: 'Strategist',                dept: 'strategy',    capacity: 40, billableTarget: 30, currentLoad: 30 },
+  { id: 'tessa_moreno',     name: 'Tessa Moreno',      initials: 'TM', role: 'Junior Strategist',         dept: 'strategy',    capacity: 40, billableTarget: 30, currentLoad: 26 },
+  { id: 'wes_calloway',     name: 'Wes Calloway',      initials: 'WC', role: 'Data/Analytics Strategist', dept: 'strategy',    capacity: 40, billableTarget: 30, currentLoad: 29 },
+
+  // Content
+  { id: 'rowan_griffiths',  name: 'Rowan Griffiths',   initials: 'RG', role: 'Sr. Content Creator',       dept: 'content',     capacity: 40, billableTarget: 34, currentLoad: 36 },
+  { id: 'jia_liang',        name: 'Jia Liang',         initials: 'JL', role: 'Content Creator',           dept: 'content',     capacity: 40, billableTarget: 34, currentLoad: 31 },
+  { id: 'elliot_saunders',  name: 'Elliot Saunders',   initials: 'ES', role: 'Content Creator',           dept: 'content',     capacity: 40, billableTarget: 34, currentLoad: 20 },
+];
+
+// ── PROJECTS ──────────────────────────────────────────────────────────────────
+const PROJECTS = [
+  // Retainers — ongoing through Q2
+  { id: 'evergreen',      name: 'Evergreen Outdoor Co.',       type: 'retainer', value: 45000,  health: 'green',  endMonth: null },
+  { id: 'brightwash',     name: 'Brightwash Home',             type: 'retainer', value: 38000,  health: 'green',  endMonth: null },
+  { id: 'vello',          name: 'Vello Cycling',               type: 'retainer', value: 32000,  health: 'red',    endMonth: null },
+  { id: 'petal',          name: 'Petal & Thorn',               type: 'retainer', value: 28000,  health: 'green',  endMonth: null },
+  { id: 'kova',           name: 'Kova Skincare',               type: 'retainer', value: 25000,  health: 'yellow', endMonth: null },
+  { id: 'drift',          name: 'Drift Coffee Roasters',       type: 'retainer', value: 22000,  health: 'green',  endMonth: null },
+  { id: 'summit',         name: 'Summit Pet Supply',           type: 'retainer', value: 18000,  health: 'green',  endMonth: null },
+  { id: 'moonridge',      name: 'Moonridge Spirits',           type: 'retainer', value: 12000,  health: 'yellow', endMonth: null },
+  // Project-based with end dates
+  { id: 'river_district', name: 'River District Rebrand',      type: 'project',  value: 85000,  health: 'green',  burned: 73, status: 'On track',    endMonth: 'apr', endsHalf: true  },
+  { id: 'cascade',        name: 'Cascade Athletic Website',    type: 'project',  value: 120000, health: 'green',  burned: 40, status: 'On track',    endMonth: 'jun', endsHalf: true  },
+  { id: 'fieldwork',      name: 'Fieldwork Provisions Launch', type: 'project',  value: 95000,  health: 'green',  burned: 19, status: 'Early stage', endMonth: 'jul+', endsHalf: false },
+  { id: 'nw_natural',     name: 'NW Natural Rebrand',          type: 'project',  value: 55000,  health: 'yellow', burned: 75, status: 'Over scope',  endMonth: 'apr', endsHalf: true  },
+];
+
+// ── ALLOCATION MATRIX (weekly hours per person per project) ───────────────────
+const allocations = {};
+PROJECTS.forEach(p => { allocations[p.id] = {}; });
+
+// Evergreen Outdoor Co. — $45K/mo
+allocations['evergreen']['nico_strand']      = 23;
+allocations['evergreen']['owen_marsh']       = 20;
+allocations['evergreen']['rowan_griffiths']  = 13;
+allocations['evergreen']['james_whitfield']  = 12;
+allocations['evergreen']['zara_osei']        = 11;
+allocations['evergreen']['sophie_morales']   = 10;
+allocations['evergreen']['celeste_durand']   = 10;
+allocations['evergreen']['luna_esperanza']   = 9;
+allocations['evergreen']['bea_cortez']       = 7;
+allocations['evergreen']['iris_chung']       = 7;
+
+// Brightwash Home — $38K/mo
+allocations['brightwash']['yuki_tanaka']     = 22;
+allocations['brightwash']['diana_kovac']     = 22;
+allocations['brightwash']['tomas_reyes']     = 16;
+allocations['brightwash']['andre_kim']       = 15;
+allocations['brightwash']['jia_liang']       = 12;
+allocations['brightwash']['jordan_tate']     = 7;
+allocations['brightwash']['sophie_morales']  = 7;
+allocations['brightwash']['casey_liu']       = 5;
+
+// Vello Cycling — $32K/mo (AT RISK)
+allocations['vello']['bea_cortez']       = 21;
+allocations['vello']['leo_farias']       = 19;
+allocations['vello']['celeste_durand']   = 11;
+allocations['vello']['sophie_morales']   = 10;
+allocations['vello']['elliot_saunders']  = 8;
+allocations['vello']['casey_liu']        = 4;
+allocations['vello']['ava_lindstrom']    = 4;
+
+// Petal & Thorn — $28K/mo
+allocations['petal']['finn_gallagher']   = 21;
+allocations['petal']['hana_yoshida']     = 18;
+allocations['petal']['alina_park']       = 12;
+allocations['petal']['jia_liang']        = 11;
+allocations['petal']['tessa_moreno']     = 8;
+allocations['petal']['ava_lindstrom']    = 7;
+allocations['petal']['priya_nair']       = 7;
+allocations['petal']['sophie_morales']   = 5;
+
+// Kova Skincare — $25K/mo
+allocations['kova']['nadia_volkov']      = 20;
+allocations['kova']['jordan_tate']       = 17;
+allocations['kova']['andre_kim']         = 15;
+allocations['kova']['tomas_reyes']       = 12;
+allocations['kova']['rowan_griffiths']   = 7;
+allocations['kova']['priya_nair']        = 7;
+allocations['kova']['sophie_morales']    = 5;
+
+// Drift Coffee Roasters — $22K/mo
+allocations['drift']['ravi_subramanian'] = 20;
+allocations['drift']['luna_esperanza']   = 16;
+allocations['drift']['wes_calloway']     = 12;
+allocations['drift']['milo_varga']       = 11;
+allocations['drift']['rowan_griffiths']  = 9;
+allocations['drift']['priya_nair']       = 7;
+allocations['drift']['casey_liu']        = 6;
+
+// Summit Pet Supply — $18K/mo
+allocations['summit']['zara_osei']       = 19;
+allocations['summit']['marcus_webb']     = 19;
+allocations['summit']['james_whitfield'] = 12;
+allocations['summit']['tessa_moreno']    = 8;
+allocations['summit']['jia_liang']       = 8;
+allocations['summit']['casey_liu']       = 6;
+
+// Moonridge Spirits — $12K/mo
+allocations['moonridge']['milo_varga']       = 17;
+allocations['moonridge']['elodie_blanc']     = 10;
+allocations['moonridge']['alina_park']       = 9;
+allocations['moonridge']['elliot_saunders']  = 6;
+allocations['moonridge']['tomas_reyes']      = 6;
+
+// River District Rebrand — $85K, 73% burned
+allocations['river_district']['kai_bergstrom']   = 18;
+allocations['river_district']['iris_chung']      = 14;
+allocations['river_district']['sam_delacroix']   = 12;
+allocations['river_district']['nico_strand']     = 11;
+allocations['river_district']['luna_esperanza']  = 9;
+allocations['river_district']['owen_marsh']      = 8;
+allocations['river_district']['celeste_durand']  = 7;
+
+// Cascade Athletic Website — $120K, 40% burned
+allocations['cascade']['owen_marsh']       = 18;
+allocations['cascade']['diana_kovac']      = 16;
+allocations['cascade']['yuki_tanaka']      = 14;
+allocations['cascade']['bea_cortez']       = 13;
+allocations['cascade']['james_whitfield']  = 12;
+allocations['cascade']['iris_chung']       = 11;
+allocations['cascade']['marcus_webb']      = 11;
+allocations['cascade']['sophie_morales']   = 5;
+
+// Fieldwork Provisions Launch — $95K, 19% burned
+allocations['fieldwork']['sam_delacroix']    = 19;
+allocations['fieldwork']['nadia_volkov']     = 16;
+allocations['fieldwork']['leo_farias']       = 15;
+allocations['fieldwork']['ava_lindstrom']    = 11;
+allocations['fieldwork']['tessa_moreno']     = 10;
+allocations['fieldwork']['elodie_blanc']     = 9;
+allocations['fieldwork']['priya_nair']       = 7;
+allocations['fieldwork']['elliot_saunders']  = 6;
+
+// NW Natural Rebrand — $55K, 75% burned, over scope
+allocations['nw_natural']['kai_bergstrom']    = 17;
+allocations['nw_natural']['wes_calloway']     = 17;
+allocations['nw_natural']['hana_yoshida']     = 15;
+allocations['nw_natural']['nico_strand']      = 14;
+allocations['nw_natural']['finn_gallagher']   = 14;
+allocations['nw_natural']['ravi_subramanian'] = 12;
+allocations['nw_natural']['celeste_durand']   = 10;
+allocations['nw_natural']['jordan_tate']      = 9;
+allocations['nw_natural']['alina_park']       = 9;
+allocations['nw_natural']['rowan_griffiths']  = 7;
+
+// ── UTILITY & FORECAST FUNCTIONS ─────────────────────────────────────────────
+
+function getProjectMonthMultiplier(project, month) {
+  if (!project.endMonth || project.endMonth === 'jul+') return 1;
+  const monthIndex = MONTHS.indexOf(month);
+  const endIndex = MONTHS.indexOf(project.endMonth);
+  if (endIndex === -1) return 1;
+  if (monthIndex < endIndex) return 1;
+  if (monthIndex === endIndex) return project.endsHalf ? 0.5 : 1;
+  return 0;
+}
+
+function getProjectDeptMonthHours(projectId, dept, month) {
+  const project = PROJECTS.find(p => p.id === projectId);
+  const mult = getProjectMonthMultiplier(project, month);
+  if (mult === 0) return 0;
+  let total = 0;
+  const projAllocs = allocations[projectId] || {};
+  for (const personId in projAllocs) {
+    const person = TEAM.find(t => t.id === personId);
+    if (person && person.dept === dept) total += projAllocs[personId] * WEEK_MONTH_FACTOR;
+  }
+  return Math.round(total * mult);
+}
+
+function getDeptMonthDemand(dept, month) {
+  let total = 0;
+  PROJECTS.forEach(p => { total += getProjectDeptMonthHours(p.id, dept, month); });
+  total += getRiskAdjustment(dept, month);
+  hypotheticalProjects.forEach(hp => { total += (hp.hours[month] && hp.hours[month][dept]) || 0; });
+  return Math.round(total);
+}
+
+function getDeptCapacity(dept) {
+  return Math.round(TEAM.filter(t => t.dept === dept).reduce((sum, t) => sum + t.billableTarget * WEEK_MONTH_FACTOR, 0));
+}
+
+function getCapacityColor(pct) {
+  if (pct > 100) return '#dc3545';
+  if (pct >= 90) return '#ffc107';
+  if (pct >= 70) return '#555';
+  return '#28a745';
+}
+
+function getCapacityLabel(pct) {
+  if (pct > 100) return 'Bottleneck';
+  if (pct >= 90) return 'Tight';
+  if (pct >= 70) return 'Normal';
+  return 'Bench time';
+}
+
+function formatMoney(n) { return n >= 1000 ? '$' + Math.round(n / 1000) + 'K' : '$' + n; }
+
+function getRiskAdjustment(dept, month) {
+  let adj = 0;
+  if (riskToggles.velloChurns && (month === 'may' || month === 'jun')) {
+    const va = allocations['vello'] || {};
+    for (const pid in va) { const p = TEAM.find(t => t.id === pid); if (p && p.dept === dept) adj -= va[pid] * WEEK_MONTH_FACTOR; }
+  }
+  if (riskToggles.kovaDownsizes && month === 'jun') {
+    const ka = allocations['kova'] || {};
+    for (const pid in ka) { const p = TEAM.find(t => t.id === pid); if (p && p.dept === dept) adj -= Math.round(ka[pid] * WEEK_MONTH_FACTOR * 0.3); }
+  }
+  if (riskToggles.summitExpands && (month === 'may' || month === 'jun')) {
+    const sa = allocations['summit'] || {};
+    for (const pid in sa) { const p = TEAM.find(t => t.id === pid); if (p && p.dept === dept) adj += Math.round(sa[pid] * WEEK_MONTH_FACTOR * 0.55); }
+  }
+  return Math.round(adj);
+}
+
+function getPersonMonthDemand(personId, month) {
+  let total = 0;
+  PROJECTS.forEach(proj => {
+    const mult = getProjectMonthMultiplier(proj, month);
+    const hrs = (allocations[proj.id] && allocations[proj.id][personId]) || 0;
+    total += hrs * WEEK_MONTH_FACTOR * mult;
+  });
+  total += getPersonRiskAdjustment(personId, month);
+  return Math.round(total);
+}
+
+function getPersonRiskAdjustment(personId, month) {
+  let adj = 0;
+  if (riskToggles.velloChurns && (month === 'may' || month === 'jun'))
+    adj -= ((allocations['vello'] && allocations['vello'][personId]) || 0) * WEEK_MONTH_FACTOR;
+  if (riskToggles.kovaDownsizes && month === 'jun')
+    adj -= Math.round(((allocations['kova'] && allocations['kova'][personId]) || 0) * WEEK_MONTH_FACTOR * 0.3);
+  if (riskToggles.summitExpands && (month === 'may' || month === 'jun'))
+    adj += Math.round(((allocations['summit'] && allocations['summit'][personId]) || 0) * WEEK_MONTH_FACTOR * 0.55);
+  return adj;
+}
+
+function getProjectMonthTotal(projectId, month, ignoreRisks) {
+  const project = PROJECTS.find(p => p.id === projectId);
+  const mult = getProjectMonthMultiplier(project, month);
+  if (mult === 0) return 0;
+  let total = 0;
+  const pa = allocations[projectId] || {};
+  for (const pid in pa) total += pa[pid] * WEEK_MONTH_FACTOR;
+  total = Math.round(total * mult);
+  if (!ignoreRisks) total += getProjectRiskAdjustment(projectId, month);
+  return Math.max(0, Math.round(total));
+}
+
+function getProjectRiskAdjustment(projectId, month) {
+  let adj = 0;
+  if (projectId === 'vello' && riskToggles.velloChurns && (month === 'may' || month === 'jun')) {
+    const pa = allocations['vello'] || {};
+    for (const pid in pa) adj -= pa[pid] * WEEK_MONTH_FACTOR;
+  }
+  if (projectId === 'kova' && riskToggles.kovaDownsizes && month === 'jun') {
+    const pa = allocations['kova'] || {};
+    for (const pid in pa) adj -= Math.round(pa[pid] * WEEK_MONTH_FACTOR * 0.3);
+  }
+  if (projectId === 'summit' && riskToggles.summitExpands && (month === 'may' || month === 'jun')) {
+    const pa = allocations['summit'] || {};
+    for (const pid in pa) adj += Math.round(pa[pid] * WEEK_MONTH_FACTOR * 0.55);
+  }
+  return Math.round(adj);
+}
+
+function isProjectRiskAffected(projectId, month) {
+  if (projectId === 'vello' && riskToggles.velloChurns && (month === 'may' || month === 'jun')) return 'removed';
+  if (projectId === 'kova' && riskToggles.kovaDownsizes && month === 'jun') return 'removed';
+  if (projectId === 'summit' && riskToggles.summitExpands && (month === 'may' || month === 'jun')) return 'increased';
+  return false;
+}
+
+function getTimelineTag(proj) {
+  if (proj.type === 'retainer') return '<span class="timeline-tag" style="color:#888;">Ongoing</span>';
+  if (proj.endMonth === 'apr') return '<span class="timeline-tag" style="color:#dc3545;">Ends Apr</span>';
+  if (proj.endMonth === 'may') return '<span class="timeline-tag" style="color:#ffc107;">Ends May</span>';
+  if (proj.endMonth === 'jun') return '<span class="timeline-tag" style="color:#28a745;">Ends Jun</span>';
+  return '<span class="timeline-tag" style="color:#888;">Through Jul+</span>';
+}
+
+// ── STATE ─────────────────────────────────────────────────────────────────────
+let hypotheticalProjects = [];
+let riskToggles = { velloChurns: false, kovaDownsizes: false, summitExpands: false };
+let expandedDept = null;
+
+// ── RENDER STUBS (implemented in later tasks) ─────────────────────────────────
+function renderForecast() {}
+function renderProjects() {}
+function renderRisks() {}
+function updateStats() {}
+
+function renderAll() { renderForecast(); renderProjects(); renderRisks(); updateStats(); }
+
+document.getElementById('headerDate').textContent = new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+renderAll();
+</script>
+</body>
+</html>
