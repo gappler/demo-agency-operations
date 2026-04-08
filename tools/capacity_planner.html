@@ -1049,6 +1049,19 @@ function updateStats() {
 function renderAll() { renderForecast(); renderProjects(); renderRisks(); updateStats(); }
 
 document.getElementById('headerDate').textContent = new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+
+// Close popovers on scroll
+document.addEventListener('scroll', function() {
+  document.querySelectorAll('.hypo-popover').forEach(function(p) { p.remove(); });
+}, true);
+
+// Debounced resize
+let resizeTimer;
+window.addEventListener('resize', function() {
+  clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(renderAll, 200);
+});
+
 renderAll();
 </script>
 </body>
