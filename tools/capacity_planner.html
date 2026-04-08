@@ -346,6 +346,16 @@ body {
 }
 .hypo-remove:hover { color: #dc3545; }
 
+/* Signals */
+.signals-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: #777; margin-top: 16px; margin-bottom: 8px; }
+.signal { font-size: 12px; padding: 4px 0; display: flex; align-items: center; gap: 6px; }
+.signal .dot { width: 7px; height: 7px; border-radius: 50%; display: inline-block; flex-shrink: 0; }
+.signal.red .dot { background: #dc3545; }
+.signal.green .dot { background: #28a745; }
+.signal.red { color: #dc3545; }
+.signal.green { color: #28a745; }
+.section-label td { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; color: #999; padding: 10px 10px 4px !important; border-bottom: none !important; }
+
 /* Net change indicator */
 .net-positive { color: #28a745; }
 .net-negative { color: #dc3545; }
@@ -749,11 +759,292 @@ let hypotheticalProjects = [];
 let riskToggles = { velloChurns: false, kovaDownsizes: false, summitExpands: false };
 let expandedDept = null;
 
-// ── RENDER STUBS (implemented in later tasks) ─────────────────────────────────
-function renderForecast() {}
-function renderProjects() {}
-function renderRisks() {}
-function updateStats() {}
+// ── HELPERS ──────────────────────────────────────────────────────────────────
+
+function toggleExpand(dept) {
+  expandedDept = expandedDept === dept ? null : dept;
+  renderAll();
+}
+
+function toggleRisk(riskKey) {
+  riskToggles[riskKey] = !riskToggles[riskKey];
+  renderAll();
+}
+
+let hypoFormVisible = false;
+
+function showHypoForm() {
+  hypoFormVisible = true;
+  renderProjects();
+}
+
+function hideHypoForm() {
+  hypoFormVisible = false;
+  renderProjects();
+}
+
+function addHypotheticalProject() {
+  const nameEl = document.getElementById('hypoName');
+  const name = nameEl ? nameEl.value.trim() : '';
+  if (!name) return;
+  const hours = {};
+  MONTHS.forEach(m => {
+    hours[m] = {};
+    DEPTS.forEach(d => {
+      const el = document.getElementById('hypo_' + m + '_' + d);
+      const v = el ? parseInt(el.value) || 0 : 0;
+      if (v > 0) hours[m][d] = v;
+    });
+  });
+  hypotheticalProjects.push({ name, hours });
+  hypoFormVisible = false;
+  renderAll();
+}
+
+function removeHypotheticalProject(idx) {
+  hypotheticalProjects.splice(idx, 1);
+  renderAll();
+}
+
+// ── RENDER FUNCTIONS ─────────────────────────────────────────────────────────
+
+function renderForecast() {
+  const el = document.getElementById('forecastBody');
+  let html = '<table class="forecast-table">';
+  // Header
+  html += '<tr class="month-header-row"><th>Department</th>';
+  MONTHS.forEach(m => { html += '<th class="month-col">' + MONTH_LABELS[m] + '</th>'; });
+  html += '</tr>';
+
+  DEPTS.forEach(dept => {
+    const cap = getDeptCapacity(dept);
+    const staff = TEAM.filter(t => t.dept === dept).length;
+    const isExpanded = expandedDept === dept;
+    const caretClass = isExpanded ? 'caret open' : 'caret';
+
+    html += '<tr class="dept-row" onclick="toggleExpand(\'' + dept + '\')">';
+    html += '<td><span class="' + caretClass + '">&#9654;</span><span class="dept-label">' + DEPT_LABELS[dept] + '</span><div class="dept-sublabel">' + staff + ' staff &middot; ' + cap + ' hrs/mo capacity</div></td>';
+
+    MONTHS.forEach(m => {
+      const demand = getDeptMonthDemand(dept, m);
+      const pct = cap > 0 ? Math.round((demand / cap) * 100) : 0;
+      const color = getCapacityColor(pct);
+      const label = getCapacityLabel(pct);
+      const fillW = Math.min(pct, 150);
+      html += '<td class="month-cell"><div class="capacity-bar-wrap">';
+      html += '<div class="capacity-bar-bg"><div class="capacity-bar-fill" style="width:' + fillW + '%;background:' + color + ';"></div></div>';
+      html += '<span class="capacity-pct" style="color:' + color + ';">' + pct + '%</span>';
+      html += '<span class="capacity-label">' + label + '</span>';
+      html += '</div></td>';
+    });
+    html += '</tr>';
+
+    // Person sub-rows when expanded
+    if (isExpanded) {
+      const people = TEAM.filter(t => t.dept === dept);
+      people.forEach(person => {
+        html += '<tr class="person-subrow"><td><span class="person-name-small">' + person.name + '</span><br><span class="person-role-small">' + person.role + '</span></td>';
+        MONTHS.forEach(m => {
+          const demand = getPersonMonthDemand(person.id, m);
+          const personCap = Math.round(person.billableTarget * WEEK_MONTH_FACTOR);
+          const pct = personCap > 0 ? Math.round((demand / personCap) * 100) : 0;
+          const color = getCapacityColor(pct);
+          html += '<td class="month-cell"><div class="capacity-bar-wrap">';
+          html += '<div class="capacity-bar-bg"><div class="capacity-bar-fill" style="width:' + Math.min(pct, 150) + '%;background:' + color + ';"></div></div>';
+          html += '<span class="capacity-pct" style="color:' + color + ';">' + pct + '%</span>';
+          html += '</div></td>';
+        });
+        html += '</tr>';
+      });
+    }
+  });
+
+  html += '</table>';
+
+  // Hiring signals
+  const signals = [];
+  DEPTS.forEach(dept => {
+    const cap = getDeptCapacity(dept);
+    MONTHS.forEach(m => {
+      const demand = getDeptMonthDemand(dept, m);
+      const pct = cap > 0 ? Math.round((demand / cap) * 100) : 0;
+      if (pct > 100) signals.push({ type: 'red', text: DEPT_LABELS[dept] + ' is at ' + pct + '% in ' + MONTH_LABELS[m] + ' — over capacity' });
+      else if (pct < 60) signals.push({ type: 'green', text: DEPT_LABELS[dept] + ' is at ' + pct + '% in ' + MONTH_LABELS[m] + ' — bench available' });
+    });
+  });
+  if (signals.length) {
+    html += '<div class="signals-title">Hiring Signals</div>';
+    signals.forEach(s => {
+      html += '<div class="signal ' + s.type + '"><span class="dot"></span>' + s.text + '</div>';
+    });
+  }
+
+  el.innerHTML = html;
+}
+
+function renderProjects() {
+  const el = document.getElementById('projectsBody');
+  let html = '<table class="projects-table">';
+  html += '<tr class="month-header-row"><th>Project</th>';
+  MONTHS.forEach(m => { html += '<th class="center">' + MONTH_LABELS[m] + '</th>'; });
+  html += '</tr>';
+
+  const retainers = PROJECTS.filter(p => p.type === 'retainer');
+  const projects = PROJECTS.filter(p => p.type === 'project');
+
+  // Retainer section
+  html += '<tr class="section-label"><td colspan="4">Retainer Clients</td></tr>';
+  retainers.forEach(proj => {
+    html += renderProjectRow(proj);
+  });
+
+  // Project section
+  html += '<tr class="section-label"><td colspan="4">Project-Based</td></tr>';
+  projects.forEach(proj => {
+    html += renderProjectRow(proj);
+  });
+
+  html += '</table>';
+
+  // Hypothetical projects UI
+  if (!hypoFormVisible) {
+    html += '<button class="hypo-add-btn" onclick="showHypoForm()">+ New Hypothetical Project</button>';
+  } else {
+    html += '<div class="hypo-form">';
+    html += '<label>Project Name</label>';
+    html += '<input type="text" id="hypoName" placeholder="e.g. Acme Corp Campaign">';
+    MONTHS.forEach(m => {
+      html += '<label>' + MONTH_LABELS[m] + ' Hours by Department</label>';
+      html += '<div class="hypo-hours-grid">';
+      DEPTS.forEach(d => {
+        html += '<div><label>' + DEPT_LABELS[d] + '</label><input type="number" id="hypo_' + m + '_' + d + '" min="0" value="0" placeholder="0"></div>';
+      });
+      html += '</div>';
+    });
+    html += '<div class="hypo-form-actions">';
+    html += '<button class="hypo-btn add" onclick="addHypotheticalProject()">Add</button>';
+    html += '<button class="hypo-btn cancel" onclick="hideHypoForm()">Cancel</button>';
+    html += '</div></div>';
+  }
+
+  // Show existing hypothetical projects
+  hypotheticalProjects.forEach((hp, idx) => {
+    const totalHrs = MONTHS.reduce((sum, m) => {
+      return sum + DEPTS.reduce((s, d) => s + ((hp.hours[m] && hp.hours[m][d]) || 0), 0);
+    }, 0);
+    html += '<div class="hypo-item"><div><div class="hypo-item-name">' + hp.name + '</div>';
+    html += '<div class="hypo-item-detail">' + totalHrs + ' total hours across Q2</div></div>';
+    html += '<button class="hypo-remove" onclick="removeHypotheticalProject(' + idx + ')">&times;</button></div>';
+  });
+
+  el.innerHTML = html;
+}
+
+function renderProjectRow(proj) {
+  let html = '<tr>';
+  html += '<td><div class="project-name"><span class="health-dot" style="background:' + HEALTH_COLORS[proj.health] + ';"></span> ' + proj.name + '</div>';
+  html += '<div class="project-meta-small">' + formatMoney(proj.value) + '/mo ' + getTimelineTag(proj);
+  if (proj.burned != null) html += ' &middot; ' + proj.burned + '% burned';
+  if (proj.status) html += ' &middot; ' + proj.status;
+  html += '</div></td>';
+
+  MONTHS.forEach(m => {
+    const hrs = getProjectMonthTotal(proj.id, m);
+    const riskStatus = isProjectRiskAffected(proj.id, m);
+    html += '<td class="hours-cell">';
+    if (hrs === 0 && !riskStatus) {
+      html += '<span class="hours-zero">&mdash;</span>';
+    } else {
+      html += hrs + 'h';
+      if (riskStatus === 'removed') html += ' <span class="risk-badge removed">risk &minus;</span>';
+      else if (riskStatus === 'increased') html += ' <span class="risk-badge increased">risk +</span>';
+    }
+    html += '</td>';
+  });
+  html += '</tr>';
+  return html;
+}
+
+function renderRisks() {
+  const el = document.getElementById('risksBody');
+  const risks = [
+    {
+      key: 'velloChurns',
+      name: 'Vello Churns',
+      value: '-$32K/mo',
+      desc: 'Vello Cycling has signaled dissatisfaction. If they leave, all Vello hours drop to zero starting May.',
+      green: false
+    },
+    {
+      key: 'kovaDownsizes',
+      name: 'Kova Downsizes',
+      value: '-30% hours',
+      desc: 'Kova Skincare may reduce scope by 30% in June due to budget cuts.',
+      green: false
+    },
+    {
+      key: 'summitExpands',
+      name: 'Summit Expands',
+      value: '+55% hours',
+      desc: 'Summit Pet Supply is considering expanding their retainer by 55% starting May.',
+      green: true
+    }
+  ];
+
+  let html = '';
+  risks.forEach(risk => {
+    const checked = riskToggles[risk.key] ? 'checked' : '';
+    const switchClass = risk.green ? 'toggle-switch green' : 'toggle-switch';
+    html += '<div class="risk-item">';
+    html += '<div class="risk-item-header"><span class="risk-name">' + risk.name + '</span><span class="risk-value">' + risk.value + '</span></div>';
+    html += '<div class="risk-desc">' + risk.desc + '</div>';
+    html += '<div class="risk-toggle-row"><span class="risk-toggle-label">Model this scenario</span>';
+    html += '<label class="' + switchClass + '"><input type="checkbox" ' + checked + ' onchange="toggleRisk(\'' + risk.key + '\')"><span class="toggle-slider"></span></label>';
+    html += '</div></div>';
+  });
+
+  // Compact hiring signals
+  const signals = [];
+  DEPTS.forEach(dept => {
+    const cap = getDeptCapacity(dept);
+    MONTHS.forEach(m => {
+      const demand = getDeptMonthDemand(dept, m);
+      const pct = cap > 0 ? Math.round((demand / cap) * 100) : 0;
+      if (pct > 100) signals.push({ type: 'red', text: DEPT_LABELS[dept] + ' ' + MONTH_LABELS[m] + ': ' + pct + '%' });
+      else if (pct < 60) signals.push({ type: 'green', text: DEPT_LABELS[dept] + ' ' + MONTH_LABELS[m] + ': ' + pct + '%' });
+    });
+  });
+  if (signals.length) {
+    html += '<div class="signals-title" style="margin-top:12px;">Signals</div>';
+    signals.forEach(s => {
+      html += '<div class="signal ' + s.type + '"><span class="dot"></span>' + s.text + '</div>';
+    });
+  }
+
+  el.innerHTML = html;
+}
+
+function updateStats() {
+  let bottlenecks = 0, bench = 0, netChange = 0;
+  DEPTS.forEach(dept => {
+    const cap = getDeptCapacity(dept);
+    MONTHS.forEach(m => {
+      const demand = getDeptMonthDemand(dept, m);
+      const pct = cap > 0 ? Math.round((demand / cap) * 100) : 0;
+      if (pct > 100) bottlenecks++;
+      if (pct < 70) bench++;
+      netChange += getRiskAdjustment(dept, m);
+    });
+  });
+  document.getElementById('statBottlenecks').textContent = bottlenecks;
+  document.getElementById('statBench').textContent = bench;
+  document.getElementById('statHypothetical').textContent = hypotheticalProjects.length;
+
+  const netEl = document.getElementById('statNetChange');
+  const sign = netChange > 0 ? '+' : '';
+  netEl.textContent = sign + Math.round(netChange) + ' hrs';
+  netEl.className = 'stat-value ' + (netChange > 0 ? 'net-positive' : netChange < 0 ? 'net-negative' : 'net-neutral');
+}
 
 function renderAll() { renderForecast(); renderProjects(); renderRisks(); updateStats(); }
 
