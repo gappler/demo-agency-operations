@@ -9,6 +9,27 @@ updated: 2026-04-08
 
 ---
 
+## 2026-04-08 — Add 'How This Was Built' and CTA Sections to Tour Page
+
+**Prompt:**
+Add a 'How this was built' section before the footer focusing on foundation-first methodology and a 'What this means for your team' section about replacing SaaS that's 70% right. Add a CTA section linking to agencystate.ai.
+
+**What was built:**
+- Added "How This Was Built" section covering the sequential build methodology
+- Added "What This Means for Your Team" subsection on custom vs. SaaS trade-offs
+- Added CTA block with agencystate.ai link and headline
+
+**Key decisions:**
+- Kept content distinct from the intro — no repetition of tool descriptions or project overview
+- Used existing `.intro` styling patterns for the new prose section
+- CTA styled as a dark card to contrast with the white content area
+
+**Files modified:**
+- `index.html`
+- `docs/process_log.md`
+
+---
+
 ## 2026-04-08 — Project Notes & Skills Inventory
 
 **Prompt:**

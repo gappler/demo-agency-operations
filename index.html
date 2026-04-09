@@ -170,6 +170,44 @@ body {
   margin-bottom: 48px;
 }
 
+/* How it was built */
+.how-built {
+  max-width: 800px;
+  margin: 64px auto 0;
+  padding: 0 40px;
+  line-height: 1.8;
+  font-size: 0.95rem;
+  color: #444;
+}
+.how-built h2 { font-size: 1.5rem; font-weight: 700; color: #1a1a1a; margin-bottom: 16px; }
+.how-built h3 { font-size: 1.15rem; font-weight: 700; color: #1a1a1a; margin: 32px 0 12px; }
+.how-built p { margin-bottom: 16px; }
+.how-built strong { color: #222; }
+
+/* CTA */
+.cta {
+  max-width: 800px;
+  margin: 48px auto 64px;
+  padding: 40px;
+  background: #1a1a1a;
+  border-radius: 8px;
+  text-align: center;
+}
+.cta h2 { font-size: 1.4rem; font-weight: 700; color: #fff; margin-bottom: 12px; }
+.cta p { font-size: 0.95rem; color: #999; margin-bottom: 24px; line-height: 1.6; }
+.cta a.cta-link {
+  display: inline-block;
+  padding: 12px 32px;
+  background: #fff;
+  color: #1a1a1a;
+  font-size: 0.9rem;
+  font-weight: 700;
+  text-decoration: none;
+  border-radius: 5px;
+  transition: background .15s, color .15s;
+}
+.cta a.cta-link:hover { background: #e0e0e0; }
+
 /* Footer */
 .footer {
   background: #1a1a1a;
@@ -376,6 +414,27 @@ body {
     </div>
     <iframe src="tools/client_reports.html" loading="lazy"></iframe>
   </div>
+</div>
+
+<!-- How This Was Built -->
+<div class="divider"><hr></div>
+<div class="how-built">
+  <h2>How This Was Built</h2>
+  <p>The build order was the strategy. Before writing a single line of dashboard code, we created two foundation files: a <strong>brand definition</strong> that captured Sidebar Creative's identity, voice, and visual system, and a <strong>structured data set</strong> that modeled the entire business — 40 team members, 8 retainer clients, SOW terms, 6 months of performance history, and a project pipeline.</p>
+  <p>Every tool was then built sequentially, each one reading from the same foundation and inheriting context from the tools before it. The Timeline Dashboard established the project data model. The Resource Allocator layered team assignments on top of it. The Capacity Planner projected both forward. The client reporting tools consumed everything upstream — health scores informed the report generator, performance trends fed the dashboard, status reports pulled from timelines and budgets. No tool was built in isolation. The sequence was the architecture.</p>
+  <p>This matters because it's the opposite of how most internal tools get built. Typically someone builds a one-off spreadsheet, then another, then a dashboard that doesn't talk to either. Here, a single conversation with Claude Code produced each tool in minutes, and because every tool read from the same data and brand definition, they came out consistent — same colors, same client names, same numbers, same voice.</p>
+
+  <h3>What This Means for Your Team</h3>
+  <p>Every agency runs on some combination of SaaS tools that are 70% right. The project tracker almost fits your workflow. The reporting tool almost matches your brand. The resource planner almost models how your team actually works. You spend the first month configuring, the next six months working around the gaps, and eventually someone builds a shadow spreadsheet that becomes the real system of record.</p>
+  <p>The alternative is tools that are 100% yours — built around your data model, your team structure, your client relationships, your definitions of what "healthy" and "at risk" actually mean. Not a platform you rent and reshape. Files you own, that run in a browser, that you can read, modify, and extend in plain language.</p>
+  <p>This suite took one afternoon. Not because the tools are simple, but because the foundation was right. Get the business definition and data model right, and Claude Code builds everything else from it.</p>
+</div>
+
+<!-- CTA -->
+<div class="cta" style="max-width: 840px;">
+  <h2>Learn how to build for your team.</h2>
+  <p>Agency State helps agencies build custom operational tools with AI — no developers, no SaaS compromises, no vendor lock-in.</p>
+  <a href="https://agencystate.ai" target="_blank" class="cta-link">Visit agencystate.ai</a>
 </div>
 
 <!-- Footer -->
