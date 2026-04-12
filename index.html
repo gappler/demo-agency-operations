@@ -13,22 +13,33 @@ body {
   color: #222;
 }
 
+/* Wordmark */
+.wordmark {
+  position: absolute;
+  top: 20px;
+  left: 24px;
+  z-index: 200;
+  display: inline-block;
+  padding: 10px 14px;
+  background: rgba(26, 26, 26, 0.9);
+  border-radius: 4px;
+  backdrop-filter: blur(6px);
+  transition: background .15s;
+}
+.wordmark:hover { background: #000; }
+.wordmark img { display: block; height: 24px; width: auto; }
+
 /* Header */
 .hero {
   background: #1a1a1a;
   color: #fff;
-  padding: 60px 40px;
+  padding: 120px 40px 60px;
   text-align: center;
 }
-.hero-brand { font-size: 0.9rem; text-transform: uppercase; letter-spacing: .12em; color: #777; margin-bottom: 12px; }
-.hero-title { font-size: 2.4rem; font-weight: 700; letter-spacing: -.02em; margin-bottom: 16px; }
-.hero-subtitle { font-size: 1.1rem; color: #aaa; max-width: 680px; margin: 0 auto 28px; line-height: 1.6; }
-.hero-stats { display: flex; justify-content: center; gap: 40px; margin-top: 28px; }
-.hero-stat-value { font-size: 2rem; font-weight: 700; }
-.hero-stat-label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: .06em; color: #777; margin-top: 4px; }
-.hero-stat-value.green { color: #28a745; }
-.hero-stat-value.red { color: #dc3545; }
-.hero-stat-value.blue { color: #007bff; }
+.hero-title { font-size: 2.4rem; font-weight: 700; letter-spacing: -.02em; margin: 20px auto 20px; max-width: 880px; }
+.hero-subtitle { font-size: 1.1rem; color: #aaa; max-width: 720px; margin: 0 auto; line-height: 1.7; }
+.hero-subtitle a { color: #fff; text-decoration: underline; text-underline-offset: 3px; }
+.hero-subtitle a:hover { color: #28a745; }
 
 /* Nav */
 .tool-nav {
@@ -101,28 +112,20 @@ body {
   max-width: 800px;
 }
 .tool-prompt {
-  background: #1a1a1a;
-  color: #ccc;
-  padding: 16px 20px;
-  border-radius: 6px;
-  font-size: 0.82rem;
-  line-height: 1.6;
-  margin-bottom: 16px;
-  position: relative;
+  color: #555;
+  font-size: 0.95rem;
+  line-height: 1.7;
+  font-style: italic;
+  margin-bottom: 20px;
+  max-width: 800px;
 }
 .tool-prompt::before {
-  content: 'PROMPT';
-  position: absolute;
-  top: -10px;
-  left: 16px;
-  background: #1a1a1a;
-  padding: 0 8px;
-  font-size: 0.65rem;
+  content: 'Prompt: ';
   font-weight: 700;
-  letter-spacing: .1em;
+  font-style: normal;
   color: #555;
 }
-.tool-prompt em { color: #fff; font-style: normal; }
+.tool-prompt em { color: #222; font-style: normal; font-weight: 600; }
 .tool-preview {
   border: 1px solid #ddd;
   border-radius: 6px;
@@ -209,31 +212,67 @@ body {
 .cta a.cta-link:hover { background: #e0e0e0; }
 
 /* Footer */
-.footer {
-  background: #1a1a1a;
-  color: #777;
-  padding: 32px 40px;
-  text-align: center;
-  font-size: 0.8rem;
-  line-height: 1.6;
+footer {
+  padding: 3rem 0;
+  border-top: 1px solid #E0DFDC;
+  background: #fff;
 }
-.footer strong { color: #aaa; }
+footer .footer-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.footer-left {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  font-size: 0.875rem;
+  color: #5C5C5C;
+}
+.footer-mark {
+  width: 56px;
+  height: 56px;
+  display: block;
+  flex-shrink: 0;
+}
+.footer-lockup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  line-height: 1.2;
+}
+.footer-lockup .footer-wordmark {
+  font-weight: 700;
+  color: #1A1A1A;
+}
+.footer-lockup .footer-wordmark .regular {
+  font-weight: 400;
+}
+.footer-right {
+  font-size: 0.8125rem;
+  color: #5C5C5C;
+}
+@media (max-width: 768px) {
+  footer .footer-container {
+    flex-direction: column;
+    gap: 0.75rem;
+    text-align: center;
+  }
+}
 </style>
 </head>
 <body>
 
+<!-- Wordmark -->
+<a href="https://agencystate.ai" target="_blank" class="wordmark"><img src="assets/agency-state-wordmark-white.svg" alt="Agency State"></a>
+
 <!-- Hero -->
 <div class="hero">
-  <div class="hero-brand">Sidebar Creative</div>
-  <div class="hero-title">Agency Operations Suite</div>
-  <div class="hero-subtitle">A complete suite of operational tools built entirely with Claude Code. Seven interactive dashboards that replace fragmented spreadsheets, manual Friday reports, and hallway-conversation resource planning with data-driven, real-time visibility.</div>
-  <div class="hero-stats">
-    <div><div class="hero-stat-value">7</div><div class="hero-stat-label">Tools Built</div></div>
-    <div><div class="hero-stat-value green">40</div><div class="hero-stat-label">Team Members</div></div>
-    <div><div class="hero-stat-value">8</div><div class="hero-stat-label">Retainer Clients</div></div>
-    <div><div class="hero-stat-value red">$69K</div><div class="hero-stat-label">Revenue at Risk</div></div>
-    <div><div class="hero-stat-value blue">$220K</div><div class="hero-stat-label">Monthly Retainers</div></div>
-  </div>
+  <div class="hero-title">Demo: Sidebar Creative Agency Operations Suite</div>
+  <div class="hero-subtitle">A 40-person digital agency running on spreadsheets and hallway conversations. Seven tools built with Claude Code to change that. Scroll through to see how.</div>
 </div>
 
 <!-- Navigation -->
@@ -249,10 +288,11 @@ body {
 
 <!-- Intro -->
 <div class="intro">
-  <h2>Building an Agency Operations Suite with Claude Code</h2>
   <p><strong>Sidebar Creative</strong> is a 40-person digital agency in Portland doing $6.5M in annual revenue. Like many agencies that have grown fast, their operational infrastructure hasn't kept pace. Scope creep is endemic. Resource loading is invisible. Profitability is a black box until quarter-end. And every Friday afternoon, account directors spend 2-3 hours per client manually assembling performance reports in Google Slides.</p>
   <p>This project demonstrates how Claude Code can build a complete suite of interconnected operational tools from a single brand definition and data set. Each tool was built in a single conversation using natural language prompts — no frameworks, no dependencies, no build steps. Every tool is a self-contained HTML file that opens in any browser.</p>
-  <p>The seven tools split into two groups. <strong>Project management tools</strong> (1-3) cover the internal operational view: the <strong>Timeline Dashboard</strong> shows project status at a glance, the <strong>Resource Allocator</strong> reveals who's overloaded and who has capacity, and the <strong>Capacity Planner</strong> forecasts where bottlenecks will form next quarter. <strong>Client reporting tools</strong> (4-7) cover the external-facing view: <strong>Status Reports</strong> eliminate the Friday reporting grind, the <strong>Performance Dashboard</strong> shows 6-month trends across the portfolio, the <strong>Health Scorer</strong> surfaces which clients need intervention, and the <strong>Client Report Generator</strong> produces polished monthly reports ready to send to clients.</p>
+  <p>Tools 1–3 cover project management — timelines, resources, and capacity. Tools 4–7 cover client reporting — status updates, performance trends, health scoring, and automated reports.</p>
+  <p>See the <a href="https://github.com/gappler/demo-agency-operations" target="_blank">GitHub repo</a> for brand, data, and other related context.</p>
+  <p style="font-size: 0.85rem; color: #888; font-style: italic; text-align: center; margin-top: 32px; white-space: nowrap; overflow-x: auto;">Each tool serves a unique purpose but they all share the same data and inform each other.</p>
 </div>
 
 <!-- Tool 1: Project Timeline -->
@@ -274,7 +314,7 @@ body {
       <span class="tool-preview-file">tools/project_timeline.html</span>
       <a href="tools/project_timeline.html" target="_blank" class="tool-preview-open">Open Full Size &rarr;</a>
     </div>
-    <iframe src="tools/project_timeline.html" loading="lazy"></iframe>
+    <iframe src="tools/project_timeline.html" loading="lazy" style="height: 850px;"></iframe>
   </div>
 </div>
 
@@ -297,7 +337,7 @@ body {
       <span class="tool-preview-file">tools/resource_allocator.html</span>
       <a href="tools/resource_allocator.html" target="_blank" class="tool-preview-open">Open Full Size &rarr;</a>
     </div>
-    <iframe src="tools/resource_allocator.html" loading="lazy"></iframe>
+    <iframe src="tools/resource_allocator.html" loading="lazy" style="height: 800px;"></iframe>
   </div>
 </div>
 
@@ -320,7 +360,7 @@ body {
       <span class="tool-preview-file">tools/capacity_planner.html</span>
       <a href="tools/capacity_planner.html" target="_blank" class="tool-preview-open">Open Full Size &rarr;</a>
     </div>
-    <iframe src="tools/capacity_planner.html" loading="lazy"></iframe>
+    <iframe src="tools/capacity_planner.html" loading="lazy" style="height: 750px;"></iframe>
   </div>
 </div>
 
@@ -343,7 +383,7 @@ body {
       <span class="tool-preview-file">tools/status_reports.html</span>
       <a href="tools/status_reports.html" target="_blank" class="tool-preview-open">Open Full Size &rarr;</a>
     </div>
-    <iframe src="tools/status_reports.html" loading="lazy"></iframe>
+    <iframe src="tools/status_reports.html" loading="lazy" style="height: 900px;"></iframe>
   </div>
 </div>
 
@@ -412,7 +452,7 @@ body {
       <span class="tool-preview-file">tools/client_reports.html</span>
       <a href="tools/client_reports.html" target="_blank" class="tool-preview-open">Open Full Size &rarr;</a>
     </div>
-    <iframe src="tools/client_reports.html" loading="lazy"></iframe>
+    <iframe src="tools/client_reports.html" loading="lazy" style="height: 750px;"></iframe>
   </div>
 </div>
 
@@ -425,24 +465,29 @@ body {
   <p>This matters because it's the opposite of how most internal tools get built. Typically someone builds a one-off spreadsheet, then another, then a dashboard that doesn't talk to either. Here, a single conversation with Claude Code produced each tool in minutes, and because every tool read from the same data and brand definition, they came out consistent — same colors, same client names, same numbers, same voice.</p>
 
   <h3>What This Means for Your Team</h3>
-  <p>Every agency runs on some combination of SaaS tools that are 70% right. The project tracker almost fits your workflow. The reporting tool almost matches your brand. The resource planner almost models how your team actually works. You spend the first month configuring, the next six months working around the gaps, and eventually someone builds a shadow spreadsheet that becomes the real system of record.</p>
-  <p>The alternative is tools that are 100% yours — built around your data model, your team structure, your client relationships, your definitions of what "healthy" and "at risk" actually mean. Not a platform you rent and reshape. Files you own, that run in a browser, that you can read, modify, and extend in plain language.</p>
-  <p>This suite took one afternoon. Not because the tools are simple, but because the foundation was right. Get the business definition and data model right, and Claude Code builds everything else from it.</p>
+  <p>Every team has operational knowledge scattered across spreadsheets, email threads, and people's heads. These tools work because they were built from that context — Sidebar Creative's actual team structure, client relationships, and performance data. The same methodology applies to your team. Capture the context, build sequentially, and the tools reflect how your business actually works.</p>
 </div>
 
 <!-- CTA -->
 <div class="cta" style="max-width: 840px;">
-  <h2>Learn how to build for your team.</h2>
-  <p>Agency State helps agencies build custom operational tools with AI — no developers, no SaaS compromises, no vendor lock-in.</p>
+  <h2>Build tools like these for your team.</h2>
+  <p>Agency State teaches professionals how to capture collective knowledge and put AI to work with it.</p>
   <a href="https://agencystate.ai" target="_blank" class="cta-link">Visit Agency State</a>
 </div>
 
 <!-- Footer -->
-<div class="footer">
-  <p><strong>Sidebar Creative — Agency Operations Suite</strong></p>
-  <p>Built with Claude Code. Every tool is a single self-contained HTML file with zero external dependencies.</p>
-  <p>7 tools &middot; 7 tutorials &middot; 4 data files &middot; 1 brand definition &middot; 0 frameworks</p>
-</div>
+<footer>
+  <div class="footer-container">
+    <div class="footer-left">
+      <img src="assets/mark.svg" alt="Agency State" class="footer-mark">
+      <div class="footer-lockup">
+        <span class="footer-wordmark">agency<span class="regular">state</span></span>
+        <span>agencystate.ai</span>
+      </div>
+    </div>
+    <p class="footer-right">Built with Claude Code</p>
+  </div>
+</footer>
 
 </body>
 </html>
