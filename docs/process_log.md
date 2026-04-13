@@ -1,11 +1,29 @@
 ---
 title: Process Log
-version: 2.1
+version: 2.2
 created: 2026-04-06
 updated: 2026-04-13
 ---
 
 # Process Log
+
+---
+
+## 2026-04-13 — Tighten Intro Section of Tour Page
+
+**Prompt:**
+In the Sidebar Creative index.html, tighten the .intro section. Cut or compress paragraph 1 — the hero already establishes "40-person agency, spreadsheets, hallway conversations." The Friday afternoon Google Slides line should be cut since it now appears in tool 7's problem statement. Keep paragraph 2 as-is (two-track framing). Keep the GitHub repo link. Result: two paragraphs plus the link.
+
+**What was built:**
+- Removed paragraph 1 of `.intro` in `index.html` entirely (agency size, pain point enumeration, Friday Google Slides line)
+- Intro now consists of the two-track framing paragraph and the GitHub repo link
+
+**Key decisions:**
+- Cut paragraph 1 completely rather than compressing to one sentence. The Portland / $6.5M detail is color but not essential, and the hero + tool-level problem statements already carry the narrative load. Intro's job is page-structure setup, not hero restatement.
+
+**Files modified:**
+- `index.html` (lines 270–273)
+- `docs/process_log.md`
 
 ---
 
