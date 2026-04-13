@@ -9,6 +9,23 @@ updated: 2026-04-13
 
 ---
 
+## 2026-04-13 — Add Plausible Analytics to index.html
+
+**Prompt:**
+Add Plausible analytics to index.html. Insert the provided script block inside `<head>`, just before `</head>`. Commit and push.
+
+**What was built:**
+- Inserted the Plausible async loader script and init snippet directly before `</head>` in `index.html`
+- Committed and pushed to `main`
+
+**Key decisions:**
+- Placed the snippet after the closing `</style>` tag so it sits immediately before `</head>` as specified, without disturbing existing head content
+
+**Files modified:**
+- `index.html`
+
+---
+
 ## 2026-04-13 — Tighten Intro Section of Tour Page
 
 **Prompt:**
