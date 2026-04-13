@@ -155,17 +155,18 @@ body {
 }
 .tool-preview-open:hover { text-decoration: underline; }
 
-/* Divider */
-.divider {
+/* Cluster label */
+.cluster-label {
   max-width: 1200px;
-  margin: 0 auto;
+  margin: 0 auto 24px;
   padding: 0 40px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #888;
 }
-.divider hr {
-  border: none;
-  border-top: 1px solid #e0e0e0;
-  margin-bottom: 48px;
-}
+.cluster-label.cluster-break { margin-top: 40px; }
 
 
 /* CTA */
@@ -268,13 +269,14 @@ footer .footer-container {
 <!-- Intro -->
 <div class="intro">
   <p><strong>Sidebar Creative</strong> is a 40-person digital agency in Portland doing $6.5M in annual revenue. Like many agencies that have grown fast, their operational infrastructure hasn't kept pace. Scope creep is endemic. Resource loading is invisible. Profitability is a black box until quarter-end. And every Friday afternoon, account directors spend 2-3 hours per client manually assembling performance reports in Google Slides.</p>
-  <p>Tools 1–3 cover project management — timelines, resources, and capacity. Tools 4–7 cover client reporting — status updates, performance trends, health scoring, and automated reports.</p>
+  <p>The seven tools below run on two tracks. <strong>Project Management</strong> (tools 1–3) moves from timelines to resource allocation to forward-looking capacity &mdash; each tool builds on the one before it. <strong>Client Intelligence</strong> (tools 4–7) moves from weekly status to performance trends to health scoring to polished client-facing reports &mdash; again, each tool feeds the next.</p>
   <p>See the <a href="https://github.com/gappler/demo-agency-operations" target="_blank">GitHub repo</a> for brand, data, and related context.</p>
-  <p style="font-size: 0.85rem; color: #888; font-style: italic; text-align: center; margin-top: 32px; white-space: nowrap; overflow-x: auto;">Each tool serves a unique purpose but they all share the same data and inform each other.</p>
 </div>
 
+<!-- Project Management cluster -->
+<div class="cluster-label">Project Management</div>
+
 <!-- Tool 1: Project Timeline -->
-<div class="divider"><hr></div>
 <div class="tool-section" id="tool-1">
   <div class="tool-header">
     <div class="tool-number">1</div>
@@ -297,7 +299,6 @@ footer .footer-container {
 </div>
 
 <!-- Tool 2: Resource Allocator -->
-<div class="divider"><hr></div>
 <div class="tool-section" id="tool-2">
   <div class="tool-header">
     <div class="tool-number">2</div>
@@ -320,7 +321,6 @@ footer .footer-container {
 </div>
 
 <!-- Tool 3: Capacity Planner -->
-<div class="divider"><hr></div>
 <div class="tool-section" id="tool-3">
   <div class="tool-header">
     <div class="tool-number">3</div>
@@ -342,15 +342,17 @@ footer .footer-container {
   </div>
 </div>
 
+<!-- Client Intelligence cluster -->
+<div class="cluster-label cluster-break">Client Intelligence</div>
+
 <!-- Tool 4: Status Reports -->
-<div class="divider"><hr></div>
 <div class="tool-section" id="tool-4">
   <div class="tool-header">
     <div class="tool-number">4</div>
     <div class="tool-name">Status Report Generator</div>
   </div>
   <div class="tool-problem">
-    <strong>Problem it solves:</strong> Every Friday afternoon, account directors stopped strategic work to spend 2-3 hours per client manually assembling performance reports in Google Slides &mdash; pulling data from GA, social platforms, email tools, and the CRM. That's 16-24 hours of senior account time per month spent formatting instead of thinking.
+    <strong>Problem it solves:</strong> Partners walked into the Monday leadership meeting with no shared view of where projects actually stood. Account directors each had their own read on progress, blockers, and budget health, but there was no consolidated internal status &mdash; so the first 30 minutes of every Monday was spent getting everyone on the same page instead of making decisions.
   </div>
   <div class="tool-prompt">
     Build an automated status report generator for Sidebar Creative. Read all project data &mdash; timelines, hours burned vs. budgeted, milestones, RAG status. <em>Generate a written weekly status report</em> for each client covering progress, blockers, next steps, and budget health. Also generate an <em>internal roll-up report</em> summarizing all 8 clients for the Monday leadership meeting. Output the reports as markdown files and build an HTML interface to generate and view them.
@@ -366,7 +368,6 @@ footer .footer-container {
 </div>
 
 <!-- Tool 5: Performance Dashboard -->
-<div class="divider"><hr></div>
 <div class="tool-section" id="tool-5">
   <div class="tool-header">
     <div class="tool-number">5</div>
@@ -389,7 +390,6 @@ footer .footer-container {
 </div>
 
 <!-- Tool 6: Client Health Scorer -->
-<div class="divider"><hr></div>
 <div class="tool-section" id="tool-6">
   <div class="tool-header">
     <div class="tool-number">6</div>
@@ -412,7 +412,6 @@ footer .footer-container {
 </div>
 
 <!-- Tool 7: Client Report Generator -->
-<div class="divider"><hr></div>
 <div class="tool-section" id="tool-7">
   <div class="tool-header">
     <div class="tool-number">7</div>

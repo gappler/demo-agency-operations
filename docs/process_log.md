@@ -1,11 +1,33 @@
 ---
 title: Process Log
-version: 2.0
+version: 2.1
 created: 2026-04-06
-updated: 2026-04-08
+updated: 2026-04-13
 ---
 
 # Process Log
+
+---
+
+## 2026-04-13 — Restructure Tour Page Around Two Operational Clusters
+
+**Prompt:**
+Restructure the Sidebar Creative Agency Operations demo (index.html) to surface the two operational clusters and the data flow within each. Add cluster section labels ("Project Management" before tool 1, "Client Intelligence" before tool 4), rewrite the intro to frame the two tracks, fix the tool 4 / tool 7 problem statement overlap, and replace all `<hr>` dividers.
+
+**What was built:**
+- Added `.cluster-label` CSS (uppercase, small, muted) with a `cluster-break` modifier for extra spacing between tracks
+- Inserted "Project Management" label before tool 1 and "Client Intelligence" label before tool 4
+- Removed all six `<div class="divider"><hr></div>` blocks between tools
+- Rewrote intro to explicitly frame the two-track structure and the feed-forward flow within each track; dropped the generic italic tagline
+- Rewrote tool 4's problem statement to lead with the internal Monday-leadership-meeting pain point, leaving tool 7 as the sole owner of the Friday-afternoon Google Slides framing
+
+**Key decisions:**
+- Kept the CSS change minimal — reused `.divider`'s container width/padding values in the new `.cluster-label` rule so visual alignment matches the rest of the page
+- Tool 4 reframing focuses on "no shared internal view" rather than volume-of-hours pain, which keeps it clearly distinct from tool 7's formatting-labor framing
+- No gate interstitials, convergence block, or architecture map added (per instructions — the structure is two parallel tracks, not a pipeline)
+
+**Files modified:**
+- index.html
 
 ---
 
