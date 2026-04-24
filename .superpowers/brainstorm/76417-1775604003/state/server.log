@@ -1,5 +1,0 @@
-{"type":"server-started","port":58847,"host":"127.0.0.1","url_host":"localhost","url":"http://localhost:58847","screen_dir":"/Users/gregappler/Claude Code Projects/demo-agency-operations/.superpowers/brainstorm/76417-1775604003/content","state_dir":"/Users/gregappler/Claude Code Projects/demo-agency-operations/.superpowers/brainstorm/76417-1775604003/state"}
-{"type":"screen-added","file":"/Users/gregappler/Claude Code Projects/demo-agency-operations/.superpowers/brainstorm/76417-1775604003/content/matrix-layout.html"}
-{"type":"screen-added","file":"/Users/gregappler/Claude Code Projects/demo-agency-operations/.superpowers/brainstorm/76417-1775604003/content/flipped-layout.html"}
-{"type":"screen-added","file":"/Users/gregappler/Claude Code Projects/demo-agency-operations/.superpowers/brainstorm/76417-1775604003/content/waiting.html"}
-{"type":"server-stopped","reason":"idle timeout"}
