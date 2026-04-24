@@ -1,0 +1,40 @@
+<h2>Timeline Dashboard Layout</h2>
+<p class="subtitle">Branded header, practical everything else</p>
+
+<div class="options">
+  <div class="option" data-choice="a" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>Single-Page Scroll</h3>
+      <p>Branded header at top, then a single Gantt timeline with all 12 engagements (8 retainers + 4 projects) stacked vertically. RAG status, budget burn, and milestones all visible inline on each bar. Filter controls at top to toggle retainers vs. projects.</p>
+      <div class="pros-cons">
+        <div class="pros"><h4>Pros</h4><ul><li>Everything on one screen</li><li>Easy to scan top-to-bottom</li><li>Simple mental model</li></ul></div>
+        <div class="cons"><h4>Cons</h4><ul><li>Can get tall with 12 rows</li><li>Detail lives in tooltips/hovers</li></ul></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="option" data-choice="b" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>Timeline + Detail Panel</h3>
+      <p>Branded header, then Gantt timeline on top (compact bars). Clicking a bar opens a detail panel below showing: budget breakdown, milestone checklist, team assignments, and health scores. Summary stats row between header and timeline.</p>
+      <div class="pros-cons">
+        <div class="pros"><h4>Pros</h4><ul><li>Timeline stays compact and scannable</li><li>Rich detail on demand</li><li>Room for milestone lists and budget charts</li></ul></div>
+        <div class="cons"><h4>Cons</h4><ul><li>Requires interaction to see details</li><li>Slightly more complex</li></ul></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="option" data-choice="c" onclick="toggleSelect(this)">
+    <div class="letter">C</div>
+    <div class="content">
+      <h3>Summary Cards + Timeline</h3>
+      <p>Branded header, row of KPI summary cards (total clients, at-risk count, budget health, upcoming deadlines), then the Gantt timeline below. Each bar shows RAG dot + progress. Hover for quick detail, click for full breakdown in a modal.</p>
+      <div class="pros-cons">
+        <div class="pros"><h4>Pros</h4><ul><li>KPI cards give instant pulse check</li><li>Timeline is the main view</li><li>Modals keep the layout clean</li></ul></div>
+        <div class="cons"><h4>Cons</h4><ul><li>Modals can feel disruptive</li><li>More UI complexity</li></ul></div>
+      </div>
+    </div>
+  </div>
+</div>

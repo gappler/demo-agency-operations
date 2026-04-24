@@ -1,0 +1,175 @@
+<h2>Multi-Client Performance Dashboard — Grid Overview</h2>
+<p class="subtitle">2x4 card grid with sparklines. Click any card for full detail view.</p>
+
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+
+  <!-- Evergreen - healthy, trending up -->
+  <div style="background:#fff;border-radius:6px;box-shadow:0 1px 3px rgba(0,0,0,.08);padding:16px;cursor:pointer;border-left:4px solid #28a745;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+      <div>
+        <div style="font-weight:700;font-size:14px;">Evergreen Outdoor Co.</div>
+        <div style="font-size:11px;color:#888;">$45K/mo · Health: 91 🟢</div>
+      </div>
+      <div style="font-size:11px;color:#28a745;font-weight:600;">↑ Trending Up</div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:11px;">
+      <!-- Traffic sparkline -->
+      <div>
+        <div style="color:#888;margin-bottom:2px;">Sessions</div>
+        <div style="display:flex;align-items:center;gap:6px;">
+          <svg width="60" height="20" viewBox="0 0 60 20"><polyline points="5,12 15,8 25,3 35,10 45,11 55,7" fill="none" stroke="#28a745" stroke-width="1.5"/></svg>
+          <span style="font-weight:600;">325.8K</span>
+        </div>
+      </div>
+      <!-- MQLs sparkline -->
+      <div>
+        <div style="color:#888;margin-bottom:2px;">MQLs</div>
+        <div style="display:flex;align-items:center;gap:6px;">
+          <svg width="60" height="20" viewBox="0 0 60 20"><polyline points="5,14 15,10 25,4 35,12 45,13 55,9" fill="none" stroke="#28a745" stroke-width="1.5"/></svg>
+          <span style="font-weight:600;">2,280</span>
+        </div>
+      </div>
+      <!-- Email rev sparkline -->
+      <div>
+        <div style="color:#888;margin-bottom:2px;">Email Rev</div>
+        <div style="display:flex;align-items:center;gap:6px;">
+          <svg width="60" height="20" viewBox="0 0 60 20"><polyline points="5,15 15,10 25,3 35,16 45,14 55,10" fill="none" stroke="#28a745" stroke-width="1.5"/></svg>
+          <span style="font-weight:600;">$168K</span>
+        </div>
+      </div>
+      <!-- Hours sparkline -->
+      <div>
+        <div style="color:#888;margin-bottom:2px;">Hours vs SOW</div>
+        <div style="display:flex;align-items:center;gap:6px;">
+          <svg width="60" height="20" viewBox="0 0 60 20"><polyline points="5,10 15,8 25,6 35,11 45,12 55,10" fill="none" stroke="#555" stroke-width="1.5"/><line x1="0" y1="10" x2="60" y2="10" stroke="#ddd" stroke-width="0.5" stroke-dasharray="2,2"/></svg>
+          <span style="font-weight:600;">98%</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Vello - red, declining -->
+  <div style="background:#fff;border-radius:6px;box-shadow:0 1px 3px rgba(0,0,0,.08);padding:16px;cursor:pointer;border-left:4px solid #dc3545;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+      <div>
+        <div style="font-weight:700;font-size:14px;">Vello Cycling</div>
+        <div style="font-size:11px;color:#888;">$32K/mo · Health: 44 🔴</div>
+      </div>
+      <div style="font-size:11px;color:#dc3545;font-weight:600;">↓ Declining</div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:11px;">
+      <div>
+        <div style="color:#888;margin-bottom:2px;">Sessions</div>
+        <div style="display:flex;align-items:center;gap:6px;">
+          <svg width="60" height="20" viewBox="0 0 60 20"><polyline points="5,5 15,7 25,10 35,13 45,15 55,17" fill="none" stroke="#dc3545" stroke-width="1.5"/></svg>
+          <span style="font-weight:600;color:#dc3545;">108.2K</span>
+        </div>
+      </div>
+      <div>
+        <div style="color:#888;margin-bottom:2px;">MQLs</div>
+        <div style="display:flex;align-items:center;gap:6px;">
+          <svg width="60" height="20" viewBox="0 0 60 20"><polyline points="5,5 15,7 25,10 35,13 45,16 55,18" fill="none" stroke="#dc3545" stroke-width="1.5"/></svg>
+          <span style="font-weight:600;color:#dc3545;">420</span>
+        </div>
+      </div>
+      <div>
+        <div style="color:#888;margin-bottom:2px;">Email Rev</div>
+        <div style="display:flex;align-items:center;gap:6px;">
+          <svg width="60" height="20" viewBox="0 0 60 20"><polyline points="5,4 15,7 25,10 35,13 45,16 55,18" fill="none" stroke="#dc3545" stroke-width="1.5"/></svg>
+          <span style="font-weight:600;color:#dc3545;">$15K</span>
+        </div>
+      </div>
+      <div>
+        <div style="color:#888;margin-bottom:2px;">Hours vs SOW</div>
+        <div style="display:flex;align-items:center;gap:6px;">
+          <svg width="60" height="20" viewBox="0 0 60 20"><polyline points="5,9 15,8 25,10 35,4 45,5 55,6" fill="none" stroke="#dc3545" stroke-width="1.5"/><line x1="0" y1="10" x2="60" y2="10" stroke="#ddd" stroke-width="0.5" stroke-dasharray="2,2"/></svg>
+          <span style="font-weight:600;color:#dc3545;">117%</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Summit - growing fast -->
+  <div style="background:#fff;border-radius:6px;box-shadow:0 1px 3px rgba(0,0,0,.08);padding:16px;cursor:pointer;border-left:4px solid #28a745;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+      <div>
+        <div style="font-weight:700;font-size:14px;">Summit Pet Supply</div>
+        <div style="font-size:11px;color:#888;">$18K/mo · Health: 84 🟢</div>
+      </div>
+      <div style="font-size:11px;color:#28a745;font-weight:600;">↑↑ Strong Growth</div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:11px;">
+      <div>
+        <div style="color:#888;margin-bottom:2px;">Sessions</div>
+        <div style="display:flex;align-items:center;gap:6px;">
+          <svg width="60" height="20" viewBox="0 0 60 20"><polyline points="5,17 15,14 25,10 35,12 45,9 55,5" fill="none" stroke="#28a745" stroke-width="1.5"/></svg>
+          <span style="font-weight:600;">72.6K</span>
+        </div>
+      </div>
+      <div>
+        <div style="color:#888;margin-bottom:2px;">MQLs</div>
+        <div style="display:flex;align-items:center;gap:6px;">
+          <svg width="60" height="20" viewBox="0 0 60 20"><polyline points="5,18 15,15 25,10 35,13 45,9 55,5" fill="none" stroke="#28a745" stroke-width="1.5"/></svg>
+          <span style="font-weight:600;">440</span>
+        </div>
+      </div>
+      <div>
+        <div style="color:#888;margin-bottom:2px;">Instagram</div>
+        <div style="display:flex;align-items:center;gap:6px;">
+          <svg width="60" height="20" viewBox="0 0 60 20"><polyline points="5,18 15,16 25,12 35,11 45,8 55,3" fill="none" stroke="#28a745" stroke-width="1.5"/></svg>
+          <span style="font-weight:600;">30.6K</span>
+        </div>
+      </div>
+      <div>
+        <div style="color:#888;margin-bottom:2px;">Hours vs SOW</div>
+        <div style="display:flex;align-items:center;gap:6px;">
+          <svg width="60" height="20" viewBox="0 0 60 20"><polyline points="5,11 15,10 25,9 35,10 45,10 55,10" fill="none" stroke="#555" stroke-width="1.5"/><line x1="0" y1="10" x2="60" y2="10" stroke="#ddd" stroke-width="0.5" stroke-dasharray="2,2"/></svg>
+          <span style="font-weight:600;">96%</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Kova - flat/yellow -->
+  <div style="background:#fff;border-radius:6px;box-shadow:0 1px 3px rgba(0,0,0,.08);padding:16px;cursor:pointer;border-left:4px solid #ffc107;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+      <div>
+        <div style="font-weight:700;font-size:14px;">Kova Skincare</div>
+        <div style="font-size:11px;color:#888;">$25K/mo · Health: 64 🟡</div>
+      </div>
+      <div style="font-size:11px;color:#b38600;font-weight:600;">→ Flat</div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:11px;">
+      <div>
+        <div style="color:#888;margin-bottom:2px;">Sessions</div>
+        <div style="display:flex;align-items:center;gap:6px;">
+          <svg width="60" height="20" viewBox="0 0 60 20"><polyline points="5,10 15,11 25,9 35,11 45,10 55,9" fill="none" stroke="#b38600" stroke-width="1.5"/></svg>
+          <span style="font-weight:600;">101.8K</span>
+        </div>
+      </div>
+      <div>
+        <div style="color:#888;margin-bottom:2px;">MQLs</div>
+        <div style="display:flex;align-items:center;gap:6px;">
+          <svg width="60" height="20" viewBox="0 0 60 20"><polyline points="5,9 15,11 25,8 35,12 45,10 55,9" fill="none" stroke="#b38600" stroke-width="1.5"/></svg>
+          <span style="font-weight:600;">570</span>
+        </div>
+      </div>
+      <div>
+        <div style="color:#888;margin-bottom:2px;">Email Rev</div>
+        <div style="display:flex;align-items:center;gap:6px;">
+          <svg width="60" height="20" viewBox="0 0 60 20"><polyline points="5,11 15,12 25,9 35,13 45,10 55,10" fill="none" stroke="#b38600" stroke-width="1.5"/></svg>
+          <span style="font-weight:600;">$30K</span>
+        </div>
+      </div>
+      <div>
+        <div style="color:#888;margin-bottom:2px;">Hours vs SOW</div>
+        <div style="display:flex;align-items:center;gap:6px;">
+          <svg width="60" height="20" viewBox="0 0 60 20"><polyline points="5,10 15,10 25,8 35,9 45,7 55,10" fill="none" stroke="#555" stroke-width="1.5"/><line x1="0" y1="10" x2="60" y2="10" stroke="#ddd" stroke-width="0.5" stroke-dasharray="2,2"/></svg>
+          <span style="font-weight:600;">102%</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="grid-column:1/-1;text-align:center;color:#888;font-size:12px;padding:8px;">... 4 more client cards (Brightwash, Petal & Thorn, Drift Coffee, Moonridge) ...</div>
+</div>

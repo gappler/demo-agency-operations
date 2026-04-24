@@ -1,0 +1,222 @@
+<h2>Capacity Planner — Split View Layout</h2>
+<p class="subtitle">Top: department capacity forecast. Bottom: project list driving the numbers. Risk toggles on the right.</p>
+
+<div class="split">
+  <!-- LEFT: Main content -->
+  <div style="flex:3;">
+    <!-- TOP HALF: Department capacity bars -->
+    <div class="mockup">
+      <div class="mockup-header">Capacity Forecast — Q2 2026 (Apr / May / Jun)</div>
+      <div class="mockup-body" style="padding:16px;">
+        <!-- Design dept -->
+        <div style="margin-bottom:16px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+            <div style="font-weight:700;font-size:13px;">Design (12 staff)</div>
+            <div style="font-size:11px;color:#888;">Target: 408 hrs/mo</div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;">
+            <!-- April -->
+            <div>
+              <div style="font-size:10px;color:#888;margin-bottom:3px;">APRIL</div>
+              <div style="background:#eee;border-radius:4px;height:28px;position:relative;overflow:hidden;">
+                <div style="position:absolute;left:0;top:0;bottom:0;width:92%;background:#dc354530;border-radius:4px;"></div>
+                <div style="position:absolute;left:0;top:0;bottom:0;width:82%;background:#dc3545;border-radius:4px;"></div>
+                <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;">
+                  <span style="color:#dc3545;">452</span><span style="color:#888;margin:0 2px;">/</span><span style="color:#555;">408</span>
+                </div>
+              </div>
+              <div style="font-size:10px;color:#dc3545;font-weight:600;margin-top:2px;">111% — Bottleneck</div>
+            </div>
+            <!-- May -->
+            <div>
+              <div style="font-size:10px;color:#888;margin-bottom:3px;">MAY</div>
+              <div style="background:#eee;border-radius:4px;height:28px;position:relative;overflow:hidden;">
+                <div style="position:absolute;left:0;top:0;bottom:0;width:78%;background:#555;border-radius:4px;"></div>
+                <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;">
+                  <span style="color:#555;">318</span><span style="color:#888;margin:0 2px;">/</span><span style="color:#555;">408</span>
+                </div>
+              </div>
+              <div style="font-size:10px;color:#555;margin-top:2px;">78% — Normal</div>
+            </div>
+            <!-- June -->
+            <div>
+              <div style="font-size:10px;color:#888;margin-bottom:3px;">JUNE</div>
+              <div style="background:#eee;border-radius:4px;height:28px;position:relative;overflow:hidden;">
+                <div style="position:absolute;left:0;top:0;bottom:0;width:55%;background:#28a745;border-radius:4px;"></div>
+                <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;">
+                  <span style="color:#28a745;">224</span><span style="color:#888;margin:0 2px;">/</span><span style="color:#555;">408</span>
+                </div>
+              </div>
+              <div style="font-size:10px;color:#28a745;margin-top:2px;">55% — Bench time</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Development dept -->
+        <div style="margin-bottom:16px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+            <div style="font-weight:700;font-size:13px;">Development (8 staff)</div>
+            <div style="font-size:11px;color:#888;">Target: 272 hrs/mo</div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;">
+            <div>
+              <div style="font-size:10px;color:#888;margin-bottom:3px;">APRIL</div>
+              <div style="background:#eee;border-radius:4px;height:28px;position:relative;overflow:hidden;">
+                <div style="position:absolute;left:0;top:0;bottom:0;width:95%;background:#ffc10730;border-radius:4px;"></div>
+                <div style="position:absolute;left:0;top:0;bottom:0;width:88%;background:#b38600;border-radius:4px;"></div>
+                <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;">
+                  <span style="color:#b38600;">286</span><span style="color:#888;margin:0 2px;">/</span><span style="color:#555;">272</span>
+                </div>
+              </div>
+              <div style="font-size:10px;color:#b38600;font-weight:600;margin-top:2px;">105% — Tight</div>
+            </div>
+            <div>
+              <div style="font-size:10px;color:#888;margin-bottom:3px;">MAY</div>
+              <div style="background:#eee;border-radius:4px;height:28px;position:relative;overflow:hidden;">
+                <div style="position:absolute;left:0;top:0;bottom:0;width:72%;background:#555;border-radius:4px;"></div>
+                <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;">
+                  <span>196</span><span style="color:#888;margin:0 2px;">/</span><span>272</span>
+                </div>
+              </div>
+              <div style="font-size:10px;color:#555;margin-top:2px;">72% — Normal</div>
+            </div>
+            <div>
+              <div style="font-size:10px;color:#888;margin-bottom:3px;">JUNE</div>
+              <div style="background:#eee;border-radius:4px;height:28px;position:relative;overflow:hidden;">
+                <div style="position:absolute;left:0;top:0;bottom:0;width:50%;background:#28a745;border-radius:4px;"></div>
+                <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;">
+                  <span style="color:#28a745;">136</span><span style="color:#888;margin:0 2px;">/</span><span>272</span>
+                </div>
+              </div>
+              <div style="font-size:10px;color:#28a745;margin-top:2px;">50% — Bench time</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Strategy (compact) -->
+        <div style="margin-bottom:16px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+            <div style="font-weight:700;font-size:13px;">Strategy (4 staff)</div>
+            <div style="font-size:11px;color:#888;">Target: 120 hrs/mo</div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;">
+            <div>
+              <div style="font-size:10px;color:#888;margin-bottom:3px;">APRIL</div>
+              <div style="background:#eee;border-radius:4px;height:28px;position:relative;overflow:hidden;">
+                <div style="position:absolute;left:0;top:0;bottom:0;width:100%;background:#dc3545;border-radius:4px;"></div>
+                <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:#fff;">
+                  135 / 120
+                </div>
+              </div>
+              <div style="font-size:10px;color:#dc3545;font-weight:600;margin-top:2px;">113% — Bottleneck</div>
+            </div>
+            <div>
+              <div style="font-size:10px;color:#888;margin-bottom:3px;">MAY</div>
+              <div style="background:#eee;border-radius:4px;height:28px;position:relative;overflow:hidden;">
+                <div style="position:absolute;left:0;top:0;bottom:0;width:75%;background:#555;border-radius:4px;"></div>
+                <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;">90 / 120</div>
+              </div>
+              <div style="font-size:10px;color:#555;margin-top:2px;">75% — Normal</div>
+            </div>
+            <div>
+              <div style="font-size:10px;color:#888;margin-bottom:3px;">JUNE</div>
+              <div style="background:#eee;border-radius:4px;height:28px;position:relative;overflow:hidden;">
+                <div style="position:absolute;left:0;top:0;bottom:0;width:75%;background:#555;border-radius:4px;"></div>
+                <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;">90 / 120</div>
+              </div>
+              <div style="font-size:10px;color:#555;margin-top:2px;">75% — Normal</div>
+            </div>
+          </div>
+        </div>
+
+        <div style="font-size:11px;color:#888;padding-top:8px;border-top:1px solid #eee;">Click any department row to expand and see individual team members.</div>
+      </div>
+    </div>
+
+    <!-- BOTTOM HALF: Project list -->
+    <div class="mockup" style="margin-top:12px;">
+      <div class="mockup-header">Projects Driving Demand</div>
+      <div class="mockup-body" style="padding:0;">
+        <table style="width:100%;border-collapse:collapse;font-size:12px;">
+          <thead>
+            <tr style="background:#f5f5f5;border-bottom:1px solid #ddd;">
+              <th style="padding:8px 12px;text-align:left;">Project</th>
+              <th style="padding:8px;text-align:center;width:90px;">Apr</th>
+              <th style="padding:8px;text-align:center;width:90px;">May</th>
+              <th style="padding:8px;text-align:center;width:90px;">Jun</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="border-bottom:1px solid #eee;">
+              <td style="padding:6px 12px;"><span style="font-weight:600;">Evergreen Outdoor</span> <span style="color:#888;font-size:10px;">$45K/mo</span></td>
+              <td style="padding:6px;text-align:center;font-weight:600;">122</td>
+              <td style="padding:6px;text-align:center;font-weight:600;">122</td>
+              <td style="padding:6px;text-align:center;font-weight:600;">122</td>
+            </tr>
+            <tr style="border-bottom:1px solid #eee;background:#dc354508;">
+              <td style="padding:6px 12px;"><span style="font-weight:600;">NW Natural Rebrand</span> <span style="color:#dc3545;font-size:10px;">Ends Apr</span></td>
+              <td style="padding:6px;text-align:center;font-weight:600;">124</td>
+              <td style="padding:6px;text-align:center;color:#ccc;">—</td>
+              <td style="padding:6px;text-align:center;color:#ccc;">—</td>
+            </tr>
+            <tr style="border-bottom:1px solid #eee;background:#28a74508;">
+              <td style="padding:6px 12px;"><span style="font-weight:600;">Cascade Athletic</span> <span style="color:#28a745;font-size:10px;">Ends Jun</span></td>
+              <td style="padding:6px;text-align:center;font-weight:600;">100</td>
+              <td style="padding:6px;text-align:center;font-weight:600;">100</td>
+              <td style="padding:6px;text-align:center;font-weight:600;color:#28a745;">50</td>
+            </tr>
+            <tr style="border-bottom:2px dashed #007bff;background:#007bff08;">
+              <td style="padding:6px 12px;"><span style="font-weight:600;color:#007bff;">+ New Project</span> <span style="color:#007bff;font-size:10px;">hypothetical</span></td>
+              <td style="padding:6px;text-align:center;color:#007bff;cursor:pointer;">click to add</td>
+              <td style="padding:6px;text-align:center;color:#007bff;cursor:pointer;">click to add</td>
+              <td style="padding:6px;text-align:center;color:#007bff;cursor:pointer;">click to add</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT: Risk toggles -->
+  <div style="flex:1;min-width:200px;">
+    <div class="mockup">
+      <div class="mockup-header">Pipeline Risks</div>
+      <div class="mockup-body" style="padding:12px;">
+        <!-- Toggle items -->
+        <div style="margin-bottom:12px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">
+            <span style="font-size:12px;font-weight:600;">Vello Churns</span>
+            <div style="width:36px;height:20px;background:#ccc;border-radius:10px;position:relative;cursor:pointer;">
+              <div style="width:16px;height:16px;background:#fff;border-radius:50%;position:absolute;top:2px;left:2px;box-shadow:0 1px 2px rgba(0,0,0,.2);"></div>
+            </div>
+          </div>
+          <div style="font-size:10px;color:#888;">Frees ~77 hrs/mo across Design, Dev, Strategy</div>
+        </div>
+        <div style="margin-bottom:12px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">
+            <span style="font-size:12px;font-weight:600;">Kova Downsizes</span>
+            <div style="width:36px;height:20px;background:#ccc;border-radius:10px;position:relative;cursor:pointer;">
+              <div style="width:16px;height:16px;background:#fff;border-radius:50%;position:absolute;top:2px;left:2px;box-shadow:0 1px 2px rgba(0,0,0,.2);"></div>
+            </div>
+          </div>
+          <div style="font-size:10px;color:#888;">Reduces ~30 hrs/mo ($25K → $18K)</div>
+        </div>
+        <div style="margin-bottom:12px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">
+            <span style="font-size:12px;font-weight:600;">Summit Expands</span>
+            <div style="width:36px;height:20px;background:#ccc;border-radius:10px;position:relative;cursor:pointer;">
+              <div style="width:16px;height:16px;background:#fff;border-radius:50%;position:absolute;top:2px;left:2px;box-shadow:0 1px 2px rgba(0,0,0,.2);"></div>
+            </div>
+          </div>
+          <div style="font-size:10px;color:#888;">Adds ~50 hrs/mo ($18K → $28K)</div>
+        </div>
+        <div style="border-top:1px solid #eee;padding-top:12px;margin-top:12px;">
+          <div style="font-size:11px;font-weight:600;color:#555;margin-bottom:6px;">HIRING SIGNALS</div>
+          <div style="font-size:11px;color:#dc3545;margin-bottom:4px;">Design bottleneck in April</div>
+          <div style="font-size:11px;color:#dc3545;margin-bottom:4px;">Strategy tight in April</div>
+          <div style="font-size:11px;color:#28a745;margin-bottom:4px;">Dev bench opens June</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

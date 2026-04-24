@@ -1,0 +1,4 @@
+{"type":"server-started","port":62747,"host":"127.0.0.1","url_host":"localhost","url":"http://localhost:62747","screen_dir":"/Users/gregappler/Claude Code Projects/demo-agency-operations/.superpowers/brainstorm/82523-1775616358/content","state_dir":"/Users/gregappler/Claude Code Projects/demo-agency-operations/.superpowers/brainstorm/82523-1775616358/state"}
+{"type":"screen-added","file":"/Users/gregappler/Claude Code Projects/demo-agency-operations/.superpowers/brainstorm/82523-1775616358/content/split-layout.html"}
+{"type":"screen-added","file":"/Users/gregappler/Claude Code Projects/demo-agency-operations/.superpowers/brainstorm/82523-1775616358/content/waiting-2.html"}
+{"type":"server-stopped","reason":"idle timeout"}
